@@ -89,17 +89,6 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		frm.addWindowListener(this);
 		frm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-		// JPopupMenu
-
-		BufferedImage icon = null;
-		try {
-			icon = ImageIO.read(getClass().getResource("disk-128.png"));
-			frm.setIconImage(icon);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		// this.icon = icon;
-
 		File programDir = Paths.get(PropFx.userHome(), ".fssync").toFile();
 		File docsDir = new File(programDir, "docs");
 
@@ -110,11 +99,12 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 
 		if (!docsDir.exists()) {
 			docsDir.mkdir();
-			String[] names = new String[] { "about.html", "help.html", "requestContinueRestore.png",
-					"requestForeignFileHandling.png", "requestSourceForRestore.png", "requestRestoreMode.png",
-					"settings.png", "gui.png", "disk-128.png" };
+			String[] names = new String[] { "../res/about.html", "../res/help.html",
+					"../res/requestContinueRestore.png", "../res/requestForeignFileHandling.png",
+					"../res/requestSourceForRestore.png", "../res/requestRestoreMode.png",
+					"../res/settings.png", "../res/gui.png", "../res/disk-128.png" };
 			for (int i = 0; i < names.length; i++) {
-				FSFx.copyResourceFile(getClass(), names[i], new File(docsDir, names[i]));
+				FSFx.copyResourceFile(getClass(), names[i], new File(docsDir, new File(names[i]).getName()));
 			}
 		}
 
@@ -128,6 +118,15 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		this.aboutURL = aboutURL;
 		this.helpURL = helpURL;
 
+		BufferedImage icon = null;
+		try {
+			icon = ImageIO.read(getClass().getResource("../res/disk-128.png"));
+			frm.setIconImage(icon);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		// this.icon = icon;
+		
 		settingsDialog = new SettingsDialog(frm);
 
 		settings = settingsDialog.getSettings();
