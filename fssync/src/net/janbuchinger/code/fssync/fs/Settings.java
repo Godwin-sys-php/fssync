@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import mishmash.PropFx;
+import net.janbuchinger.code.mishmash.PropFx;
 
 import org.apache.commons.io.FileUtils;
 

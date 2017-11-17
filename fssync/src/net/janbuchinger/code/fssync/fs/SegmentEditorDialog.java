@@ -33,8 +33,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import mishmash.ui.UIFx;
-import mishmash.ui.dialog.DialogEscapeHook;
+import net.janbuchinger.code.mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.ui.dialog.DialogEscapeHook;
 
 
 @SuppressWarnings("serial")

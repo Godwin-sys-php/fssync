@@ -24,8 +24,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Vector;
 
 import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
-
-import mishmash.FSFx;
+import net.janbuchinger.code.mishmash.FSFx;
 
 public class RemoteFileVisitor implements FileVisitor<Path> {
 

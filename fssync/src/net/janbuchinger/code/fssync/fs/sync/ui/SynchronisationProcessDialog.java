@@ -45,10 +45,10 @@ import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
-import mishmash.ui.UIFx;
 import net.janbuchinger.code.fssync.fs.Operation;
 import net.janbuchinger.code.fssync.fs.Settings;
 import net.janbuchinger.code.fssync.fs.sync.OperationSummary;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 import org.apache.commons.io.FileUtils;
 

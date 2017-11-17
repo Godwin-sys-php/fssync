@@ -22,9 +22,8 @@ import javax.swing.table.AbstractTableModel;
 
 import net.janbuchinger.code.fssync.fs.sync.DeleteAction;
 import net.janbuchinger.code.fssync.fs.sync.OperationSummary;
-
-import mishmash.FSFx;
-import mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.FSFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 @SuppressWarnings("serial")
 public class DeleteActionTableModel extends AbstractTableModel {

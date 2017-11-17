@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 
-import mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 @SuppressWarnings("serial")
 public class RestorationModePanel extends JPanel {

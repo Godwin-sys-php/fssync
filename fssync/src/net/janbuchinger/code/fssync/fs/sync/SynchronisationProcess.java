@@ -29,20 +29,9 @@ import java.util.Vector;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import mishmash.GC;
-import mishmash.ui.UIFx;
 import net.janbuchinger.code.fssync.fs.FSSync;
 import net.janbuchinger.code.fssync.fs.Operation;
 import net.janbuchinger.code.fssync.fs.Settings;
-import net.janbuchinger.code.fssync.fs.sync.CopyAction;
-import net.janbuchinger.code.fssync.fs.sync.DeleteAction;
-import net.janbuchinger.code.fssync.fs.sync.EditDBsFilenameFilter;
-import net.janbuchinger.code.fssync.fs.sync.LocalFileVisitor;
-import net.janbuchinger.code.fssync.fs.sync.OnlineDB;
-import net.janbuchinger.code.fssync.fs.sync.OperationSummary;
-import net.janbuchinger.code.fssync.fs.sync.RelativeFile;
-import net.janbuchinger.code.fssync.fs.sync.RemoteFileVisitor;
-import net.janbuchinger.code.fssync.fs.sync.SpiderCancelledException;
 import net.janbuchinger.code.fssync.fs.sync.ui.GetContinueRestore;
 import net.janbuchinger.code.fssync.fs.sync.ui.GetForeignFileHandling;
 import net.janbuchinger.code.fssync.fs.sync.ui.GetRetryOnOutOfMemory;
@@ -53,6 +42,8 @@ import net.janbuchinger.code.fssync.fs.sync.ui.RunSetDeterminate;
 import net.janbuchinger.code.fssync.fs.sync.ui.RunStatusTextUpdate;
 import net.janbuchinger.code.fssync.fs.sync.ui.RunStatusUpdate;
 import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
+import net.janbuchinger.code.mishmash.GC;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 import org.apache.commons.io.FileUtils;
 

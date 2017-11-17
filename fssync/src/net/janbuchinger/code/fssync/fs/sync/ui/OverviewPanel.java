@@ -25,9 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.janbuchinger.code.fssync.fs.sync.OperationSummary;
-
-import mishmash.FSFx;
-import mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.FSFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 @SuppressWarnings("serial")
 public class OverviewPanel extends JPanel {

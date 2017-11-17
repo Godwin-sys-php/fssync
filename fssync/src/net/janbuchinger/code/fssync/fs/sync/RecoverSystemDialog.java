@@ -22,7 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-import mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 @SuppressWarnings("serial")
 public class RecoverSystemDialog extends JDialog {

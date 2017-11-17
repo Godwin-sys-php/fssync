@@ -21,8 +21,8 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
-import mishmash.FSFx;
-import mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.FSFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 @SuppressWarnings("serial")
 public class FileTableModel extends AbstractTableModel {

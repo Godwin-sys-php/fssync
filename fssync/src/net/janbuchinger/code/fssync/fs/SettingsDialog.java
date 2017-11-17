@@ -35,9 +35,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import mishmash.ui.dialog.EscapeListener;
-import mishmash.ui.userInput.FolderPathTextField;
-import mishmash.ui.userInput.JTextFieldWithPopUp;
+import net.janbuchinger.code.mishmash.ui.dialog.EscapeListener;
+import net.janbuchinger.code.mishmash.ui.userInput.FolderPathTextField;
+import net.janbuchinger.code.mishmash.ui.userInput.JTextFieldWithPopUp;
 
 import org.apache.commons.io.FileUtils;
 

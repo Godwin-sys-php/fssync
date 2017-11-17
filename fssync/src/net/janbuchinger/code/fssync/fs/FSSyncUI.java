@@ -42,14 +42,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import mishmash.FSFx;
-import mishmash.GC;
-import mishmash.PropFx;
-import mishmash.ui.UIFx;
-import mishmash.ui.dialog.InfoDialog;
 import net.janbuchinger.code.fssync.fs.sync.RestorationProcess;
 import net.janbuchinger.code.fssync.fs.sync.SynchronisationProcess;
 import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
+import net.janbuchinger.code.mishmash.FSFx;
+import net.janbuchinger.code.mishmash.GC;
+import net.janbuchinger.code.mishmash.PropFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.ui.dialog.InfoDialog;
 
 import org.apache.commons.io.FileUtils;
 

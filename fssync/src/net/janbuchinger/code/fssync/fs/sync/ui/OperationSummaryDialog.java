@@ -32,8 +32,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import net.janbuchinger.code.fssync.fs.sync.OperationSummary;
-
-import mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 @SuppressWarnings("serial")
 public final class OperationSummaryDialog extends JDialog implements ActionListener, ChangeListener {

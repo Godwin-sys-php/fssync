@@ -24,9 +24,8 @@ import javax.swing.table.AbstractTableModel;
 import net.janbuchinger.code.fssync.fs.sync.CopyAction;
 import net.janbuchinger.code.fssync.fs.sync.OperationSummary;
 import net.janbuchinger.code.fssync.fs.sync.SpiderCancelledException;
-
-import mishmash.FSFx;
-import mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.FSFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
 
 @SuppressWarnings("serial")
 public class CopyActionTableModel extends AbstractTableModel {

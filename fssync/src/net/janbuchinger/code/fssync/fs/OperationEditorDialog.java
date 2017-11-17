@@ -44,12 +44,12 @@ import net.janbuchinger.code.fssync.fs.sync.OnlineDB;
 import net.janbuchinger.code.fssync.fs.sync.RecoverSystemDialog;
 import net.janbuchinger.code.fssync.fs.sync.RecoverSystemProcess;
 import net.janbuchinger.code.fssync.fs.sync.ui.CopyActionTableModel;
-
-import mishmash.FSFx;
-import mishmash.ui.UIFx;
-import mishmash.ui.dialog.DialogEscapeHook;
-import mishmash.ui.dialog.dirChooser.DirChooserDialog;
-import mishmash.ui.userInput.FolderPathTextField;
+import net.janbuchinger.code.mishmash.FSFx;
+import net.janbuchinger.code.mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.ui.dialog.DialogEscapeHook;
+import net.janbuchinger.code.mishmash.ui.dialog.dirChooser.DirChooserDialog;
+import net.janbuchinger.code.mishmash.ui.models.StringListModel;
+import net.janbuchinger.code.mishmash.ui.userInput.FolderPathTextField;
 
 @SuppressWarnings("serial")
 public class OperationEditorDialog extends JDialog implements ActionListener {
