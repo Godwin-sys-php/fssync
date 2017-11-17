@@ -89,6 +89,15 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		frm.addWindowListener(this);
 		frm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+		BufferedImage icon = null;
+		try {
+			icon = ImageIO.read(getClass().getResource("../res/disk-128.png"));
+			frm.setIconImage(icon);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		// this.icon = icon;
+		
 		File programDir = Paths.get(PropFx.userHome(), ".fssync").toFile();
 		File docsDir = new File(programDir, "docs");
 
@@ -117,15 +126,6 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		}
 		this.aboutURL = aboutURL;
 		this.helpURL = helpURL;
-
-		BufferedImage icon = null;
-		try {
-			icon = ImageIO.read(getClass().getResource("../res/disk-128.png"));
-			frm.setIconImage(icon);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		// this.icon = icon;
 		
 		settingsDialog = new SettingsDialog(frm);
 
