@@ -133,7 +133,7 @@ public class OperationPanel extends JPanel implements MouseListener {
 		} else if (e.getSource() instanceof JLabel) {
 			try {
 				Runtime.getRuntime()
-						.exec(settings.getFileBrowser() + " " + ((JLabel) e.getSource()).getText());
+						.exec(settings.getFileBrowser() + " \"" + ((JLabel) e.getSource()).getText() + "\"");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
