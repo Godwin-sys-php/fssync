@@ -18,11 +18,11 @@
 <p>nach dem Hinzuf&uuml;gen oder &auml;ndern eines Segmentes werden die Segmente sortiert. Es werden Segmente die Operationen enthalten die als Zielverzeichnis das Quellverzeichnis (oder ein Unterverzeichnis) einer anderen Operation (in einem anderen Segment) haben, dieser vorangestellt.</p>
 <p>Es ist vermutlich empfehlenswert dass bei der Planung des Datenflusses eher viele Segmente mit wenigen Operationen angelegt werden als wenige Segmente mit vielen Operationen.</p>
 <h3>Operation</h3>
-<p>Eine Operation hat einen Quell- und einen Zielordner. Wenn die Operation ausgef&uuml;hrt wird werden Ziel- und Quellordner verglichen und Synchronisiert (in den gleichen Zustang gebracht).</p>
+<p>Eine Operation hat einen Quell- und einen Zielordner. Wenn die Operation ausgef&uuml;hrt wird werden Ziel- und Quellordner verglichen und Synchronisiert (in den gleichen Zustand gebracht).</p>
 <p>Des Weiteren kann eine Operation Ausnahmen (Ordner die im Quellverzeichnis ignoriert werden) haben.</p>
 <p><b>Unidirektionale Synchronisation</b> (Es wird nur vom Quell- ins Zielverzeichnis kopiert.)</p>
 <p>Bsp.: <b>/home/joe/Desktop &gt;&gt; /media/joe/backup1/Desktop</b></p>
-<p><b>Bidirektionale Synchronisation</b> (Es wird in beide Richtungen kopiert, wenn &auml;nderungen und neue Dateien im Zielverzeichnis erkannt werden, werden sie auch in das Quellverzeichnis geholt.)</p>
+<p><b>Bidirektionale Synchronisation</b> (Es wird in beide Richtungen kopiert, wenn &Auml;nderungen und neue Dateien im Zielverzeichnis erkannt werden, werden sie auch in das Quellverzeichnis geholt.)</p>
 <p>Bsp.: <b>/home/joe/Music &lt;&gt; /media/joe/backup1/Music</b></p>
 <p>Mehrere Operationen k&ouml;nnen das gleiche Quellverzeichnis haben. Ein Quellverzeichnis kann mehrere Zielverzeichnisse haben.</p>
 <p>Ein Zielverzeichnis kann nur in einer einzigen Operation als Zielverzeichnis verwendet werden. Ein Zielverzeichnis kann nur ein Quellverzeichnis haben.</p>
@@ -97,13 +97,13 @@
 <img src="requestContinueRestore.png">
 <p>Wenn fortgesetzt wird, wird versucht die identische Datei wieder herzustellen. Wenn die Quelldatei sich ver&auml;ndert hat wird sie sp&auml;ter verarbeitet.</p>
 <p style="color: red; font-weight: bold;">Die Wiederherstellung von defekten Dateien wurde noch nicht getestet, es empfiehlt sich daher vermutlich die Operation hier abzubrechen und den defekten Datentr&auml;ger zu ersetzen (angenommen der Datentr&auml;ger ist defekt...).</p>
-<h3>Unerwartete &auml;nderungen</h3>
-<p>Wenn bei der unidirektionalen Synchronisation &auml;nderungen im Zieldateisystem festgestellt werden erscheint ein Dialog um das weitere Vorgehen abzufragen:</p>
+<h3>Unerwartete &Auml;nderungen</h3>
+<p>Wenn bei der unidirektionalen Synchronisation &Auml;nderungen im Zieldateisystem festgestellt werden erscheint ein Dialog um das weitere Vorgehen abzufragen:</p>
 <img src="requestForeignFileHandling.png">
-<p><b>&auml;nderungen Ignorieren</b>: Es werden die &auml;nderungen im Zieldateisystem nicht beachtet. Dabei k&ouml;nnte es passieren dass eine ge&auml;nderte Datei im Zieldateisystem mit einer ge&auml;nderten Datei aus dem Quelldateisystem &uuml;berschrieben wird und Daten verloren gehen.</p>
-<p><b>&auml;nderungen Holen (Bidirektional Synchronisieren)</b>: Es wird die Bidirektionale Synchronisation eingeschalten um &auml;nderungen ins Quelldateisystem zu holen.</p>
-<p><b>&auml;nderungen L&ouml;schen</b>: Es werden alle im Zieldateisystem neuen Dateien gel&ouml;scht und ge&auml;nderte Dateien mit der Quelldatei &uuml;berschrieben.</p>
-<p>Wenn &auml;nderungen erkannt werden obwohl keine gemacht wurden kann man probieren in den Operationsoptionen &quot;&Auml;nderungsdatum ignorieren wenn Pr&uuml;fsumme und L&auml;nge gleichgeblieben&quot; zu aktivieren.</p>
+<p><b>&Auml;nderungen Ignorieren</b>: Es werden die &Auml;nderungen im Zieldateisystem nicht beachtet. Dabei k&ouml;nnte es passieren dass eine ge&auml;nderte Datei im Zieldateisystem mit einer ge&auml;nderten Datei aus dem Quelldateisystem &uuml;berschrieben wird und Daten verloren gehen.</p>
+<p><b>&Auml;nderungen Holen (Bidirektional Synchronisieren)</b>: Es wird die Bidirektionale Synchronisation eingeschalten um &Auml;nderungen ins Quelldateisystem zu holen.</p>
+<p><b>&Auml;nderungen L&ouml;schen</b>: Es werden alle im Zieldateisystem neuen Dateien gel&ouml;scht und ge&auml;nderte Dateien mit der Quelldatei &uuml;berschrieben.</p>
+<p>Wenn &Auml;nderungen erkannt werden obwohl keine gemacht wurden kann man probieren in den Operationsoptionen &quot;&Auml;nderungsdatum ignorieren wenn Pr&uuml;fsumme und L&auml;nge gleichgeblieben&quot; zu aktivieren.</p>
 <p>In Folge der Integrit&auml;tspr&uuml;fung werden alle leeren Verzeichnisse im Zielverzeichnis gel&ouml;scht.</p>
 <p>Wenn defekte Dateien erkannt werden, wird versucht diese wiederherzustellen. In der Zusammenfassung werden die Dateien dann nochmals angezeigt.</p>
 <h2>Vb :: Analyse des Quelldateisystems</h2>
@@ -120,19 +120,19 @@
 <p><b style="color:red;">Rot:</b> Datei wird gel&ouml;scht</p>
 <h3>Bei bidirektionalem Synchronisieren</h3>
 <p><b style="color:green; background: yellow;">Gr&uuml;n auf Gelb:</b> Es besteht ein Konflikt, diese Datei wird kopiert</p>
-<p><b style="color:yellow; background: red;">Gelb auf Rot:</b> Es besteht ein Konflikt, diese Datei wird &uuml;berschrieben und &auml;nderungen gehen verloren.</p>
+<p><b style="color:yellow; background: red;">Gelb auf Rot:</b> Es besteht ein Konflikt, diese Datei wird &uuml;berschrieben und &Auml;nderungen gehen verloren.</p>
 <p><b style="color:white; background: gray;">Weiss auf Grau:</b> Es besteht ein Konflikt der ignoriert wird, es bleiben beide Versionen bestehen.</p>
 <h2>Ve :: L&ouml;schen &amp; Kopieren</h2>
 <p>Es wird zuerst die Liste mit den zu l&ouml;schenden, danach die Liste mit zu kopierenden Dateien abgearbeitet.</p>
 
 <h2>VI :: Segment Wiederherstellen :: Ausf&uuml;hren &gt; Wiederherstellen &gt; &quot;Segment Name&quot;</h2>
-<p>Falls ein Quelldatentr&auml;ger ausf&auml;llt k&ouml;nnen mit der Wiederherstellenfunktion die Dateien vom Zieldatentr&auml;ger zur&uuml;ck in den Quellordner geholt werden. Wenn eine Operation wiederhergestellt wird werden alle Dateien vom Zieldatentr&auml;ger geholt; dabei k&ouml;nnten Dateien mit &auml;lteren Versionen &uuml;berschrieben werden. Daher sollte diese Funktion normalerweise nur ausgef&uuml;hrt werden wenn zum Beispiel ungewollte &auml;nderungen wie Sch&auml;den im Quelldateisystem aufgetreten sind oder ein Datentr&auml;ger erneuert werden musste oder nachdem das Betriebssystem neu installiert wurde.</p>
+<p>Falls ein Quelldatentr&auml;ger ausf&auml;llt k&ouml;nnen mit der Wiederherstellenfunktion die Dateien vom Zieldatentr&auml;ger zur&uuml;ck in den Quellordner geholt werden. Wenn eine Operation wiederhergestellt wird werden alle Dateien vom Zieldatentr&auml;ger geholt; dabei k&ouml;nnten Dateien mit &auml;lteren Versionen &uuml;berschrieben werden. Daher sollte diese Funktion normalerweise nur ausgef&uuml;hrt werden wenn zum Beispiel ungewollte &Auml;nderungen wie Sch&auml;den im Quelldateisystem aufgetreten sind oder ein Datentr&auml;ger erneuert werden musste oder nachdem das Betriebssystem neu installiert wurde.</p>
 <p>Wenn ein Segment mehrere Operationen mit dem selben Quellverzeichnis zum Wiederherstellen hat erscheint ein Dialog um eine der Operationen auszuw&auml;hlen:</p>
 <img src="requestSourceForRestore.png">
 <h2>VIa :: Wiederherstellungsmodus</h2>
 <img src="requestRestoreMode.png">
-<p><b>Nur besch&auml;digte Dateien Wiederherstellen:</b> Es werden nur unge&auml;nderte Dateien (&auml;nderungsdatum) welche eine andere Gr&ouml;sse oder Pr&uuml;fsumme als in der Datenbank haben gesucht.</p>
-<p><b>Nur ge&auml;nderte Dateien Wiederherstellen:</b> Es werden nur ge&auml;nderte Dateien (&auml;nderungsdatum der Datei im Quellordner) gesucht.</p>
+<p><b>Nur besch&auml;digte Dateien Wiederherstellen:</b> Es werden nur unge&auml;nderte Dateien (&Auml;nderungsdatum) welche eine andere Gr&ouml;sse oder Pr&uuml;fsumme als in der Datenbank haben gesucht.</p>
+<p><b>Nur ge&auml;nderte Dateien Wiederherstellen:</b> Es werden nur ge&auml;nderte Dateien (&Auml;nderungsdatum der Datei im Quellordner) gesucht.</p>
 <p><b>Alle Dateien Wiederherstellen:</b> Es werden alle Dateien aus der Datenbank Wiederhergestellt.</p>
 <p><b>Neue Dateien l&ouml;schen:</b> Dateien die seit der letzten Synchronisation neu im Quelldateisystem erschienen sind werden gel&ouml;scht.</p>
 <h2>VIb :: Zusammenfassung</h2>
