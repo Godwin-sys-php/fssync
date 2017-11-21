@@ -263,7 +263,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	}
 
 	private void rebuildTrayMenu() {
-		Menu muRun = new Menu("Ausführen");
+//		Menu muRun = new Menu("Ausführen");
 		Iterator<Segment> iSeg;
 		Segment s;
 		SegmentTrayMenuItem stmi;
@@ -272,24 +272,24 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		OperationTrayMenuItem otmi;
 		iSeg = segments.iterator();
 
+		trayPopup.removeAll();
 		while (iSeg.hasNext()) {
 			s = iSeg.next();
 			stmi = new SegmentTrayMenuItem(s);
 			stmi.addActionListener(this);
-			muRun.add(stmi);
+			trayPopup.add(stmi);
 			iOp = s.iterator();
 			while (iOp.hasNext()) {
 				o = iOp.next();
 				otmi = new OperationTrayMenuItem(o);
 				otmi.addActionListener(this);
-				muRun.add(otmi);
+				trayPopup.add(otmi);
 			}
-			muRun.addSeparator();
+			trayPopup.addSeparator();
 		}
 
-		muRun.add(tiRunAll);
-		trayPopup.removeAll();
-		trayPopup.add(muRun);
+		trayPopup.add(tiRunAll);
+		trayPopup.addSeparator();
 		trayPopup.add(tiExit);
 	}
 
