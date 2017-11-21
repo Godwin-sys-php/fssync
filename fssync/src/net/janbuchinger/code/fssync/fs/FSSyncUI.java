@@ -21,6 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -94,12 +95,12 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 	private final URL helpURL;
 	private final URL aboutURL;
-	
+
 	private long click;
 
 	public FSSyncUI() {
 		click = 0;
-		
+
 		frm = new JFrame("FSSync 0.4a");
 		frm.addWindowListener(this);
 		frm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -205,9 +206,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		pnContent.add(UIFx.initScrollPane(pnOperationsOverview, 15), BorderLayout.CENTER);
 		frm.setContentPane(pnContent);
 
-		rebuildOverview();
-
-		if ((settings.isStartToTray() || settings.isCloseToTray()) && SystemTray.isSupported()) {
+		if (SystemTray.isSupported()) {
 			Image imgIcon = null;
 			try {
 				imgIcon = ImageIO.read(getClass().getResource("../res/disk-128.png"));
@@ -224,7 +223,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			tiRunAll = new MenuItem("Alle Ausführen");
 			tiRunAll.addActionListener(this);
 			trayIcon.setPopupMenu(trayPopup);
-			rebuildTrayMenu();
 		} else {
 			tray = null;
 			trayIcon = null;
@@ -232,6 +230,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			tiExit = null;
 			tiRunAll = null;
 		}
+		rebuildOverview();
 
 		if (settings.isStartToTray() && SystemTray.isSupported()) {
 			try {
@@ -265,12 +264,40 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	}
 
 	private void rebuildTrayMenu() {
+		Menu muRun = new Menu("Ausführen");
+		Iterator<Segment> iSeg;
+		Segment s;
+		SegmentTrayMenuItem stmi;
+		Iterator<Operation> iOp;
+		Operation o;
+		OperationTrayMenuItem otmi;
+		iSeg = segments.iterator();
+
+		while (iSeg.hasNext()) {
+			s = iSeg.next();
+			stmi = new SegmentTrayMenuItem(s);
+			stmi.addActionListener(this);
+			muRun.add(stmi);
+			iOp = s.iterator();
+			while (iOp.hasNext()) {
+				o = iOp.next();
+				otmi = new OperationTrayMenuItem(o);
+				otmi.addActionListener(this);
+				muRun.add(otmi);
+			}
+			muRun.addSeparator();
+		}
+
+		muRun.add(tiRunAll);
 		trayPopup.removeAll();
+		trayPopup.add(muRun);
 		trayPopup.add(tiExit);
-		trayPopup.add(tiRunAll);
 	}
 
 	private final void rebuildOverview() {
+		if (SystemTray.isSupported())
+			rebuildTrayMenu();
+		
 		pnOperationsOverview.removeAll();
 		muRestore.removeAll();
 		muRun.removeAll();
@@ -384,7 +411,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				rebuildOverview();
 			}
 		} else if (e.getSource() == miRefresh) {
-			rebuildOverview();
+			refresh();
 		} else if (e.getSource() == miRunAll) {
 			runAll();
 		} else if (e.getSource() == miRunSelected) {
@@ -462,6 +489,23 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			RestorationProcess rp = new RestorationProcess(operations, rsmi.getSegment().getName(), spd);
 			rp.execute();
 			spd.setVisible(true);
+		} else if (e.getSource() instanceof SegmentTrayMenuItem) {
+			SegmentTrayMenuItem stmi = (SegmentTrayMenuItem) e.getSource();
+			Vector<Operation> operations = new Vector<Operation>();
+			Iterator<Operation> iOp = stmi.getSegment().iterator();
+			while (iOp.hasNext()) {
+				operations.add(iOp.next());
+			}
+			frm.setVisible(true);
+			runOperations(operations, stmi.getSegment().getName());
+			frm.setVisible(false);
+		} else if (e.getSource() instanceof OperationTrayMenuItem) {
+			OperationTrayMenuItem otmi = (OperationTrayMenuItem) e.getSource();
+			Vector<Operation> ops = new Vector<Operation>();
+			ops.add(otmi.getOperation());
+			frm.setVisible(true);
+			runOperations(ops, null);
+			frm.setVisible(false);
 		}
 	}
 
@@ -503,14 +547,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	public final void windowDeactivated(WindowEvent arg0) {}
 
 	@Override
-	public final void windowDeiconified(WindowEvent arg0) {
-		System.out.println("de");
-	}
+	public final void windowDeiconified(WindowEvent arg0) {}
 
 	@Override
 	public final void windowIconified(WindowEvent arg0) {
-		System.out.println("ico");
-		if(settings.isMinimizeToTray() && SystemTray.isSupported()){
+		if (settings.isMinimizeToTray() && SystemTray.isSupported()) {
 			frm.setVisible(false);
 			frm.setExtendedState(JFrame.NORMAL);
 			try {
@@ -526,8 +567,8 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(e.getSource() == trayIcon){
-			if(System.currentTimeMillis() - click < 500){
+		if (e.getSource() == trayIcon) {
+			if (System.currentTimeMillis() - click < 500) {
 				frm.setVisible(true);
 				tray.remove(trayIcon);
 			}
