@@ -17,6 +17,7 @@ package net.janbuchinger.code.fssync.fs;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -49,6 +50,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import net.janbuchinger.code.fssync.fs.sync.RestorationProcess;
 import net.janbuchinger.code.fssync.fs.sync.SynchronisationProcess;
@@ -102,11 +104,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 		frm = new JFrame("FSSync 0.4a");
 		frm.addWindowListener(this);
-		frm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		BufferedImage icon = null;
 		try {
-			icon = ImageIO.read(getClass().getResource("../res/disk-128.png"));
+			icon = ImageIO.read(getClass().getResource("res/disk-128.png"));
 			frm.setIconImage(icon);
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -208,7 +210,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		if (SystemTray.isSupported()) {
 			Image imgIcon = null;
 			try {
-				imgIcon = ImageIO.read(getClass().getResource("../res/disk-128.png"));
+				imgIcon = ImageIO.read(getClass().getResource("res/disk-128.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -262,7 +264,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	}
 
 	private void rebuildTrayMenu() {
-//		Menu muRun = new Menu("Ausführen");
+		// Menu muRun = new Menu("Ausführen");
 		Iterator<Segment> iSeg;
 		Segment s;
 		SegmentTrayMenuItem stmi;
@@ -434,7 +436,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		} else if (e.getSource() == miHelp) {
 			if (helpURL == null)
 				return;
-			String[] rules = new String[] { "ol.sync {margin: 10px; padding: 5px;}" };
+			String[] rules = new String[] {};
 			InfoDialog id = new InfoDialog(frm, helpURL, "Hilfe", 0.5, 0.7, rules);
 			id.setVisible(true);
 		} else if (e.getSource() == miAbout) {
@@ -551,7 +553,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			try {
 				tray.add(trayIcon);
 				frm.setVisible(false);
-				frm.setExtendedState(JFrame.NORMAL);
+				frm.setExtendedState(Frame.NORMAL);
 			} catch (AWTException e) {}
 		}
 	}
