@@ -236,7 +236,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			try {
 				tray.add(trayIcon);
 			} catch (AWTException e) {
-				System.out.println("TrayIcon could not be added.");
+				frm.setVisible(true);
 			}
 		} else {
 			frm.setVisible(true);
@@ -258,7 +258,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 					settings.write();
 					settingsDialog.updateFileBrowser(cmd);
 				}
-
 			}
 		}
 	}
@@ -297,7 +296,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private final void rebuildOverview() {
 		if (SystemTray.isSupported())
 			rebuildTrayMenu();
-		
+
 		pnOperationsOverview.removeAll();
 		muRestore.removeAll();
 		muRun.removeAll();
@@ -528,12 +527,10 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			frm.setVisible(false);
 			System.exit(0);
 		} else {
-			frm.setVisible(false);
 			try {
 				tray.add(trayIcon);
-			} catch (AWTException e) {
-				System.out.println("TrayIcon could not be added.");
-			}
+				frm.setVisible(false);
+			} catch (AWTException e) {}
 		}
 	}
 
@@ -552,13 +549,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	@Override
 	public final void windowIconified(WindowEvent arg0) {
 		if (settings.isMinimizeToTray() && SystemTray.isSupported()) {
-			frm.setVisible(false);
-			frm.setExtendedState(JFrame.NORMAL);
 			try {
 				tray.add(trayIcon);
-			} catch (AWTException e) {
-				System.out.println("TrayIcon could not be added.");
-			}
+				frm.setVisible(false);
+				frm.setExtendedState(JFrame.NORMAL);
+			} catch (AWTException e) {}
 		}
 	}
 
