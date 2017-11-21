@@ -35,6 +35,9 @@ public class Settings {
 	private boolean showSummary;
 	private boolean verbose;
 	private String fileBrowser;
+	private boolean startToTray;
+	private boolean closeToTray;
+	private boolean minimizeToTray;
 
 	public Settings(File settingsFile) {
 		this.settingsFile = settingsFile;
@@ -43,10 +46,13 @@ public class Settings {
 		logFilesDir = PropFx.userHome();
 		showSummary = true;
 		verbose = false;
-
+		
 		String os = PropFx.osName().toLowerCase();
-
 		fileBrowser = os.startsWith("win") ? "explorer" : os.startsWith("mac") ? "finder" : "";
+		
+		startToTray = false;
+		closeToTray = false;
+		minimizeToTray = false;
 	}
 
 	public final void write() {
@@ -136,5 +142,29 @@ public class Settings {
 
 	public final void setFileBrowser(String fileBrowser) {
 		this.fileBrowser = fileBrowser;
+	}
+
+	public final boolean isStartToTray() {
+		return startToTray;
+	}
+
+	public final void setStartToTray(boolean startToTray) {
+		this.startToTray = startToTray;
+	}
+
+	public final boolean isCloseToTray() {
+		return closeToTray;
+	}
+
+	public final void setCloseToTray(boolean closeToTray) {
+		this.closeToTray = closeToTray;
+	}
+
+	public final boolean isMinimizeToTray() {
+		return minimizeToTray;
+	}
+
+	public final void setMinimizeToTray(boolean minimizeToTray) {
+		this.minimizeToTray = minimizeToTray;
 	}
 }

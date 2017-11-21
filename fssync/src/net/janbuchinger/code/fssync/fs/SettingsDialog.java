@@ -20,6 +20,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -67,6 +68,10 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 	private final JCheckBox ckShowSummary;
 
 	private final JTextFieldWithPopUp tfFileBrowser;
+	
+	private final JCheckBox ckStartToTray;
+	private final JCheckBox ckCloseToTray;
+	private final JCheckBox ckMinimizeToTray;
 
 	public SettingsDialog(JFrame frm) {
 		super(frm, "Einstellungen", true);
@@ -109,7 +114,21 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 
 		tfFileBrowser = new JTextFieldWithPopUp();
 		tfFileBrowser.setText(s.getFileBrowser());
+		
+		ckStartToTray = new JCheckBox("Als Tray Icon Starten");
+		ckStartToTray.setSelected(s.isStartToTray());
 
+		ckCloseToTray = new JCheckBox("Ins Tray Schliessen");
+		ckCloseToTray.setSelected(s.isCloseToTray());
+
+		ckMinimizeToTray = new JCheckBox("Ins Tray Minimieren");
+		ckMinimizeToTray.setSelected(s.isMinimizeToTray());
+		
+		if(!SystemTray.isSupported()){
+			ckStartToTray.setEnabled(false);
+			ckCloseToTray.setEnabled(false);
+		}
+		
 		GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 2, 2);
 
@@ -134,6 +153,14 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 		pnControls.add(new JLabel("Dateibrowser"), c);
 		c.gridx++;
 		pnControls.add(tfFileBrowser, c);
+		c.gridy++;
+		c.gridx = 0;
+		c.gridwidth = 1;
+		pnControls.add(ckStartToTray, c);
+		c.gridx++;
+		pnControls.add(ckCloseToTray, c);
+		c.gridy++;
+		pnControls.add(ckMinimizeToTray, c);
 
 		btOk = new JButton("Speichern");
 		btOk.addActionListener(this);
@@ -182,6 +209,9 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 			settings.setAlwaysSaveLog(ckAlwaysSaveLog.isSelected());
 			settings.setShowSummary(ckShowSummary.isSelected());
 			settings.setFileBrowser(tfFileBrowser.getText());
+			settings.setStartToTray(ckStartToTray.isSelected());
+			settings.setCloseToTray(ckCloseToTray.isSelected());
+			settings.setMinimizeToTray(ckMinimizeToTray.isSelected());
 			settings.write();
 			setVisible(false);
 		} else if (e.getSource() == btCancel) {
@@ -191,6 +221,9 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 			ckAlwaysSaveLog.setSelected(settings.isAlwaysSaveLog());
 			ckShowSummary.setSelected(settings.isShowSummary());
 			tfFileBrowser.setText(settings.getFileBrowser());
+			ckStartToTray.setSelected(settings.isStartToTray());
+			ckCloseToTray.setSelected(settings.isCloseToTray());
+			ckMinimizeToTray.setSelected(settings.isMinimizeToTray());
 			setVisible(false);
 		}
 	}

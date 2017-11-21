@@ -15,12 +15,20 @@
  */
 package net.janbuchinger.code.fssync.fs;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -56,7 +64,7 @@ import org.apache.commons.io.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public final class FSSyncUI implements WindowListener, ActionListener {
+public final class FSSyncUI implements WindowListener, ActionListener, MouseListener {
 
 	private final JFrame frm;
 	private final JPanel pnOperationsOverview;
@@ -71,20 +79,27 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 	private final JMenu muRun;
 	private final JMenu muRestore;
 
+	private final PopupMenu trayPopup;
+	private final MenuItem tiExit;
+	private final MenuItem tiRunAll;
+
+	private final TrayIcon trayIcon;
+	private final SystemTray tray;
+
 	private final SettingsDialog settingsDialog;
 
 	private final Segments segments;
 
-	// private final Vector<OperationPanel> operationPanels;
-
 	private final Settings settings;
-
-	// private final BufferedImage icon;
 
 	private final URL helpURL;
 	private final URL aboutURL;
+	
+	private long click;
 
 	public FSSyncUI() {
+		click = 0;
+		
 		frm = new JFrame("FSSync 0.4a");
 		frm.addWindowListener(this);
 		frm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -96,7 +111,6 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		// this.icon = icon;
 
 		File programDir = Paths.get(PropFx.userHome(), ".fssync").toFile();
 		File docsDir = new File(programDir, "docs");
@@ -148,10 +162,10 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		miSettings = new JMenuItem("Einstellungen...");
 		miSettings.addActionListener(this);
 
-		miRunAll = new JMenuItem("Alle Ausf" + GC.ue() + "hren...");
+		miRunAll = new JMenuItem("Alle");
 		miRunAll.addActionListener(this);
 
-		miRunSelected = new JMenuItem("Ausgewählte Ausf" + GC.ue() + "hren...");
+		miRunSelected = new JMenuItem("Ausgewählte");
 		miRunSelected.addActionListener(this);
 
 		miRefresh = new JMenuItem("Aktualisieren");
@@ -193,7 +207,41 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 
 		rebuildOverview();
 
-		frm.setVisible(true);
+		if ((settings.isStartToTray() || settings.isCloseToTray()) && SystemTray.isSupported()) {
+			Image imgIcon = null;
+			try {
+				imgIcon = ImageIO.read(getClass().getResource("../res/disk-128.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			int traySquare = new TrayIcon(imgIcon).getSize().width;
+			trayIcon = new TrayIcon(imgIcon.getScaledInstance(traySquare, traySquare, Image.SCALE_SMOOTH));
+			trayIcon.addMouseListener(this);
+			tray = SystemTray.getSystemTray();
+			trayPopup = new PopupMenu();
+			tiExit = new MenuItem("Schliessen");
+			tiExit.addActionListener(this);
+			tiRunAll = new MenuItem("Alle Ausführen");
+			tiRunAll.addActionListener(this);
+			trayIcon.setPopupMenu(trayPopup);
+			rebuildTrayMenu();
+		} else {
+			tray = null;
+			trayIcon = null;
+			trayPopup = null;
+			tiExit = null;
+			tiRunAll = null;
+		}
+
+		if (settings.isStartToTray() && SystemTray.isSupported()) {
+			try {
+				tray.add(trayIcon);
+			} catch (AWTException e) {
+				System.out.println("TrayIcon could not be added.");
+			}
+		} else {
+			frm.setVisible(true);
+		}
 
 		if (settings.getFileBrowser().equals("")) {
 			int answer = JOptionPane
@@ -214,6 +262,12 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 
 			}
 		}
+	}
+
+	private void rebuildTrayMenu() {
+		trayPopup.removeAll();
+		trayPopup.add(tiExit);
+		trayPopup.add(tiRunAll);
 	}
 
 	private final void rebuildOverview() {
@@ -332,16 +386,7 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		} else if (e.getSource() == miRefresh) {
 			rebuildOverview();
 		} else if (e.getSource() == miRunAll) {
-			Vector<Operation> operations = new Vector<Operation>();
-			Iterator<Segment> iSeg = segments.iterator();
-			Iterator<Operation> iOp;
-			while (iSeg.hasNext()) {
-				iOp = iSeg.next().iterator();
-				while (iOp.hasNext()) {
-					operations.add(iOp.next());
-				}
-			}
-			runOperations(operations, "Alle Segmente");
+			runAll();
 		} else if (e.getSource() == miRunSelected) {
 			Vector<Operation> operations = new Vector<Operation>();
 			Iterator<Segment> iSeg = segments.iterator();
@@ -373,6 +418,13 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 			InfoDialog id = new InfoDialog(frm, aboutURL, "Über", 0.35, 0.5, null);
 			id.pack();
 			id.setVisible(true);
+		} else if (e.getSource() == tiExit) {
+			tray.remove(trayIcon);
+			System.exit(0);
+		} else if (e.getSource() == tiRunAll) {
+			frm.setVisible(true);
+			runAll();
+			frm.setVisible(false);
 		} else if (e.getSource() instanceof SegmentMenuItem) {
 			Segment s = ((SegmentMenuItem) e.getSource()).getSegment();
 			String[] segNames = new String[segments.size() - 1];
@@ -413,9 +465,32 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		}
 	}
 
+	private void runAll() {
+		Vector<Operation> operations = new Vector<Operation>();
+		Iterator<Segment> iSeg = segments.iterator();
+		Iterator<Operation> iOp;
+		while (iSeg.hasNext()) {
+			iOp = iSeg.next().iterator();
+			while (iOp.hasNext()) {
+				operations.add(iOp.next());
+			}
+		}
+		runOperations(operations, "Alle Segmente");
+	}
+
 	@Override
 	public final void windowClosing(WindowEvent arg0) {
-		System.exit(0);
+		if (!settings.isCloseToTray() || !SystemTray.isSupported()) {
+			frm.setVisible(false);
+			System.exit(0);
+		} else {
+			frm.setVisible(false);
+			try {
+				tray.add(trayIcon);
+			} catch (AWTException e) {
+				System.out.println("TrayIcon could not be added.");
+			}
+		}
 	}
 
 	@Override
@@ -428,11 +503,47 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 	public final void windowDeactivated(WindowEvent arg0) {}
 
 	@Override
-	public final void windowDeiconified(WindowEvent arg0) {}
+	public final void windowDeiconified(WindowEvent arg0) {
+		System.out.println("de");
+	}
 
 	@Override
-	public final void windowIconified(WindowEvent arg0) {}
+	public final void windowIconified(WindowEvent arg0) {
+		System.out.println("ico");
+		if(settings.isMinimizeToTray() && SystemTray.isSupported()){
+			frm.setVisible(false);
+			frm.setExtendedState(JFrame.NORMAL);
+			try {
+				tray.add(trayIcon);
+			} catch (AWTException e) {
+				System.out.println("TrayIcon could not be added.");
+			}
+		}
+	}
 
 	@Override
 	public final void windowOpened(WindowEvent arg0) {}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(e.getSource() == trayIcon){
+			if(System.currentTimeMillis() - click < 500){
+				frm.setVisible(true);
+				tray.remove(trayIcon);
+			}
+			click = System.currentTimeMillis();
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 }
