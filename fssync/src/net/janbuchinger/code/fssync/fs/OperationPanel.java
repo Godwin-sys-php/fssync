@@ -33,6 +33,7 @@ public class OperationPanel extends JPanel implements MouseListener {
 	private final NumberPanel np;
 	private final ArrowPanel ap;
 	private final JLabel lbSrc, lbTrg;
+	private final OperationCheckBox ckOperation;
 	// private final OperationPanelObserver opo;
 	private final FSSyncUI ui;
 
@@ -46,6 +47,12 @@ public class OperationPanel extends JPanel implements MouseListener {
 		this.settings = settings;
 		this.operation = operation;
 		this.ui = ui;
+		ckOperation = new OperationCheckBox(operation);
+		if(!operation.isOnline()) {
+			ckOperation.setEnabled(false);
+		} else {
+			ckOperation.setSelected(operation.isSelected());
+		}
 		np = new NumberPanel(n);
 		np.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		np.addMouseListener(this);
@@ -64,6 +71,7 @@ public class OperationPanel extends JPanel implements MouseListener {
 			lbTrg.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			lbTrg.addMouseListener(this);
 		}
+		add(ckOperation);
 		add(np);
 		add(lbSrc);
 		add(ap);

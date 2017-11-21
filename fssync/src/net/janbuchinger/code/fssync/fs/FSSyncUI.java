@@ -56,7 +56,6 @@ import org.apache.commons.io.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-
 public final class FSSyncUI implements WindowListener, ActionListener {
 
 	private final JFrame frm;
@@ -64,6 +63,7 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 	private final JMenuItem miAddSegment;
 	private final JMenuItem miSettings;
 	private final JMenuItem miRunAll;
+	private final JMenuItem miRunSelected;
 	private final JMenuItem miRefresh;
 	private final JMenuItem miAbout;
 	private final JMenuItem miHelp;
@@ -97,7 +97,7 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 			e1.printStackTrace();
 		}
 		// this.icon = icon;
-		
+
 		File programDir = Paths.get(PropFx.userHome(), ".fssync").toFile();
 		File docsDir = new File(programDir, "docs");
 
@@ -126,7 +126,7 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		}
 		this.aboutURL = aboutURL;
 		this.helpURL = helpURL;
-		
+
 		settingsDialog = new SettingsDialog(frm);
 
 		settings = settingsDialog.getSettings();
@@ -150,6 +150,9 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 
 		miRunAll = new JMenuItem("Alle Ausf" + GC.ue() + "hren...");
 		miRunAll.addActionListener(this);
+
+		miRunSelected = new JMenuItem("Ausgewählte Ausf" + GC.ue() + "hren...");
+		miRunSelected.addActionListener(this);
 
 		miRefresh = new JMenuItem("Aktualisieren");
 		miRefresh.addActionListener(this);
@@ -218,6 +221,7 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 		muRestore.removeAll();
 		muRun.removeAll();
 		muRun.add(miRunAll);
+		muRun.add(miRunSelected);
 		muSegments.removeAll();
 		muSegments.add(miRefresh);
 		muSegments.add(miAddSegment);
@@ -338,6 +342,20 @@ public final class FSSyncUI implements WindowListener, ActionListener {
 				}
 			}
 			runOperations(operations, "Alle Segmente");
+		} else if (e.getSource() == miRunSelected) {
+			Vector<Operation> operations = new Vector<Operation>();
+			Iterator<Segment> iSeg = segments.iterator();
+			Iterator<Operation> iOp;
+			Operation op;
+			while (iSeg.hasNext()) {
+				iOp = iSeg.next().iterator();
+				while (iOp.hasNext()) {
+					op = iOp.next();
+					if (op.isSelected())
+						operations.add(op);
+				}
+			}
+			runOperations(operations, "Ausgewählte Operationen");
 		} else if (e.getSource() == miSettings) {
 			int cols = settings.getColumns();
 			settingsDialog.display();

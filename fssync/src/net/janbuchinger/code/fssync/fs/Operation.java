@@ -22,6 +22,7 @@ import java.util.Vector;
 import net.janbuchinger.code.mishmash.FSFx;
 
 public class Operation {
+	private transient boolean isSelected;
 	private File source;
 	private File target;
 	private boolean manageVersions;
@@ -161,6 +162,14 @@ public class Operation {
 	// public final void setForceHidden(Vector<String> forceHidden) {
 	// this.forceHidden = forceHidden;
 	// }
+
+	public final boolean isSelected() {
+		return isSelected;
+	}
+
+	public final void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
 
 	@Override
 	public String toString() {
