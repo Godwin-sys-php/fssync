@@ -236,6 +236,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		if (settings.isStartToTray() && SystemTray.isSupported()) {
 			try {
 				tray.add(trayIcon);
+				trayIcon.displayMessage("Caption", "Text", TrayIcon.MessageType.WARNING);
 			} catch (AWTException e) {
 				frm.setVisible(true);
 			}
@@ -381,6 +382,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		SynchronisationProcess sp = new SynchronisationProcess(operations, syncTitle, settings, spd) {};
 		sp.execute();
 		spd.setVisible(true);
+		segments.save();
 	}
 
 	public Segments getSegments() {

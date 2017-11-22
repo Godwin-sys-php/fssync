@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import net.janbuchinger.code.fssync.fs.sync.OnlineDB;
 import net.janbuchinger.code.fssync.fs.sync.RecoverSystemDialog;
@@ -67,6 +68,10 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 	private JRadioButton rbPrioTarget;
 	private JRadioButton rbPrioNew;
 	private JRadioButton rbPrioOld;
+
+	private JTextField tfLastSynced;
+	private JTextField tfInterval;
+	private JCheckBox ckRemind;
 
 	public final static int CANCEL = 0;
 	public final static int SAVE = 1;
@@ -143,6 +148,12 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		pnPriorityOnConflict.add(rbPrioNew);
 		pnPriorityOnConflict.add(rbPrioOld);
 
+		tfLastSynced = new JTextField();
+		tfLastSynced.setEditable(false);
+		tfLastSynced.setText("---");
+		tfInterval = new JTextField();
+		ckRemind = new JCheckBox("Erinnern");
+
 		// btAddExclHidden = new JButton("+");
 		// btAddExclHidden.addActionListener(this);
 		// btAddExclHidden.setEnabled(false);
@@ -193,6 +204,11 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			} else {
 				rbPrioSource.setSelected(true);
 			}
+			if (syncOperation.getLastSynced() > 0) {
+				tfLastSynced.setText(UIFx.initDisplayDateTimeFormat().format(syncOperation.getLastSynced()));
+			}
+			tfInterval.setText(syncOperation.getInterval() + "");
+			ckRemind.setSelected(syncOperation.isRemind());
 		} else {
 			rbPrioSource.setSelected(true);
 		}
@@ -255,20 +271,47 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		c.gridy++;
 		pnOptions.add(ckIgnoreModifiedWhenEqual, c);
 		c.gridy++;
-		pnSync.add(pnButtons, c);
 
-		pnSync.setBorder(BorderFactory.createEmptyBorder(5, 3, 2, 3));
+		c = UIFx.initGridBagConstraints();
+		JPanel pnTiming = new JPanel(new GridBagLayout());
+
+		c.weightx = 0;
+		pnTiming.add(new JLabel("Letzte Synchronisierung "), c);
+		c.gridx++;
+		c.weightx = 1;
+		pnTiming.add(tfLastSynced, c);
+		c.weightx = 0;
+		c.gridy++;
+		c.gridx = 0;
+		pnTiming.add(new JLabel("Intervall (Tage)"), c);
+		c.gridx++;
+		c.weightx = 1;
+		pnTiming.add(tfInterval, c);
+		c.weightx = 0;
+		c.gridy++;
+		c.gridx = 0;
+		c.gridwidth = 2;
+		pnTiming.add(ckRemind, c);
 
 		JPanel pnSyncStretch = new JPanel(new BorderLayout());
 		pnSyncStretch.add(pnSync, BorderLayout.NORTH);
+		pnSyncStretch.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+		pnExclude.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
 		JPanel pnFurtherStretch = new JPanel(new BorderLayout());
 		pnFurtherStretch.add(pnOptions, BorderLayout.NORTH);
+		pnFurtherStretch.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+		JPanel pnTimingStretch = new JPanel(new BorderLayout());
+		pnTimingStretch.add(pnTiming, BorderLayout.NORTH);
+		pnTimingStretch.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
 		JTabbedPane tpOperation = new JTabbedPane();
 		tpOperation.add("Synchronisation", UIFx.initScrollPane(pnSyncStretch, 15));
 		tpOperation.add("Ausnahmen", pnExclude);
 		tpOperation.add("Optionen", UIFx.initScrollPane(pnFurtherStretch, 15));
+		tpOperation.add("Timing", UIFx.initScrollPane(pnTimingStretch, 15));
 
 		JPanel pnContent = new JPanel(new BorderLayout());
 		pnContent.add(tpOperation, BorderLayout.CENTER);
@@ -384,13 +427,24 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			} else {
 				priorityOnConflict = CopyActionTableModel.sel_source;
 			}
-			syncOperation = new Operation(source, target, manageVersions, exclude, /*
-																					 * excludeHidden
-																					 * ,
-																					 * forceHidden
-																					 * ,
-																					 */
-			syncBidirectional, ignoreModifiedWhenEqual, priorityOnConflict);
+
+			long lastSynced = syncOperation != null ? syncOperation.getLastSynced() : 0;
+			int interval = 0;
+			try {
+				interval = Integer.parseInt(tfInterval.getText());
+			} catch (NumberFormatException e2) {
+				JOptionPane.showMessageDialog(this, "Bitte Ganzzahl als Intervall eingeben", "Fehler", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			boolean remind = ckRemind.isSelected();
+			boolean reminded =syncOperation != null ? syncOperation.isReminded(): false; 
+			
+			syncOperation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
+					ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, remind, reminded);
+
+			// ion(source, target, manageVersions, exclude, syncBidirectional,
+			// ignoreModifiedWhenEqual,
+			// priorityOnConflict);
 			answer = SAVE;
 			setVisible(false);
 		} else if (e.getSource() == btCancel) {

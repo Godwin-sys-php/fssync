@@ -33,6 +33,11 @@ public class Operation {
 	private boolean ignoreModifiedWhenEqual;
 	private int priorityOnConflict;
 
+	private long lastSynced;
+	private int interval;
+	private boolean remind;
+	private boolean reminded;
+
 	// public Operation(String source, String target, boolean manageVersions,
 	// Vector<String> exclude,
 	// /*boolean excludeHidden, Vector<String> forceHidden, */boolean
@@ -43,7 +48,8 @@ public class Operation {
 	// }
 
 	public Operation(File source, File target, boolean manageVersions, Vector<String> exclude,
-			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict) {
+			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict, long lastSynced,
+			int interval, boolean remind, boolean reminded) {
 		this.source = source;
 		this.target = target;
 		this.manageVersions = manageVersions;
@@ -53,6 +59,11 @@ public class Operation {
 		this.syncBidirectional = syncBidirectional;
 		this.ignoreModifiedWhenEqual = ignoreModifiedWhenEqual;
 		this.priorityOnConflict = priorityOnConflict;
+		
+		this.lastSynced = lastSynced;
+		this.interval = interval;
+		this.remind = remind;
+		this.reminded = reminded;
 	}
 
 	public boolean isOnline() {
@@ -111,7 +122,7 @@ public class Operation {
 		return exclude;
 	}
 
-	public final void setExclude(Vector<String> exclude) {
+	public final void setExcludes(Vector<String> exclude) {
 		this.exclude = exclude;
 	}
 
@@ -169,6 +180,38 @@ public class Operation {
 
 	public final void setSelected(boolean isSelected) {
 		this.isSelected = isSelected;
+	}
+
+	public final long getLastSynced() {
+		return lastSynced;
+	}
+
+	public final void setLastSynced(long lastSynced) {
+		this.lastSynced = lastSynced;
+	}
+
+	public final int getInterval() {
+		return interval;
+	}
+
+	public final void setInterval(int interval) {
+		this.interval = interval;
+	}
+
+	public final boolean isRemind() {
+		return remind;
+	}
+
+	public final void setRemind(boolean remind) {
+		this.remind = remind;
+	}
+
+	public final boolean isReminded() {
+		return reminded;
+	}
+
+	public final void setReminded(boolean reminded) {
+		this.reminded = reminded;
 	}
 
 	@Override

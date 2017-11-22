@@ -61,7 +61,7 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 	private final String syncTitle;
 
 	/**
-	 * Instantiation of <code>NewSynchronisationProcess</code>
+	 * Instantiation of <code>SynchronisationProcess</code>
 	 * 
 	 * @param segments
 	 *            The complete segments list.
@@ -934,6 +934,7 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				operation.setLastSynced(System.currentTimeMillis());
 			}
 
 			removePropertyChangeListener(this);
