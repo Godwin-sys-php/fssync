@@ -288,7 +288,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			}
 			trayPopup.addSeparator();
 		}
-
+		
 		trayPopup.add(tiRunAll);
 		trayPopup.addSeparator();
 		trayPopup.add(tiExit);
