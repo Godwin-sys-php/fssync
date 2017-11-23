@@ -75,14 +75,6 @@ public class OperationsListModel extends DefaultListModel<Operation> {
 	}
 
 	@Override
-	public Operation set(int index, Operation element) {
-		Operation o = operations.set(index, element);
-		fireContentsChanged(this, 0, getSize() - 1);
-		hasChanges = true;
-		return o;
-	}
-
-	@Override
 	public void setElementAt(Operation element, int index) {
 		set(index, element);
 	}

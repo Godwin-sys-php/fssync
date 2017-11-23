@@ -76,7 +76,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 	public final static int CANCEL = 0;
 	public final static int SAVE = 1;
 	private int answer;
-	private Operation syncOperation;
+	private Operation operation;
 	private Segments segments;
 
 	public OperationEditorDialog(JDialog frm, Segments segments) {
@@ -93,9 +93,9 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		init(synchronisationOperation, segments, frm);
 	}
 
-	private final void init(Operation synchronisationOperation, Segments segments, Window frm) {
+	private final void init(Operation operation, Segments segments, Window frm) {
 		this.segments = segments;
-		syncOperation = synchronisationOperation;
+		this.operation = operation;
 
 		new DialogEscapeHook(this);
 
@@ -181,20 +181,20 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		pnButtons.add(btCancel);
 		pnButtons.add(btOk);
 
-		if (syncOperation != null) {
-			tfSource.setPath(syncOperation.getSource().getPath());
-			tfDestination.setPath(syncOperation.getTarget().getPath());
-			lmExclude.setList(syncOperation.getExcludes());
+		if (operation != null) {
+			tfSource.setPath(operation.getSource().getPath());
+			tfDestination.setPath(operation.getTarget().getPath());
+			lmExclude.setList(operation.getExcludes());
 			// lmExcludeHidden.setList(syncOperation.getForceHidden());
 			// ckExcludeHidden.setSelected(syncOperation.isExcludeHidden());
 			// btAddExclHidden.setEnabled(ckExcludeHidden.isSelected());
 			// btRemExclHidden.setEnabled(ckExcludeHidden.isSelected());
 			// jlExcludeHidden.setEnabled(ckExcludeHidden.isSelected());
-			ckVersionManagement.setSelected(syncOperation.isManageVersions());
-			ckBidirectional.setSelected(syncOperation.isSyncBidirectional());
-			ckIgnoreModifiedWhenEqual.setSelected(syncOperation.isIgnoreModifiedWhenEqual());
+			ckVersionManagement.setSelected(operation.isManageVersions());
+			ckBidirectional.setSelected(operation.isSyncBidirectional());
+			ckIgnoreModifiedWhenEqual.setSelected(operation.isIgnoreModifiedWhenEqual());
 
-			int priority = syncOperation.getPriorityOnConflict();
+			int priority = operation.getPriorityOnConflict();
 			if (priority == CopyActionTableModel.sel_new) {
 				rbPrioNew.setSelected(true);
 			} else if (priority == CopyActionTableModel.sel_old) {
@@ -204,11 +204,11 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			} else {
 				rbPrioSource.setSelected(true);
 			}
-			if (syncOperation.getLastSynced() > 0) {
-				tfLastSynced.setText(UIFx.initDisplayDateTimeFormat().format(syncOperation.getLastSynced()));
+			if (operation.getLastSynced() > 0) {
+				tfLastSynced.setText(UIFx.initDisplayDateTimeFormat().format(operation.getLastSynced()));
 			}
-			tfInterval.setText(syncOperation.getInterval() + "");
-			ckRemind.setSelected(syncOperation.isRemind());
+			tfInterval.setText(operation.getInterval() + "");
+			ckRemind.setSelected(operation.isRemind());
 		} else {
 			rbPrioSource.setSelected(true);
 		}
@@ -353,8 +353,8 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 				while (iOp.hasNext()) {
 					o = iOp.next();
 					if (o.getRemotePath().equals(target.getPath())) {
-						if (syncOperation != null) {
-							if (o != syncOperation) {
+						if (operation != null) {
+							if (o != operation) {
 								targetAlreadyInUse = true;
 								break;
 							}
@@ -428,19 +428,35 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 				priorityOnConflict = CopyActionTableModel.sel_source;
 			}
 
-			long lastSynced = syncOperation != null ? syncOperation.getLastSynced() : 0;
+			long lastSynced = operation != null ? operation.getLastSynced() : 0;
 			int interval = 0;
 			try {
 				interval = Integer.parseInt(tfInterval.getText());
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(this, "Bitte Ganzzahl als Intervall eingeben", "Fehler", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Bitte Ganzzahl als Intervall eingeben", "Fehler",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			boolean remind = ckRemind.isSelected();
-			boolean reminded =syncOperation != null ? syncOperation.isReminded(): false; 
-			
-			syncOperation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
-					ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, remind, reminded);
+			boolean reminded = operation != null ? operation.isReminded() : false;
+
+			if (operation == null) {
+				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
+						ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, remind, reminded);
+			} else {
+				operation.setSource(source);
+				operation.setTarget(target);
+
+				operation.setExcludes(exclude);
+
+				operation.setSyncBidirectional(syncBidirectional);
+				operation.setPriorityOnConflict(priorityOnConflict);
+				operation.setIgnoreModifiedWhenEqual(ignoreModifiedWhenEqual);
+				operation.setManageVersions(manageVersions);
+
+				operation.setInterval(interval);
+				operation.setRemind(remind);
+			}
 
 			// ion(source, target, manageVersions, exclude, syncBidirectional,
 			// ignoreModifiedWhenEqual,
@@ -491,6 +507,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 	}
 
 	public final Operation getOperation() {
-		return syncOperation;
+		return operation;
 	}
 }

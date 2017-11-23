@@ -36,7 +36,6 @@ import javax.swing.JTextField;
 import net.janbuchinger.code.mishmash.ui.UIFx;
 import net.janbuchinger.code.mishmash.ui.dialog.DialogEscapeHook;
 
-
 @SuppressWarnings("serial")
 public class SegmentEditorDialog extends JDialog implements ActionListener, MouseListener {
 	private final Segment s;
@@ -63,15 +62,15 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 	private long click;
 	private int clickId;
 
-//	private final String[] segNames;
-	
+	// private final String[] segNames;
+
 	private final Segments segments;
 
 	public SegmentEditorDialog(JFrame frm, Segment s, Segments segments) {
 		super(frm, "Neues Segment", true);
 
-//		this.segNames = segNames;
-		
+		// this.segNames = segNames;
+
 		this.segments = segments;
 
 		new DialogEscapeHook(this);
@@ -181,7 +180,6 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 			soed.setVisible(true);
 			if (soed.getAnswer() == OperationEditorDialog.SAVE) {
 				Operation op = soed.getOperation();
-				// System.out.println(op);
 				lmOperations.addElement(op);
 			}
 		} else if (e.getSource() == btRemOp) {
@@ -203,10 +201,11 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 	public void mouseClicked(MouseEvent e) {
 		if (System.currentTimeMillis() - click < 500) {
 			if (jlOperations.getSelectedIndex() == clickId) {
-				OperationEditorDialog soed = new OperationEditorDialog(this, lmOperations.get(clickId), segments);
+				OperationEditorDialog soed = new OperationEditorDialog(this, lmOperations.get(clickId),
+						segments);
 				soed.setVisible(true);
 				if (soed.getAnswer() == OperationEditorDialog.SAVE) {
-					lmOperations.set(clickId, soed.getOperation());
+					hasChanges = true;
 				}
 			}
 		}
