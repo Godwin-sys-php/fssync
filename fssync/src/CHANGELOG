@@ -1,0 +1,10 @@
+0.5a
+Bugs
+-fixed not saving operation upon opening OperationEditorDialog via click on panel
+
+Improvements
+
+New Features
+-checkbox selection in ui
+-tray icon
+-operation timing
