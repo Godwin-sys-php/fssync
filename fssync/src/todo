@@ -5,8 +5,8 @@ x 2 tray icon
 3 observe all operations and update ui on changes
 
 4 operation
--lastSync
--syncInterval
+x -lastSync
+x -syncInterval
 -remind
 -dbId??
 
