@@ -127,6 +127,7 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 		if(!SystemTray.isSupported()){
 			ckStartToTray.setEnabled(false);
 			ckCloseToTray.setEnabled(false);
+			ckMinimizeToTray.setEnabled(false);
 		}
 		
 		GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER,
