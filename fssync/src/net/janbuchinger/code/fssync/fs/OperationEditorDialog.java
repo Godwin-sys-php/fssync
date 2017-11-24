@@ -201,7 +201,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		if (operation != null) {
 			tfSource.setPath(operation.getSource().getPath());
 			tfDestination.setPath(operation.getTarget().getPath());
-			lmExclude.setList(operation.getExcludes());
+			lmExclude.setStrings(operation.getExcludes());
 			// lmExcludeHidden.setList(syncOperation.getForceHidden());
 			// ckExcludeHidden.setSelected(syncOperation.isExcludeHidden());
 			// btAddExclHidden.setEnabled(ckExcludeHidden.isSelected());
