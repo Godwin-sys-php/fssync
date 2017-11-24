@@ -17,6 +17,7 @@ package net.janbuchinger.code.fssync.fs;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -51,6 +52,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import javax.swing.border.LineBorder;
 
 import net.janbuchinger.code.fssync.fs.sync.RestorationProcess;
 import net.janbuchinger.code.fssync.fs.sync.SynchronisationProcess;
@@ -98,6 +100,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private final URL aboutURL;
 
 	private long click;
+	private int mode;
+	
+	private UIChangeWatcher uiChangeWatcher;
 
 	public FSSyncUI() {
 		click = 0;
@@ -126,8 +131,8 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			docsDir.mkdir();
 			String[] names = new String[] { "res/about.html", "res/help.html",
 					"res/requestContinueRestore.png", "res/requestForeignFileHandling.png",
-					"res/requestSourceForRestore.png", "res/requestRestoreMode.png",
-					"res/settings.png", "res/gui.png", "res/disk-128.png" };
+					"res/requestSourceForRestore.png", "res/requestRestoreMode.png", "res/settings.png",
+					"res/gui.png", "res/disk-128.png" };
 			for (int i = 0; i < names.length; i++) {
 				FSFx.copyResourceFile(getClass(), names[i], new File(docsDir, new File(names[i]).getName()));
 			}
@@ -289,7 +294,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			}
 			trayPopup.addSeparator();
 		}
-		
+
 		trayPopup.add(tiRunAll);
 		trayPopup.addSeparator();
 		trayPopup.add(tiExit);
@@ -352,6 +357,12 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 					allOpsOnline = false;
 				}
 				opPan = new OperationPanel(this, op, cc++, settings);
+				
+				if(op.isDue()){
+					opPan.setBorder(new LineBorder(Color.orange, 2, true));
+//					opPan.setBackground(Color.gray.brighter());
+				}
+				
 				pnSegment.add(opPan);
 			}
 			if (allOpsOnline) {
@@ -362,6 +373,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 						BorderFactory.createLineBorder(OperationPanel.offline, 2, true), seg.getName()));
 			}
 
+//			JPanel pnSegmentPush = new JPanel(new BorderLayout());
+//			pnSegmentPush.add(pnSegment, BorderLayout.NORTH);
+			
 			pnOperationsOverview.add(pnSegment, c);
 			if ((ccSeg++) % cols == 0) {
 				c.gridy++;
@@ -383,6 +397,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		sp.execute();
 		spd.setVisible(true);
 		segments.save();
+		refresh();
 	}
 
 	public Segments getSegments() {
@@ -396,6 +411,22 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	public void refresh() {
 		rebuildOverview();
 	}
+	
+	public final void startUIChangeWatcher(){
+		if(uiChangeWatcher == null){
+			uiChangeWatcher = new UIChangeWatcher(segments, this);
+			Thread t = new Thread(uiChangeWatcher);
+			t.start();
+		}
+	}
+	
+	public final void stopUIChangeWatcher(){
+		if(uiChangeWatcher != null){
+			uiChangeWatcher.stop();
+			uiChangeWatcher = null;
+		}
+	}
+	
 
 	@Override
 	public final void actionPerformed(ActionEvent e) {
@@ -532,6 +563,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		} else {
 			try {
 				tray.add(trayIcon);
+				System.out.println("stop");
 				frm.setVisible(false);
 			} catch (AWTException e) {}
 		}
@@ -555,13 +587,16 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			try {
 				tray.add(trayIcon);
 				frm.setVisible(false);
+				System.out.println("stop");
 				frm.setExtendedState(Frame.NORMAL);
 			} catch (AWTException e) {}
 		}
 	}
 
 	@Override
-	public final void windowOpened(WindowEvent arg0) {}
+	public final void windowOpened(WindowEvent arg0) {
+		System.out.println("start");
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
