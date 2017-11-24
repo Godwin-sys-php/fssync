@@ -1,19 +1,7 @@
-x 1 checkbox selection in ui
-
-x 2 tray icon
-
-3 observe all operations and update ui on changes
-
-4 operation
-x -lastSync
-x -syncInterval
--remind
--dbId??
-
-5 Extras
+1 Extras
 -convert db (windows / unix)
 
-6 versions
+2 versions
 -file object id?
 
-7 sort operations
+3 sort operations

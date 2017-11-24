@@ -3,8 +3,9 @@ Bugs
 -fixed not saving operation upon opening OperationEditorDialog via click on panel
 
 Improvements
+-ui automatically updates
 
 New Features
 -checkbox selection in ui
 -tray icon
--operation timing
+-operation timing & reminding
