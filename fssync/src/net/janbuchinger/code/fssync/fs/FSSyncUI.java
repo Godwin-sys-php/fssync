@@ -543,7 +543,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			runOperations(operations, rsmi.getSegment().getName());
 		} else if (e.getSource() instanceof RestoreSegmentMenuItem) {
 			RestoreSegmentMenuItem rsmi = (RestoreSegmentMenuItem) e.getSource();
-
 			Vector<Operation> operations = new Vector<Operation>();
 			operations.addAll(rsmi.getSegment().getOperations());
 			SynchronisationProcessDialog spd = new SynchronisationProcessDialog("Wiederherstellen", frm,
