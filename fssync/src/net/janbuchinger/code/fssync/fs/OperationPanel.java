@@ -134,9 +134,11 @@ public class OperationPanel extends JPanel implements MouseListener {
 			OperationEditorDialog oed = new OperationEditorDialog(ui.getFrame(), operation, ui.getSegments());
 			oed.setVisible(true);
 			if (oed.getAnswer() == OperationEditorDialog.SAVE) {
+				ui.stopUIChangeWatcher();
 				ui.getSegments().sort();
 				ui.getSegments().save();
 				ui.refresh();
+				ui.startUIChangeWatcher();
 			}
 		} else if (e.getSource() instanceof JLabel) {
 			try {

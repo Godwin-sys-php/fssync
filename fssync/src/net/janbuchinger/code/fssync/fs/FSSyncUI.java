@@ -101,7 +101,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 	private long click;
 	private int mode;
-	
+
 	private UIChangeWatcher uiChangeWatcher;
 
 	public FSSyncUI() {
@@ -244,9 +244,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				trayIcon.displayMessage("Caption", "Text", TrayIcon.MessageType.WARNING);
 			} catch (AWTException e) {
 				frm.setVisible(true);
+				startUIChangeWatcher();
 			}
 		} else {
 			frm.setVisible(true);
+			startUIChangeWatcher();
 		}
 
 		if (settings.getFileBrowser().equals("")) {
@@ -357,12 +359,12 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 					allOpsOnline = false;
 				}
 				opPan = new OperationPanel(this, op, cc++, settings);
-				
-				if(op.isDue()){
+
+				if (op.isDue()) {
 					opPan.setBorder(new LineBorder(Color.orange, 2, true));
-//					opPan.setBackground(Color.gray.brighter());
+					// opPan.setBackground(Color.gray.brighter());
 				}
-				
+
 				pnSegment.add(opPan);
 			}
 			if (allOpsOnline) {
@@ -373,9 +375,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 						BorderFactory.createLineBorder(OperationPanel.offline, 2, true), seg.getName()));
 			}
 
-//			JPanel pnSegmentPush = new JPanel(new BorderLayout());
-//			pnSegmentPush.add(pnSegment, BorderLayout.NORTH);
-			
+			// JPanel pnSegmentPush = new JPanel(new BorderLayout());
+			// pnSegmentPush.add(pnSegment, BorderLayout.NORTH);
+
 			pnOperationsOverview.add(pnSegment, c);
 			if ((ccSeg++) % cols == 0) {
 				c.gridy++;
@@ -411,22 +413,21 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	public void refresh() {
 		rebuildOverview();
 	}
-	
-	public final void startUIChangeWatcher(){
-		if(uiChangeWatcher == null){
+
+	public final void startUIChangeWatcher() {
+		if (uiChangeWatcher == null) {
 			uiChangeWatcher = new UIChangeWatcher(segments, this);
 			Thread t = new Thread(uiChangeWatcher);
 			t.start();
 		}
 	}
-	
-	public final void stopUIChangeWatcher(){
-		if(uiChangeWatcher != null){
+
+	public final void stopUIChangeWatcher() {
+		if (uiChangeWatcher != null) {
 			uiChangeWatcher.stop();
 			uiChangeWatcher = null;
 		}
 	}
-	
 
 	@Override
 	public final void actionPerformed(ActionEvent e) {
@@ -438,9 +439,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			SegmentEditorDialog sed = new SegmentEditorDialog(frm, null, segments);
 			sed.setVisible(true);
 			if (sed.getAnswer() == SegmentEditorDialog.OK) {
+				stopUIChangeWatcher();
 				segments.add(sed.getSegment());
 				segments.sort();
 				segments.save();
+				startUIChangeWatcher();
 				rebuildOverview();
 			}
 		} else if (e.getSource() == miRefresh) {
@@ -496,6 +499,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			}
 			SegmentEditorDialog sed = new SegmentEditorDialog(frm, s, segments);
 			sed.setVisible(true);
+			stopUIChangeWatcher();
 			if (sed.isDelete()) {
 				segments.remove(s);
 				rebuildOverview();
@@ -504,6 +508,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				segments.save();
 				rebuildOverview();
 			}
+			startUIChangeWatcher();
 		} else if (e.getSource() instanceof RunSegmentMenuItem) {
 			RunSegmentMenuItem rsmi = (RunSegmentMenuItem) e.getSource();
 			Vector<Operation> operations = new Vector<Operation>();
@@ -563,8 +568,8 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		} else {
 			try {
 				tray.add(trayIcon);
-				System.out.println("stop");
 				frm.setVisible(false);
+				stopUIChangeWatcher();
 			} catch (AWTException e) {}
 		}
 	}
@@ -587,22 +592,22 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			try {
 				tray.add(trayIcon);
 				frm.setVisible(false);
-				System.out.println("stop");
+				stopUIChangeWatcher();
 				frm.setExtendedState(Frame.NORMAL);
 			} catch (AWTException e) {}
 		}
 	}
 
 	@Override
-	public final void windowOpened(WindowEvent arg0) {
-		System.out.println("start");
-	}
+	public final void windowOpened(WindowEvent arg0) {}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == trayIcon) {
 			if (System.currentTimeMillis() - click < 500) {
+				System.out.println("start");
 				frm.setVisible(true);
+				startUIChangeWatcher();
 				tray.remove(trayIcon);
 			}
 			click = System.currentTimeMillis();
