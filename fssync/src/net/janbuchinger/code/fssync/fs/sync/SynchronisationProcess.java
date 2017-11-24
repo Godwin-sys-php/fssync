@@ -935,6 +935,7 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					e.printStackTrace();
 				}
 				operation.setLastSynced(System.currentTimeMillis());
+				operation.setReminded(false);
 			}
 
 			removePropertyChangeListener(this);

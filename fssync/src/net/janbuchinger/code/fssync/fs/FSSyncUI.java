@@ -100,9 +100,10 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private final URL aboutURL;
 
 	private long click;
-	private int mode;
 
 	private UIChangeWatcher uiChangeWatcher;
+	
+	private TrayReminder trayReminder;
 
 	public FSSyncUI() {
 		click = 0;
@@ -241,7 +242,8 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		if (settings.isStartToTray() && SystemTray.isSupported()) {
 			try {
 				tray.add(trayIcon);
-				trayIcon.displayMessage("Caption", "Text", TrayIcon.MessageType.WARNING);
+//				trayIcon.displayMessage("Caption", "Text", TrayIcon.MessageType.WARNING);
+				startTrayReminder();
 			} catch (AWTException e) {
 				frm.setVisible(true);
 				startUIChangeWatcher();
@@ -394,12 +396,19 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	}
 
 	public final void runOperations(Vector<Operation> operations, String syncTitle) {
+		boolean restartChangeWatcher = false;
+		if(uiChangeWatcher != null){
+			restartChangeWatcher = true;
+			stopUIChangeWatcher();
+		}		
 		SynchronisationProcessDialog spd = new SynchronisationProcessDialog("Synchronisation", frm, settings);
 		SynchronisationProcess sp = new SynchronisationProcess(operations, syncTitle, settings, spd) {};
 		sp.execute();
 		spd.setVisible(true);
 		segments.save();
 		refresh();
+		if(restartChangeWatcher)
+			startUIChangeWatcher();
 	}
 
 	public Segments getSegments() {
@@ -426,6 +435,21 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		if (uiChangeWatcher != null) {
 			uiChangeWatcher.stop();
 			uiChangeWatcher = null;
+		}
+	}
+
+	public final void startTrayReminder() {
+		if (trayReminder == null) {
+			trayReminder = new TrayReminder(segments, trayIcon);
+			Thread t = new Thread(trayReminder);
+			t.start();
+		}
+	}
+
+	public final void stopTrayReminder() {
+		if (trayReminder != null) {
+			trayReminder.stop();
+			trayReminder = null;
 		}
 	}
 
@@ -568,6 +592,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		} else {
 			try {
 				tray.add(trayIcon);
+				startTrayReminder();
 				frm.setVisible(false);
 				stopUIChangeWatcher();
 			} catch (AWTException e) {}
@@ -591,6 +616,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		if (settings.isMinimizeToTray() && SystemTray.isSupported()) {
 			try {
 				tray.add(trayIcon);
+				startTrayReminder();
 				frm.setVisible(false);
 				stopUIChangeWatcher();
 				frm.setExtendedState(Frame.NORMAL);
@@ -605,10 +631,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == trayIcon) {
 			if (System.currentTimeMillis() - click < 500) {
-				System.out.println("start");
+				refresh();
 				frm.setVisible(true);
 				startUIChangeWatcher();
 				tray.remove(trayIcon);
+				stopTrayReminder();
 			}
 			click = System.currentTimeMillis();
 		}
