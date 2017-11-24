@@ -22,6 +22,10 @@ import java.util.Vector;
 import net.janbuchinger.code.mishmash.FSFx;
 
 public class Operation {
+	public static final transient int MD_DAYS = 0;
+	public static final transient int MD_HOURS = 1;
+	public static final transient int MD_MINUTES = 2;
+
 	private transient boolean isSelected;
 	private File source;
 	private File target;
@@ -35,6 +39,7 @@ public class Operation {
 
 	private long lastSynced;
 	private int interval;
+	private int intervalMode;
 	private boolean remind;
 	private boolean reminded;
 
@@ -48,8 +53,8 @@ public class Operation {
 	// }
 
 	public Operation(File source, File target, boolean manageVersions, Vector<String> exclude,
-			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict, long lastSynced,
-			int interval, boolean remind, boolean reminded) {
+			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict,
+			long lastSynced, int interval, int intervalMode, boolean remind, boolean reminded) {
 		this.source = source;
 		this.target = target;
 		this.manageVersions = manageVersions;
@@ -59,9 +64,10 @@ public class Operation {
 		this.syncBidirectional = syncBidirectional;
 		this.ignoreModifiedWhenEqual = ignoreModifiedWhenEqual;
 		this.priorityOnConflict = priorityOnConflict;
-		
+
 		this.lastSynced = lastSynced;
 		this.interval = interval;
+		this.intervalMode = intervalMode;
 		this.remind = remind;
 		this.reminded = reminded;
 	}
@@ -198,6 +204,23 @@ public class Operation {
 		this.interval = interval;
 	}
 
+	public final int getIntervalMode() {
+		return intervalMode;
+	}
+
+	public final void setIntervalMode(int intervalMode) {
+		this.intervalMode = intervalMode;
+	}
+
+	private long getIntervalMillis() {
+		if (intervalMode == MD_HOURS)
+			return interval * 60 * 60 * 1000;
+		else if (intervalMode == MD_MINUTES)
+			return interval * 60 * 1000;
+		else
+			return interval * 24 * 60 * 60 * 1000;
+	}
+
 	public final boolean isRemind() {
 		return remind;
 	}
@@ -212,6 +235,19 @@ public class Operation {
 
 	public final void setReminded(boolean reminded) {
 		this.reminded = reminded;
+	}
+
+	public boolean isDue() {
+		if (interval == 0)
+			return false;
+		else if (!remind)
+			return false;
+		else if (lastSynced == 0)
+			return true;
+		else if ((lastSynced + getIntervalMillis()) < System.currentTimeMillis())
+			return true;
+		else
+			return false;
 	}
 
 	@Override

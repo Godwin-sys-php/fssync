@@ -73,6 +73,10 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 	private JTextField tfInterval;
 	private JCheckBox ckRemind;
 
+	private JRadioButton rbIntervalDays;
+	private JRadioButton rbIntervalHours;
+	private JRadioButton rbIntervalMinutes;
+
 	public final static int CANCEL = 0;
 	public final static int SAVE = 1;
 	private int answer;
@@ -154,6 +158,19 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		tfInterval = new JTextField();
 		ckRemind = new JCheckBox("Erinnern");
 
+		bg = new ButtonGroup();
+		rbIntervalDays = new JRadioButton("Tage");
+		bg.add(rbIntervalDays);
+		rbIntervalHours = new JRadioButton("Stunden");
+		bg.add(rbIntervalHours);
+		rbIntervalMinutes = new JRadioButton("Minuten");
+		bg.add(rbIntervalMinutes);
+
+		JPanel pnIntervalMode = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		pnIntervalMode.add(rbIntervalDays);
+		pnIntervalMode.add(rbIntervalHours);
+		pnIntervalMode.add(rbIntervalMinutes);
+
 		// btAddExclHidden = new JButton("+");
 		// btAddExclHidden.addActionListener(this);
 		// btAddExclHidden.setEnabled(false);
@@ -209,8 +226,17 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			}
 			tfInterval.setText(operation.getInterval() + "");
 			ckRemind.setSelected(operation.isRemind());
+			int intervalMode = operation.getIntervalMode();
+			if (intervalMode == Operation.MD_DAYS) {
+				rbIntervalDays.setSelected(true);
+			} else if (intervalMode == Operation.MD_HOURS) {
+				rbIntervalHours.setSelected(true);
+			} else if (intervalMode == Operation.MD_MINUTES) {
+				rbIntervalMinutes.setSelected(true);
+			}
 		} else {
 			rbPrioSource.setSelected(true);
+			rbIntervalDays.setSelected(true);
 		}
 
 		GridBagConstraints c = UIFx.initGridBagConstraints();
@@ -279,18 +305,22 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		pnTiming.add(new JLabel("Letzte Synchronisierung "), c);
 		c.gridx++;
 		c.weightx = 1;
+		c.gridwidth = 2;
 		pnTiming.add(tfLastSynced, c);
 		c.weightx = 0;
 		c.gridy++;
 		c.gridx = 0;
+		c.gridwidth = 1;
 		pnTiming.add(new JLabel("Intervall (Tage)"), c);
-		c.gridx++;
 		c.weightx = 1;
+		c.gridx++;
 		pnTiming.add(tfInterval, c);
+		c.gridx++;
 		c.weightx = 0;
+		pnTiming.add(pnIntervalMode, c);
 		c.gridy++;
 		c.gridx = 0;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		pnTiming.add(ckRemind, c);
 
 		JPanel pnSyncStretch = new JPanel(new BorderLayout());
@@ -440,9 +470,16 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			boolean remind = ckRemind.isSelected();
 			boolean reminded = operation != null ? operation.isReminded() : false;
 
+			int intervalMode = Operation.MD_DAYS;
+			if (rbIntervalHours.isSelected()) {
+				intervalMode = Operation.MD_HOURS;
+			} else if (rbIntervalMinutes.isSelected()) {
+				intervalMode = Operation.MD_MINUTES;
+			}
+
 			if (operation == null) {
 				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
-						ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, remind, reminded);
+						ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, intervalMode, remind, reminded);
 			} else {
 				operation.setSource(source);
 				operation.setTarget(target);
@@ -455,6 +492,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 				operation.setManageVersions(manageVersions);
 
 				operation.setInterval(interval);
+				operation.setIntervalMode(intervalMode);
 				operation.setRemind(remind);
 			}
 
