@@ -56,6 +56,7 @@ import javax.swing.border.LineBorder;
 
 import net.janbuchinger.code.fssync.fs.sync.RestorationProcess;
 import net.janbuchinger.code.fssync.fs.sync.SynchronisationProcess;
+import net.janbuchinger.code.fssync.fs.sync.ui.RunFinished;
 import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
 import net.janbuchinger.code.mishmash.FSFx;
 import net.janbuchinger.code.mishmash.GC;
@@ -104,8 +105,12 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private UIChangeWatcher uiChangeWatcher;
 	
 	private TrayReminder trayReminder;
+	
+	private boolean showFromTray;
 
 	public FSSyncUI() {
+		showFromTray = false;
+		
 		click = 0;
 
 		frm = new JFrame("FSSync 0.5a");
@@ -509,9 +514,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			tray.remove(trayIcon);
 			System.exit(0);
 		} else if (e.getSource() == tiRunAll) {
+			showFromTray = true;
 			frm.setVisible(true);
 			runAll();
 			frm.setVisible(false);
+			showFromTray = false;
 		} else if (e.getSource() instanceof SegmentMenuItem) {
 			Segment s = ((SegmentMenuItem) e.getSource()).getSegment();
 			String[] segNames = new String[segments.size() - 1];
@@ -557,16 +564,20 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			while (iOp.hasNext()) {
 				operations.add(iOp.next());
 			}
+			showFromTray = true;
 			frm.setVisible(true);
 			runOperations(operations, stmi.getSegment().getName());
 			frm.setVisible(false);
+			showFromTray = false;
 		} else if (e.getSource() instanceof OperationTrayMenuItem) {
 			OperationTrayMenuItem otmi = (OperationTrayMenuItem) e.getSource();
 			Vector<Operation> ops = new Vector<Operation>();
 			ops.add(otmi.getOperation());
+			showFromTray = true;
 			frm.setVisible(true);
 			runOperations(ops, null);
 			frm.setVisible(false);
+			showFromTray = false;
 		}
 	}
 
@@ -628,7 +639,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == trayIcon) {
+		if (e.getSource() == trayIcon && !showFromTray) {
 			if (System.currentTimeMillis() - click < 500) {
 				refresh();
 				frm.setVisible(true);
