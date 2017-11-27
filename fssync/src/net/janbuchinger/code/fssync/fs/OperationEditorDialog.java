@@ -54,12 +54,11 @@ import net.janbuchinger.code.mishmash.ui.userInput.FolderPathTextField;
 
 @SuppressWarnings("serial")
 public class OperationEditorDialog extends JDialog implements ActionListener {
-	private JButton btOk, btCancel,/* btAddExclHidden, btRemExclHidden, */btAddExcl, btRemExcl;
+	private JButton btOk, btCancel, btAddExcl, btRemExcl;
 	private FolderPathTextField tfSource;
 	private FolderPathTextField tfDestination;
-	private JList<String> /* jlExcludeHidden, */jlExclude;
-	private StringListModel lmExclude/* , lmExcludeHidden */;
-	// private JCheckBox ckExcludeHidden;
+	private JList<String> jlExclude;
+	private StringListModel lmExclude;
 	private JCheckBox ckVersionManagement;
 	private JCheckBox ckBidirectional;
 	private JCheckBox ckIgnoreModifiedWhenEqual;
@@ -108,9 +107,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		int top = 10, left = 30, bottom = 0, right = 3;
 		JLabel lbSync = new JLabel("Synchronisation");
 		lbSync.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
-		// JLabel lbHidden = new JLabel("Versteckte");
-		// lbHidden.setBorder(BorderFactory.createEmptyBorder(top, left, bottom,
-		// right));
 		JLabel lbExceptions = new JLabel("Ausnahmen (nicht Synchronisieren)");
 		lbExceptions.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
 		JLabel lbVersions = new JLabel("Versionen");
@@ -119,14 +115,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		tfDestination = new FolderPathTextField(this);
 
 		lmExclude = new StringListModel();
-		// lmExcludeHidden = new StringListModel();
-
-		// jlExcludeHidden = new JList<String>(lmExcludeHidden);
-		// jlExcludeHidden.setEnabled(false);
 		jlExclude = new JList<String>(lmExclude);
-
-		// ckExcludeHidden = new JCheckBox("Versteckte Ausschliessen");
-		// ckExcludeHidden.addActionListener(this);
 
 		ckVersionManagement = new JCheckBox("Dateiversionen Speichern");
 
@@ -172,17 +161,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		pnIntervalMode.add(rbIntervalHours);
 		pnIntervalMode.add(rbIntervalMinutes);
 
-		// btAddExclHidden = new JButton("+");
-		// btAddExclHidden.addActionListener(this);
-		// btAddExclHidden.setEnabled(false);
-		// btRemExclHidden = new JButton("-");
-		// btRemExclHidden.addActionListener(this);
-		// btRemExclHidden.setEnabled(false);
-		// JPanel pnExclHiddenButtons = new JPanel(new
-		// FlowLayout(FlowLayout.LEFT));
-		// pnExclHiddenButtons.add(btAddExclHidden);
-		// pnExclHiddenButtons.add(btRemExclHidden);
-
 		btAddExcl = new JButton("+");
 		btAddExcl.addActionListener(this);
 		btRemExcl = new JButton("-");
@@ -203,11 +181,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			tfSource.setPath(operation.getSource().getPath());
 			tfDestination.setPath(operation.getTarget().getPath());
 			lmExclude.setStrings(operation.getExcludes());
-			// lmExcludeHidden.setList(syncOperation.getForceHidden());
-			// ckExcludeHidden.setSelected(syncOperation.isExcludeHidden());
-			// btAddExclHidden.setEnabled(ckExcludeHidden.isSelected());
-			// btRemExclHidden.setEnabled(ckExcludeHidden.isSelected());
-			// jlExcludeHidden.setEnabled(ckExcludeHidden.isSelected());
 			ckVersionManagement.setSelected(operation.isManageVersions());
 			ckBidirectional.setSelected(operation.isSyncBidirectional());
 			ckIgnoreModifiedWhenEqual.setSelected(operation.isIgnoreModifiedWhenEqual());
@@ -244,10 +217,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		c.weightx = 1;
 		JPanel pnSync = new JPanel(new GridBagLayout());
 
-		// pnSync.add(lbSync, c);
-		// c.gridy++;
-		// pnSync.add(new JSeparator(), c);
-		// c.gridy++;
 		pnSync.add(new JLabel("Quelle"), c);
 		c.gridy++;
 		pnSync.add(tfSource, c);
@@ -262,33 +231,16 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		c.weighty = 1;
 		JPanel pnExclude = new JPanel(new GridBagLayout());
 
-		// pnExclude.add(lbExceptions, c);
-		// c.gridy++;
-		// pnExclude.add(new JSeparator(), c);
-		// c.gridy++;
 		pnExclude.add(UIFx.initScrollPane(jlExclude, 15), c);
 		c.weighty = 0;
 		c.gridy++;
 		pnExclude.add(pnExclButtons, c);
 
-		// pnContent.add(lbHidden, c);
-		// c.gridy++;
-		// pnContent.add(new JSeparator(), c);
-		// c.gridy++;
-		// pnContent.add(ckExcludeHidden, c);
-		// c.gridy++;
-		// pnContent.add(new JLabel("Ausnahmen (trotzdem Synchronisieren)"), c);
-		// c.gridy++;
-		// pnContent.add(UIFx.initScrollPane(jlExcludeHidden, 15), c);
-		// c.gridy++;
-		// pnContent.add(pnExclHiddenButtons, c);
-		// c.gridy++;
-
 		c = UIFx.initGridBagConstraints();
 		c.weightx = 1;
 		JPanel pnOptions = new JPanel(new GridBagLayout());
 
-		// pnFurther.add(ckVersionManagement, c);
+		// pnOptions.add(ckVersionManagement, c);
 		// c.gridy++;
 		pnOptions.add(ckBidirectional, c);
 		c.gridy++;
@@ -354,11 +306,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// if (e.getSource() == ckExcludeHidden) {
-		// btAddExclHidden.setEnabled(ckExcludeHidden.isSelected());
-		// btRemExclHidden.setEnabled(ckExcludeHidden.isSelected());
-		// jlExcludeHidden.setEnabled(ckExcludeHidden.isSelected());
-		// } else
 		if (e.getSource() == btOk) {
 			File source = new File(tfSource.getPath());
 
@@ -444,8 +391,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 					iExc.remove();
 			}
 
-			// boolean excludeHidden = ckExcludeHidden.isSelected();
-			// Vector<String> forceHidden = lmExcludeHidden.getStrings();
 			boolean syncBidirectional = ckBidirectional.isSelected();
 			boolean ignoreModifiedWhenEqual = ckIgnoreModifiedWhenEqual.isSelected();
 			int priorityOnConflict = -1;
@@ -498,9 +443,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 				operation.setRemind(remind);
 			}
 
-			// ion(source, target, manageVersions, exclude, syncBidirectional,
-			// ignoreModifiedWhenEqual,
-			// priorityOnConflict);
 			answer = SAVE;
 			setVisible(false);
 		} else if (e.getSource() == btCancel) {
@@ -536,9 +478,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 					jlExclude.setSelectedIndices(new int[0]);
 				}
 			}
-			// } else if (e.getSource() == btAddExclHidden) {
-			//
-			// } else if (e.getSource() == btRemExclHidden) {
 		}
 	}
 
