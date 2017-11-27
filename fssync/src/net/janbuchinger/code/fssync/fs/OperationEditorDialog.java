@@ -156,6 +156,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		tfLastSynced.setEditable(false);
 		tfLastSynced.setText("---");
 		tfInterval = new JTextField();
+		tfInterval.setText("0");
 		ckRemind = new JCheckBox("Erinnern");
 
 		bg = new ButtonGroup();
