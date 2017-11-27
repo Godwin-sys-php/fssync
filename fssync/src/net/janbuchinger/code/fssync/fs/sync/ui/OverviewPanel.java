@@ -33,7 +33,7 @@ public class OverviewPanel extends JPanel {
 
 	private final OperationSummary operationSummary;
 	private final boolean isBiDirectional;
-	
+
 	private final JLabel lbSrcNew, lbDstNew;
 	private final JLabel lbSrcMod, lbDstMod;
 	private final JLabel lbSrcDeltaMod, lbDstDeltaMod;
@@ -64,10 +64,10 @@ public class OverviewPanel extends JPanel {
 		lbSrcFree = new JLabel();
 		lbDstFree = new JLabel();
 		lbCopyTotal = new JLabel();
-		
+
 		GridBagConstraints c = UIFx.initGridBagConstraints();
 		c.insets = new Insets(15, 15, 5, 15);
-		
+
 		if (isBiDirectional) {
 			pnOverview.add(new JLabel(""), c);
 			c.gridx++;
@@ -89,12 +89,10 @@ public class OverviewPanel extends JPanel {
 		pnOverview.add(new JLabel("Geändert"), c);
 		c.gridx++;
 		if (isBiDirectional) {
-			pnOverview.add(lbSrcMod,
-					c);
+			pnOverview.add(lbSrcMod, c);
 			c.gridx++;
 		}
-		pnOverview.add(lbDstMod,
-				c);
+		pnOverview.add(lbDstMod, c);
 		c.gridy++;
 		c.gridx = 0;
 		pnOverview.add(new JLabel("Wachstum"), c);

@@ -44,23 +44,23 @@ public class RecoverSystemProcess extends SwingWorker<Void, Void> {
 	protected Void doInBackground() throws Exception {
 		File fseditdb = new File(source, ".fs.edit.db");
 		int c = 1;
-		while(fseditdb.exists()) {
+		while (fseditdb.exists()) {
 			fseditdb = new File(source, ".fs.edit" + (c++) + ".db");
 		}
-		
+
 		File fsdb = new File(target, ".fs.db");
-		
+
 		FileUtils.copyFile(fsdb, fseditdb);
-		
+
 		OnlineDB db = new OnlineDB(fseditdb);
-		
+
 		visitor.setDB(db);
 		try {
 			Files.walkFileTree(start, visitor);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		FileUtils.copyFile(fseditdb, fsdb);
 		return null;
 	}

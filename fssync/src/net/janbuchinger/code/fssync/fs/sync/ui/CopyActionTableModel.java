@@ -43,7 +43,7 @@ public class CopyActionTableModel extends AbstractTableModel {
 	private final OperationSummary operationSummary;
 
 	private CopyAction copyAction;
-	
+
 	private int selectCurrent;
 
 	private final SimpleDateFormat df;
@@ -125,12 +125,12 @@ public class CopyActionTableModel extends AbstractTableModel {
 		switch (columnIndex) {
 		case 0:
 			boolean select = (Boolean) aValue;
-			if(select){
+			if (select) {
 				copyAction.setSelected(true);
 				calc(true, copyAction);
 				CopyAction conflict = copyAction.getConflict();
 				if (conflict != null) {
-					if(conflict.isSelected()){
+					if (conflict.isSelected()) {
 						conflict.setSelected(false);
 						calc(false, conflict);
 					}
@@ -185,7 +185,7 @@ public class CopyActionTableModel extends AbstractTableModel {
 		return data.get(row);
 	}
 
-	private final void refresh(){
+	private final void refresh() {
 		try {
 			operationSummary.reCalcAll();
 		} catch (SpiderCancelledException e) {
@@ -193,41 +193,41 @@ public class CopyActionTableModel extends AbstractTableModel {
 		}
 		fireTableDataChanged();
 	}
-	
+
 	public final void select(int select) {
-		if(select == sel_all){
+		if (select == sel_all) {
 			Iterator<CopyAction> iData = data.iterator();
-			while(iData.hasNext())
+			while (iData.hasNext())
 				iData.next().setSelected(true);
 			select = selectCurrent;
-			if(operationSummary.getCopyActionsDuplicates().size()==0){
+			if (operationSummary.getCopyActionsDuplicates().size() == 0) {
 				refresh();
 				return;
 			}
-		} else if(select == sel_none){
+		} else if (select == sel_none) {
 			Iterator<CopyAction> iData = data.iterator();
-			while(iData.hasNext())
+			while (iData.hasNext())
 				iData.next().setSelected(false);
 			refresh();
 			return;
-		} else if(select == sel_dir_source){
+		} else if (select == sel_dir_source) {
 			Iterator<CopyAction> iData = data.iterator();
 			CopyAction copyAction;
-			while(iData.hasNext()){
+			while (iData.hasNext()) {
 				copyAction = iData.next();
-				if(copyAction.getDirection() == CopyAction.DIR_BACKUP)
+				if (copyAction.getDirection() == CopyAction.DIR_BACKUP)
 					copyAction.setSelected(true);
 				else
 					copyAction.setSelected(false);
 			}
 			refresh();
 			return;
-		} else if(select == sel_dir_destination){
+		} else if (select == sel_dir_destination) {
 			Iterator<CopyAction> iData = data.iterator();
 			CopyAction copyAction;
-			while(iData.hasNext()){
+			while (iData.hasNext()) {
 				copyAction = iData.next();
-				if(copyAction.getDirection() == CopyAction.DIR_RESTORE)
+				if (copyAction.getDirection() == CopyAction.DIR_RESTORE)
 					copyAction.setSelected(true);
 				else
 					copyAction.setSelected(false);
@@ -235,7 +235,7 @@ public class CopyActionTableModel extends AbstractTableModel {
 			refresh();
 			return;
 		}
-		
+
 		Iterator<Vector<CopyAction>> iConflicts = operationSummary.getCopyActionsDuplicates().iterator();
 		Vector<CopyAction> conflict;
 		CopyAction copyActionA;

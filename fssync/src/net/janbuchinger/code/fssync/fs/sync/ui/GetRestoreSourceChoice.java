@@ -19,7 +19,6 @@ import java.util.Vector;
 
 import net.janbuchinger.code.fssync.fs.Operation;
 
-
 public class GetRestoreSourceChoice implements Runnable {
 	private final SynchronisationProcessDialog spd;
 	private final Vector<Operation> duplicates;

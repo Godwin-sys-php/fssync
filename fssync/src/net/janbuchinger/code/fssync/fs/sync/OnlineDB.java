@@ -173,8 +173,8 @@ public final class OnlineDB {
 			sql = "CREATE TABLE IF NOT EXISTS " + key_dbinfo_tablename + " (" + key_dbinfo_dbid
 					+ " STRING PRIMARY KEY, " + key_dbinfo_dbversion + " INTEGER);";
 			st.execute(sql);
-			sql = "INSERT INTO " + key_dbinfo_tablename + "(" + key_dbinfo_dbid + ", "
-					+ key_dbinfo_dbversion + ") VALUES('" + dbId + "', 0);";
+			sql = "INSERT INTO " + key_dbinfo_tablename + "(" + key_dbinfo_dbid + ", " + key_dbinfo_dbversion
+					+ ") VALUES('" + dbId + "', 0);";
 			st.execute(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();

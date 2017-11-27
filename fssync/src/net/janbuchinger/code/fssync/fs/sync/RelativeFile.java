@@ -16,10 +16,10 @@
 package net.janbuchinger.code.fssync.fs.sync;
 
 public class RelativeFile {
-	
+
 	private final String relativePath, checksum;
 	private final long length, modified;
-	
+
 	public RelativeFile(String relativePath, long length, long modified, String checksum) {
 		this.relativePath = relativePath;
 		this.length = length;

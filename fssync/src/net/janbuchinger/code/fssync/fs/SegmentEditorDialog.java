@@ -63,7 +63,7 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 	private int clickId;
 
 	// private final String[] segNames;
-	
+
 	private final FSSyncUI ui;
 
 	private final Segments segments;

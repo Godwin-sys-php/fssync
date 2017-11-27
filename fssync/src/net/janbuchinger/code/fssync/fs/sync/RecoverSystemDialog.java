@@ -28,35 +28,35 @@ import net.janbuchinger.code.mishmash.ui.UIFx;
 public class RecoverSystemDialog extends JDialog {
 	private final JProgressBar progressBar;
 	private boolean done;
-	
+
 	public RecoverSystemDialog(JDialog frm) {
 		super(frm, "Datenbank aufbauen", true);
-		
+
 		progressBar = new JProgressBar();
 		progressBar.setIndeterminate(true);
-		
+
 		done = false;
-		
+
 		JPanel pnContent = new JPanel(new BorderLayout());
 		pnContent.add(new JLabel("Dateisysteme werden verglichen..."), BorderLayout.CENTER);
 		pnContent.add(progressBar, BorderLayout.SOUTH);
-		
+
 		setContentPane(pnContent);
-		
+
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		
+
 		UIFx.packAndCenter(this, frm);
 	}
-	
+
 	@Override
 	public void setVisible(boolean b) {
-		if(!b){
+		if (!b) {
 			done = true;
 			setDefaultCloseOperation(HIDE_ON_CLOSE);
 		}
 		super.setVisible(b);
 	}
-	
+
 	public boolean isDone() {
 		return done;
 	}

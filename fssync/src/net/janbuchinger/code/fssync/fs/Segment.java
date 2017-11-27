@@ -34,8 +34,8 @@ public class Segment implements Comparable<Segment> {
 	public final void setName(String name) {
 		this.segmentName = name;
 	}
-	
-	public final Iterator<Operation> iterator(){
+
+	public final Iterator<Operation> iterator() {
 		return operations.iterator();
 	}
 
@@ -63,7 +63,7 @@ public class Segment implements Comparable<Segment> {
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public synchronized String toString() {
 		return segmentName;
@@ -88,8 +88,8 @@ public class Segment implements Comparable<Segment> {
 	public void add(Operation element) {
 		operations.add(element);
 	}
-	
-	public final ArrayList<Operation> getOperations(){
+
+	public final ArrayList<Operation> getOperations() {
 		return operations;
 	}
 }

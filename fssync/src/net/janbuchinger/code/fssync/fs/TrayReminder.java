@@ -40,11 +40,11 @@ public class TrayReminder implements Runnable {
 				iOp = iSeg.next().iterator();
 				while (iOp.hasNext()) {
 					o = iOp.next();
-					if (o.isDue() && o.isRemind() &&!o.isReminded()) {
-							trayIcon.displayMessage("Erinnerung", o.toString() + " ist fällig",
-									TrayIcon.MessageType.WARNING);
-							o.setReminded(true);
-							segments.save();
+					if (o.isDue() && o.isRemind() && !o.isReminded()) {
+						trayIcon.displayMessage("Erinnerung", o.toString() + " ist fällig",
+								TrayIcon.MessageType.WARNING);
+						o.setReminded(true);
+						segments.save();
 					}
 				}
 			}

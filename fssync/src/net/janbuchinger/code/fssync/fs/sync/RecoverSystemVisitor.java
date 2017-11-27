@@ -25,7 +25,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import net.janbuchinger.code.fssync.fs.FSSync;
 
-
 public class RecoverSystemVisitor implements FileVisitor<Path> {
 
 	private final File source;

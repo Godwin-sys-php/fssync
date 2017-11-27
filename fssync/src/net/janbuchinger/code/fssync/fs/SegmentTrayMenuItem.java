@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 package net.janbuchinger.code.fssync.fs;
-import java.awt.MenuItem;
 
+import java.awt.MenuItem;
 
 @SuppressWarnings("serial")
 public class SegmentTrayMenuItem extends MenuItem {

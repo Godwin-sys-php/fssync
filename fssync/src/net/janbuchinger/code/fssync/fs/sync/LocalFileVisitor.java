@@ -26,7 +26,6 @@ import java.util.Vector;
 
 import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
 
-
 public class LocalFileVisitor implements FileVisitor<Path> {
 
 	private final Vector<File> localFiles;
@@ -76,7 +75,7 @@ public class LocalFileVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-//		System.out.println(attrs.fileKey());
+		// System.out.println(attrs.fileKey());
 		if (spd.isCancelled())
 			return FileVisitResult.TERMINATE;
 		if (file.getParent().toString().equals(source.getPath())) {

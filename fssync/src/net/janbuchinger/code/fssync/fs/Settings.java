@@ -46,10 +46,10 @@ public class Settings {
 		logFilesDir = PropFx.userHome();
 		showSummary = true;
 		verbose = false;
-		
+
 		String os = PropFx.osName().toLowerCase();
 		fileBrowser = os.startsWith("win") ? "explorer" : os.startsWith("mac") ? "finder" : "";
-		
+
 		startToTray = false;
 		closeToTray = false;
 		minimizeToTray = false;
@@ -69,7 +69,7 @@ public class Settings {
 	}
 
 	public final String findFileBrowser() {
-		
+
 		try {
 			Runtime.getRuntime().exec("thunar");
 			return "thunar";

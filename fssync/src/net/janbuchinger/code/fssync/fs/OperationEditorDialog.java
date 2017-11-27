@@ -480,7 +480,8 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 
 			if (operation == null) {
 				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
-						ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, intervalMode, remind, reminded);
+						ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, intervalMode,
+						remind, reminded);
 			} else {
 				operation.setSource(source);
 				operation.setTarget(target);

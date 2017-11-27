@@ -45,7 +45,7 @@ public class SynchronisationStatusListModel extends AbstractListModel<String> {
 		fireContentsChanged(this, 0, getSize() - 1);
 	}
 
-	public final Iterator<String> iterator(){
+	public final Iterator<String> iterator() {
 		return data.iterator();
 	}
 }

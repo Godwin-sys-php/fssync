@@ -47,7 +47,6 @@ import net.janbuchinger.code.mishmash.ui.UIFx;
 
 import org.apache.commons.io.FileUtils;
 
-
 public class SynchronisationProcess extends SwingWorker<Void, Void> implements PropertyChangeListener {
 
 	private final SynchronisationProcessDialog spd;

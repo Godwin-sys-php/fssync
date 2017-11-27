@@ -23,7 +23,7 @@ public class DisplayFile extends File {
 	public DisplayFile(String pathname) {
 		super(pathname);
 	}
-	
+
 	@Override
 	public String toString() {
 		return getAbsolutePath();

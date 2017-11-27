@@ -20,22 +20,22 @@ import java.io.File;
 public class DeleteAction {
 	public final static int del_destination = 0;
 	public final static int del_source = 1;
-	
+
 	private final File f;
 	private final int location;
-	
+
 	private boolean isSelected;
-	
+
 	private final String relativePath;
-	
+
 	public DeleteAction(File f, String relativePath, int location) {
 		this.location = location;
 		this.f = f;
 		this.relativePath = relativePath;
-		
+
 		isSelected = true;
 	}
-	
+
 	public final File getFile() {
 		return f;
 	}

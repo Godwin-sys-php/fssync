@@ -101,14 +101,14 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private long click;
 
 	private UIChangeWatcher uiChangeWatcher;
-	
+
 	private TrayReminder trayReminder;
-	
+
 	private boolean showFromTray;
 
 	public FSSyncUI() {
 		showFromTray = false;
-		
+
 		click = 0;
 
 		frm = new JFrame("FSSync 0.5a");
@@ -391,17 +391,17 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 	public final void runOperations(Vector<Operation> operations, String syncTitle) {
 		boolean restartChangeWatcher = false;
-		if(uiChangeWatcher != null){
+		if (uiChangeWatcher != null) {
 			restartChangeWatcher = true;
 			stopUIChangeWatcher();
-		}		
+		}
 		SynchronisationProcessDialog spd = new SynchronisationProcessDialog("Synchronisation", frm, settings);
 		SynchronisationProcess sp = new SynchronisationProcess(operations, syncTitle, settings, spd) {};
 		sp.execute();
 		spd.setVisible(true);
 		segments.save();
 		refresh();
-		if(restartChangeWatcher)
+		if (restartChangeWatcher)
 			startUIChangeWatcher();
 	}
 

@@ -18,21 +18,21 @@ package net.janbuchinger.code.fssync.fs;
 import javax.swing.JMenuItem;
 
 @SuppressWarnings("serial")
-public class RestoreSegmentMenuItem extends JMenuItem{
-	
+public class RestoreSegmentMenuItem extends JMenuItem {
+
 	private final Segment segment;
 	private final int segmentId;
-	
+
 	public RestoreSegmentMenuItem(Segment segment, int segmentId) {
 		super(segment.getName());
 		this.segmentId = segmentId;
 		this.segment = segment;
 	}
-	
+
 	public Segment getSegment() {
 		return segment;
 	}
-	
+
 	public int getSegmentId() {
 		return segmentId;
 	}

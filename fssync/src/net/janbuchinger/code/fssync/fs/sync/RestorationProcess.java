@@ -44,7 +44,6 @@ import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
 
 import org.apache.commons.io.FileUtils;
 
-
 public class RestorationProcess extends SwingWorker<Void, Void> implements PropertyChangeListener {
 
 	private final SynchronisationProcessDialog spd;

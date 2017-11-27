@@ -25,16 +25,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 import net.janbuchinger.code.fssync.fs.sync.CopyAction;
 import net.janbuchinger.code.fssync.fs.sync.DeleteAction;
 
-
 @SuppressWarnings("serial")
 public class DeleteActionTableCellRenderer extends DefaultTableCellRenderer {
 	private final boolean isRestore;
-	
+
 	public DeleteActionTableCellRenderer(boolean isRestore) {
 		super();
 		this.isRestore = isRestore;
 	}
-	
+
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 			boolean hasFocus, int row, int column) {
@@ -49,7 +48,7 @@ public class DeleteActionTableCellRenderer extends DefaultTableCellRenderer {
 		if (ca.isSelected()) {
 			setBackground(table.getBackground());
 			setForeground(Color.red.darker());
-		} else if(!isRestore){
+		} else if (!isRestore) {
 			setBackground(table.getBackground());
 			setForeground(Color.green.darker());
 		} else {

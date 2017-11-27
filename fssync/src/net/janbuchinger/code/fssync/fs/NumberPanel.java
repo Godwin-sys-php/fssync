@@ -32,7 +32,7 @@ public class NumberPanel extends JPanel {
 	public static final int OFFLINE = 1;
 	public static final int SYNCHRONIZING = 2;
 
-//	private int status;
+	// private int status;
 
 	private Graphics2D g2d;
 	private Stroke stroke;
@@ -44,7 +44,7 @@ public class NumberPanel extends JPanel {
 
 	public NumberPanel(int number) {
 		this.number = number + "";
-//		this.status = -1;
+		// this.status = -1;
 		setPreferredSize(new Dimension(32, 32));
 	}
 
@@ -70,7 +70,7 @@ public class NumberPanel extends JPanel {
 	}
 
 	public final void setStatus(int status) {
-//		this.status = status;
+		// this.status = status;
 		repaint();
 	}
 }

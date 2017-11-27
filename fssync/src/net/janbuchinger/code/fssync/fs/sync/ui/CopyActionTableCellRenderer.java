@@ -24,7 +24,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import net.janbuchinger.code.fssync.fs.sync.CopyAction;
 
-
 @SuppressWarnings("serial")
 public class CopyActionTableCellRenderer extends DefaultTableCellRenderer {
 	@Override
@@ -36,23 +35,23 @@ public class CopyActionTableCellRenderer extends DefaultTableCellRenderer {
 			setHorizontalAlignment(JLabel.RIGHT);
 		else
 			setHorizontalAlignment(JLabel.LEFT);
-		
+
 		CopyAction ca = ((CopyActionTableModel) table.getModel()).getRow(row);
-		
+
 		setBackground(table.getBackground());
-		
+
 		CopyAction conflict = ca.getConflict();
-		
+
 		if (ca.isSelected() && conflict == null) {
 			setForeground(Color.green.darker());
 		} else if (ca.isSelected() && conflict != null) {
 			setForeground(Color.green.darker());
 			setBackground(Color.yellow);
 		} else if (!ca.isSelected() && conflict != null) {
-			if(conflict.isSelected()){
+			if (conflict.isSelected()) {
 				setForeground(Color.yellow);
 				setBackground(Color.red.darker());
-			}else{
+			} else {
 				setForeground(Color.white);
 				setBackground(Color.gray);
 			}

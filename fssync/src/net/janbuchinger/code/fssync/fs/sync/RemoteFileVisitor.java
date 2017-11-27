@@ -32,8 +32,7 @@ public class RemoteFileVisitor implements FileVisitor<Path> {
 	private final File target;
 	private final Vector<File> remoteFiles;
 	private final Vector<File> emptyDirs;
-	
-	
+
 	public RemoteFileVisitor(File target, Vector<File> remoteFiles, Vector<File> emptyDirs,
 			SynchronisationProcessDialog spd) {
 		this.spd = spd;
@@ -46,12 +45,13 @@ public class RemoteFileVisitor implements FileVisitor<Path> {
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 		if (spd.isCancelled())
 			return FileVisitResult.TERMINATE;
-		if(!FSFx.hasDirEntries(dir))
+		if (!FSFx.hasDirEntries(dir))
 			emptyDirs.add(dir.toFile());
 		return FileVisitResult.CONTINUE;
 	}
+
 	private String filename;
-	
+
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 		if (spd.isCancelled())

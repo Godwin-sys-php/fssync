@@ -52,7 +52,6 @@ import net.janbuchinger.code.mishmash.ui.UIFx;
 
 import org.apache.commons.io.FileUtils;
 
-
 @SuppressWarnings("serial")
 public final class SynchronisationProcessDialog extends JDialog implements ActionListener {
 
@@ -257,14 +256,14 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		int newestVersion = -1;
 		long newestDate = 0;
 		for (int i = 0; i < sources.size(); i++) {
-			if(newestDate < sources.get(i).getDbOriginal().lastModified()){
+			if (newestDate < sources.get(i).getDbOriginal().lastModified()) {
 				newestVersion = i;
 				newestDate = sources.get(i).getDbOriginal().lastModified();
 			}
 		}
 		int c = 0;
 		for (Operation o : sources) {
-			rb = new JRadioButton(o.getRemotePath() + (c == newestVersion?" (Neueste Version)":""));
+			rb = new JRadioButton(o.getRemotePath() + (c == newestVersion ? " (Neueste Version)" : ""));
 			if (c == newestVersion)
 				rb.setSelected(true);
 			c++;

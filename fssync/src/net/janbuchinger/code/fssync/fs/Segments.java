@@ -41,7 +41,7 @@ public class Segments {
 		GsonBuilder gb = new GsonBuilder();
 		gb.setPrettyPrinting();
 		Gson g = gb.create();
-		
+
 		String j = g.toJson(this);
 		try {
 			FileUtils.writeStringToFile(segmentsFile, j, Charset.defaultCharset());

@@ -19,12 +19,12 @@ public class RunSetDeterminate implements Runnable {
 
 	private final boolean determinate;
 	private final SynchronisationProcessDialog spd;
-	
+
 	public RunSetDeterminate(boolean determinate, SynchronisationProcessDialog spd) {
 		this.determinate = determinate;
 		this.spd = spd;
 	}
-	
+
 	@Override
 	public void run() {
 		spd.setDeterminate(determinate);

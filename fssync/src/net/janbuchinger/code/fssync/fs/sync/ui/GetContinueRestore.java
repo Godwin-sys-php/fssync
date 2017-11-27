@@ -28,7 +28,7 @@ public class GetContinueRestore implements Runnable {
 	public void run() {
 		continueRestore = spd.requestContinueRestore();
 	}
-	
+
 	public boolean isContinueRestore() {
 		return continueRestore;
 	}

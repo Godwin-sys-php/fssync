@@ -109,14 +109,14 @@ public class DeleteActionTableModel extends AbstractTableModel {
 		deleteAction = data.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			if((Boolean) aValue){
-				if(deleteAction.getLocation() == DeleteAction.del_destination){
+			if ((Boolean) aValue) {
+				if (deleteAction.getLocation() == DeleteAction.del_destination) {
 					operationSummary.addRmDestination(deleteAction.getFile().length());
 				} else {
 					operationSummary.addRmSource(deleteAction.getFile().length());
 				}
 			} else {
-				if(deleteAction.getLocation() == DeleteAction.del_destination){
+				if (deleteAction.getLocation() == DeleteAction.del_destination) {
 					operationSummary.removeRmDestination(deleteAction.getFile().length());
 				} else {
 					operationSummary.removeRmSource(deleteAction.getFile().length());

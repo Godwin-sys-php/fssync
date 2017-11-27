@@ -21,7 +21,6 @@ import java.util.Vector;
 
 import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
 
-
 public final class OperationSummary {
 	// updateSizeSourceModified - updateSizeSourceModifiedOld
 	private long deltaModSource;

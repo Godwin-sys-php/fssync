@@ -104,7 +104,7 @@ public final class OperationSummaryDialog extends JDialog implements ActionListe
 		toolBarSelect.add(new JLabel("Auswählen" + " "));
 		toolBarSelect.add(btSelectAll);
 		toolBarSelect.add(btSelectNone);
-		if(isBiDirectional && !operationSummary.isRestore()) {
+		if (isBiDirectional && !operationSummary.isRestore()) {
 			toolBarSelect.add(btSelectSource);
 			toolBarSelect.add(btSelectDestination);
 		}
@@ -121,7 +121,8 @@ public final class OperationSummaryDialog extends JDialog implements ActionListe
 
 		tmDelete = new DeleteActionTableModel(operationSummary.getDeleteActions(), operationSummary);
 		tbDelete = new JTable(tmDelete);
-		tbDelete.setDefaultRenderer(String.class, new DeleteActionTableCellRenderer(operationSummary.isRestore()));
+		tbDelete.setDefaultRenderer(String.class,
+				new DeleteActionTableCellRenderer(operationSummary.isRestore()));
 
 		tmCorruptSource = new FileTableModel(operationSummary.getCorruptFilesSource());
 		tbCorruptSource = new JTable(tmCorruptSource);

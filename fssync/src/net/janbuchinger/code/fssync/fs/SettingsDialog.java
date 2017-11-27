@@ -68,7 +68,7 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 	private final JCheckBox ckShowSummary;
 
 	private final JTextFieldWithPopUp tfFileBrowser;
-	
+
 	private final JCheckBox ckStartToTray;
 	private final JCheckBox ckCloseToTray;
 	private final JCheckBox ckMinimizeToTray;
@@ -114,7 +114,7 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 
 		tfFileBrowser = new JTextFieldWithPopUp();
 		tfFileBrowser.setText(s.getFileBrowser());
-		
+
 		ckStartToTray = new JCheckBox("Als Tray Icon Starten");
 		ckStartToTray.setSelected(s.isStartToTray());
 
@@ -123,13 +123,13 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 
 		ckMinimizeToTray = new JCheckBox("Ins Tray Minimieren");
 		ckMinimizeToTray.setSelected(s.isMinimizeToTray());
-		
-		if(!SystemTray.isSupported()){
+
+		if (!SystemTray.isSupported()) {
 			ckStartToTray.setEnabled(false);
 			ckCloseToTray.setEnabled(false);
 			ckMinimizeToTray.setEnabled(false);
 		}
-		
+
 		GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 2, 2);
 
