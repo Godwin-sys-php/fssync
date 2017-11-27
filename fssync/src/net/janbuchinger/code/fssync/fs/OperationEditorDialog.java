@@ -404,7 +404,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 				priorityOnConflict = CopyActionTableModel.sel_source;
 			}
 
-			long lastSynced = operation != null ? operation.getLastSynced() : 0;
 			int interval = 0;
 			try {
 				interval = Integer.parseInt(tfInterval.getText());
@@ -414,7 +413,6 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 				return;
 			}
 			boolean remind = ckRemind.isSelected() && interval != 0 ? ckRemind.isSelected() : false;
-			boolean reminded = operation != null ? operation.isReminded() : false;
 
 			int intervalMode = Operation.MD_DAYS;
 			if (rbIntervalHours.isSelected()) {
@@ -425,8 +423,8 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 
 			if (operation == null) {
 				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
-						ignoreModifiedWhenEqual, priorityOnConflict, lastSynced, interval, intervalMode,
-						remind, reminded);
+						ignoreModifiedWhenEqual, priorityOnConflict, interval, intervalMode,
+						remind);
 			} else {
 				operation.setSource(source);
 				operation.setTarget(target);
