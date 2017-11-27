@@ -63,12 +63,15 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 	private int clickId;
 
 	// private final String[] segNames;
+	
+	private final FSSyncUI ui;
 
 	private final Segments segments;
 
-	public SegmentEditorDialog(JFrame frm, Segment s, Segments segments) {
+	public SegmentEditorDialog(JFrame frm, Segment s, Segments segments, FSSyncUI ui) {
 		super(frm, "Neues Segment", true);
 
+		this.ui = ui;
 		// this.segNames = segNames;
 
 		this.segments = segments;
@@ -180,7 +183,9 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 			soed.setVisible(true);
 			if (soed.getAnswer() == OperationEditorDialog.SAVE) {
 				Operation op = soed.getOperation();
+				ui.stopUIChangeWatcher();
 				lmOperations.addElement(op);
+				ui.startUIChangeWatcher();
 			}
 		} else if (e.getSource() == btRemOp) {
 			if (jlOperations.getSelectedIndex() != -1) {

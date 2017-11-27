@@ -450,7 +450,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	@Override
 	public final void actionPerformed(ActionEvent e) {
 		if (e.getSource() == miAddSegment) {
-			SegmentEditorDialog sed = new SegmentEditorDialog(frm, null, segments);
+			SegmentEditorDialog sed = new SegmentEditorDialog(frm, null, segments, this);
 			sed.setVisible(true);
 			if (sed.getAnswer() == SegmentEditorDialog.OK) {
 				stopUIChangeWatcher();
@@ -511,11 +511,13 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 					segNames[i1++] = segments.get(i).getName();
 				}
 			}
-			SegmentEditorDialog sed = new SegmentEditorDialog(frm, s, segments);
+			SegmentEditorDialog sed = new SegmentEditorDialog(frm, s, segments, this);
 			sed.setVisible(true);
 			stopUIChangeWatcher();
 			if (sed.isDelete()) {
+				stopUIChangeWatcher();
 				segments.remove(s);
+				startUIChangeWatcher();
 				rebuildOverview();
 			} else if (sed.hasChanges()) {
 				segments.sort();
