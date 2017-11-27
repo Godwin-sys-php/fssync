@@ -218,6 +218,7 @@ public class Operation {
 		else if (intervalMode == MD_MINUTES)
 			return interval * 60 * 1000;
 		else
+			// MD_DAYS by default
 			return interval * 24 * 60 * 60 * 1000;
 	}
 
@@ -240,7 +241,7 @@ public class Operation {
 	public boolean isDue() {
 		if (interval == 0)
 			return false;
-		else if (!remind)
+		else if (interval == 0)
 			return false;
 		else if (lastSynced == 0)
 			return true;
