@@ -48,7 +48,7 @@ public class OperationPanel extends JPanel implements MouseListener {
 		this.operation = operation;
 		this.ui = ui;
 		ckOperation = new OperationCheckBox(operation);
-		if(!operation.isOnline()) {
+		if (!operation.isOnline()) {
 			ckOperation.setEnabled(false);
 		} else {
 			ckOperation.setSelected(operation.isSelected());
@@ -57,17 +57,17 @@ public class OperationPanel extends JPanel implements MouseListener {
 		np.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		np.addMouseListener(this);
 		ap = new ArrowPanel(operation.isSyncBidirectional());
-		if(operation.isOnline()){
+		if (operation.isOnline()) {
 			ap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			ap.addMouseListener(this);
 		}
 		lbSrc = new JLabel(operation.getSource().getPath());
-		if(operation.isSourceOnline() && settings.getFileBrowser().length()>0){
+		if (operation.isSourceOnline() && settings.getFileBrowser().length() > 0) {
 			lbSrc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			lbSrc.addMouseListener(this);
 		}
 		lbTrg = new JLabel(operation.getTarget().getPath());
-		if(operation.isTargetOnline() && settings.getFileBrowser().length()>0){
+		if (operation.isTargetOnline() && settings.getFileBrowser().length() > 0) {
 			lbTrg.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			lbTrg.addMouseListener(this);
 		}
@@ -124,7 +124,7 @@ public class OperationPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(e.getButton() != MouseEvent.BUTTON1)
+		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 		if (e.getSource() == ap) {
 			Vector<Operation> operations = new Vector<Operation>();
@@ -142,8 +142,8 @@ public class OperationPanel extends JPanel implements MouseListener {
 			}
 		} else if (e.getSource() instanceof JLabel) {
 			try {
-				Runtime.getRuntime()
-						.exec(settings.getFileBrowser() + " \"" + ((JLabel) e.getSource()).getText() + "\"");
+				String[] cmd = { settings.getFileBrowser(), ((JLabel) e.getSource()).getText() };
+				Runtime.getRuntime().exec(cmd);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
