@@ -30,28 +30,22 @@ public class ArrowPanel extends JPanel {
 	public static final int OFFLINE = 1;
 	public static final int SYNCHRONIZING = 2;
 
-//	private int status;
-
 	private Graphics2D g2d;
 	private Stroke stroke;
-//	private Font font;
-//	private FontMetrics fm;
-//	private int x, y;
 
 	private final int[] xPoints;
 	private final int[] yPoints;
 	private final int nPoints;
-	
+
 	public ArrowPanel(boolean bidirectional) {
-//		this.status = -1;
 		setPreferredSize(new Dimension(32, 32));
-		
-		if(bidirectional){
-			xPoints = new int[] {4 , 14, 14, 17, 17, 27, 17, 17, 14, 14};
-			yPoints = new int[] {16, 6 , 12, 12, 6 , 16, 26, 21, 21, 26};
+
+		if (bidirectional) {
+			xPoints = new int[] { 4, 14, 14, 17, 17, 27, 17, 17, 14, 14 };
+			yPoints = new int[] { 16, 6, 12, 12, 6, 16, 26, 21, 21, 26 };
 		} else {
-			xPoints = new int[] {4 , 17, 17, 27, 17, 17, 4};
-			yPoints = new int[] {12, 12, 6 , 16, 26, 21, 21};
+			xPoints = new int[] { 4, 17, 17, 27, 17, 17, 4 };
+			yPoints = new int[] { 12, 12, 6, 16, 26, 21, 21 };
 		}
 		nPoints = xPoints.length;
 	}
@@ -62,20 +56,7 @@ public class ArrowPanel extends JPanel {
 		stroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(2));
 		g2d.fillPolygon(xPoints, yPoints, nPoints);
-		
-//		font = g2d.getFont();
-//		g2d.setFont(font.deriveFont(Font.BOLD));
-//		g2d.drawOval(2, 2, 28, 28);
-//		fm = g2d.getFontMetrics();
-//		x = (getWidth() - fm.stringWidth(number)) / 2;
-//		y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
-//		g2d.drawString(number, x, y);
-		g2d.setStroke(stroke);
-//		g2d.setFont(font);
-	}
 
-	public final void setStatus(int status) {
-//		this.status = status;
-		repaint();
+		g2d.setStroke(stroke);
 	}
 }
