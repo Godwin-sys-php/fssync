@@ -31,8 +31,6 @@ public class Operation {
 	private File target;
 	private boolean manageVersions;
 	private Vector<String> exclude;
-	// private boolean excludeHidden;
-	// private Vector<String> forceHidden;
 	private boolean syncBidirectional;
 	private boolean ignoreModifiedWhenEqual;
 	private int priorityOnConflict;
@@ -43,15 +41,6 @@ public class Operation {
 	private boolean remind;
 	private boolean reminded;
 
-	// public Operation(String source, String target, boolean manageVersions,
-	// Vector<String> exclude,
-	// /*boolean excludeHidden, Vector<String> forceHidden, */boolean
-	// syncBidirectional, boolean ignoreModifiedWhenEqual) {
-	// this(new File(source), new File(target), manageVersions, exclude,
-	// /*excludeHidden, forceHidden,*/
-	// syncBidirectional, ignoreModifiedWhenEqual);
-	// }
-
 	public Operation(File source, File target, boolean manageVersions, Vector<String> exclude,
 			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict,
 			long lastSynced, int interval, int intervalMode, boolean remind, boolean reminded) {
@@ -59,8 +48,6 @@ public class Operation {
 		this.target = target;
 		this.manageVersions = manageVersions;
 		this.exclude = exclude;
-		// this.excludeHidden = excludeHidden;
-		// this.forceHidden = forceHidden;
 		this.syncBidirectional = syncBidirectional;
 		this.ignoreModifiedWhenEqual = ignoreModifiedWhenEqual;
 		this.priorityOnConflict = priorityOnConflict;
@@ -164,22 +151,6 @@ public class Operation {
 		this.priorityOnConflict = priorityOnConflict;
 	}
 
-	// public final boolean isExcludeHidden() {
-	// return excludeHidden;
-	// }
-	//
-	// public final void setExcludeHidden(boolean excludeHidden) {
-	// this.excludeHidden = excludeHidden;
-	// }
-	//
-	// public final Vector<String> getForceHidden() {
-	// return forceHidden;
-	// }
-	//
-	// public final void setForceHidden(Vector<String> forceHidden) {
-	// this.forceHidden = forceHidden;
-	// }
-
 	public final boolean isSelected() {
 		return isSelected;
 	}
@@ -240,8 +211,6 @@ public class Operation {
 
 	public boolean isDue() {
 		if (interval == 0)
-			return false;
-		else if (interval == 0)
 			return false;
 		else if (lastSynced == 0)
 			return true;
