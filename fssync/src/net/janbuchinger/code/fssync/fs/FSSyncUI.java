@@ -56,7 +56,6 @@ import javax.swing.border.LineBorder;
 
 import net.janbuchinger.code.fssync.fs.sync.RestorationProcess;
 import net.janbuchinger.code.fssync.fs.sync.SynchronisationProcess;
-import net.janbuchinger.code.fssync.fs.sync.ui.RunFinished;
 import net.janbuchinger.code.fssync.fs.sync.ui.SynchronisationProcessDialog;
 import net.janbuchinger.code.mishmash.FSFx;
 import net.janbuchinger.code.mishmash.GC;
@@ -77,7 +76,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private final JMenuItem miSettings;
 	private final JMenuItem miRunAll;
 	private final JMenuItem miRunSelected;
-	private final JMenuItem miRefresh;
 	private final JMenuItem miAbout;
 	private final JMenuItem miHelp;
 	private final JMenu muSegments;
@@ -181,9 +179,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		miRunSelected = new JMenuItem("Ausgewählte");
 		miRunSelected.addActionListener(this);
 
-		miRefresh = new JMenuItem("Aktualisieren");
-		miRefresh.addActionListener(this);
-
 		miAbout = new JMenuItem("Über...");
 		miAbout.addActionListener(this);
 
@@ -247,7 +242,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		if (settings.isStartToTray() && SystemTray.isSupported()) {
 			try {
 				tray.add(trayIcon);
-//				trayIcon.displayMessage("Caption", "Text", TrayIcon.MessageType.WARNING);
 				startTrayReminder();
 			} catch (AWTException e) {
 				frm.setVisible(true);
@@ -279,7 +273,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	}
 
 	private void rebuildTrayMenu() {
-		// Menu muRun = new Menu("Ausführen");
 		Iterator<Segment> iSeg;
 		Segment s;
 		SegmentTrayMenuItem stmi;
@@ -319,7 +312,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		muRun.add(miRunAll);
 		muRun.add(miRunSelected);
 		muSegments.removeAll();
-		muSegments.add(miRefresh);
 		muSegments.add(miAddSegment);
 
 		Iterator<Segment> iSeg = segments.iterator();
@@ -381,9 +373,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				pnSegment.setBorder(BorderFactory.createTitledBorder(
 						BorderFactory.createLineBorder(OperationPanel.offline, 2, true), seg.getName()));
 			}
-
-			// JPanel pnSegmentPush = new JPanel(new BorderLayout());
-			// pnSegmentPush.add(pnSegment, BorderLayout.NORTH);
 
 			pnOperationsOverview.add(pnSegment, c);
 			if ((ccSeg++) % cols == 0) {
@@ -461,10 +450,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	@Override
 	public final void actionPerformed(ActionEvent e) {
 		if (e.getSource() == miAddSegment) {
-			// String[] segNames = new String[segments.size()];
-			// for (int i = 0; i < segNames.length; i++) {
-			// segNames[i] = segments.get(i).getName();
-			// }
 			SegmentEditorDialog sed = new SegmentEditorDialog(frm, null, segments);
 			sed.setVisible(true);
 			if (sed.getAnswer() == SegmentEditorDialog.OK) {
@@ -475,8 +460,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				startUIChangeWatcher();
 				rebuildOverview();
 			}
-		} else if (e.getSource() == miRefresh) {
-			refresh();
 		} else if (e.getSource() == miRunAll) {
 			runAll();
 		} else if (e.getSource() == miRunSelected) {
