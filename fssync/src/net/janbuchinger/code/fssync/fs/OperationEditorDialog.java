@@ -468,7 +468,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			boolean remind = ckRemind.isSelected();
+			boolean remind = ckRemind.isSelected() && interval != 0 ? ckRemind.isSelected() : false;
 			boolean reminded = operation != null ? operation.isReminded() : false;
 
 			int intervalMode = Operation.MD_DAYS;
