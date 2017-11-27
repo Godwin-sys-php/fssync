@@ -69,6 +69,7 @@ public class Settings {
 	}
 
 	public final String findFileBrowser() {
+		
 		try {
 			Runtime.getRuntime().exec("thunar");
 			return "thunar";
@@ -84,6 +85,10 @@ public class Settings {
 		try {
 			Runtime.getRuntime().exec("conqueror");
 			return "conqueror";
+		} catch (IOException e) {}
+		try {
+			Runtime.getRuntime().exec("xdg-open");
+			return "xdg-open";
 		} catch (IOException e) {}
 		return "";
 	}
