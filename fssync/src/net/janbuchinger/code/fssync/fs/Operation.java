@@ -42,8 +42,8 @@ public class Operation {
 	private boolean reminded;
 
 	public Operation(File source, File target, boolean manageVersions, Vector<String> exclude,
-			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict,
-			long lastSynced, int interval, int intervalMode, boolean remind, boolean reminded) {
+			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict, int interval,
+			int intervalMode, boolean remind, boolean reminded) {
 		this.source = source;
 		this.target = target;
 		this.manageVersions = manageVersions;
@@ -52,7 +52,7 @@ public class Operation {
 		this.ignoreModifiedWhenEqual = ignoreModifiedWhenEqual;
 		this.priorityOnConflict = priorityOnConflict;
 
-		this.lastSynced = lastSynced;
+		this.lastSynced = 0;
 		this.interval = interval;
 		this.intervalMode = intervalMode;
 		this.remind = remind;
