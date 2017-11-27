@@ -43,7 +43,7 @@ public class Operation {
 
 	public Operation(File source, File target, boolean manageVersions, Vector<String> exclude,
 			boolean syncBidirectional, boolean ignoreModifiedWhenEqual, int priorityOnConflict, int interval,
-			int intervalMode, boolean remind, boolean reminded) {
+			int intervalMode, boolean remind) {
 		this.source = source;
 		this.target = target;
 		this.manageVersions = manageVersions;
@@ -56,7 +56,7 @@ public class Operation {
 		this.interval = interval;
 		this.intervalMode = intervalMode;
 		this.remind = remind;
-		this.reminded = reminded;
+		this.reminded = false;
 	}
 
 	public boolean isOnline() {
