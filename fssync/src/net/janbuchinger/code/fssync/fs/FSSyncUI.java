@@ -328,6 +328,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		pnOperationsOverview.removeAll();
 		muRestore.removeAll();
 		muRestore.add(miRestoreSelected);
+		muRestore.addSeparator();
 		muRun.removeAll();
 		if (segments.size() > 0){
 			muRun.add(miRunSelected);
