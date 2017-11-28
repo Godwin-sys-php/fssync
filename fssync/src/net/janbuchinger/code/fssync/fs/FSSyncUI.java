@@ -18,6 +18,7 @@ package net.janbuchinger.code.fssync.fs;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -45,7 +46,9 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -81,6 +84,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private final JMenu muSegments;
 	private final JMenu muRun;
 	private final JMenu muRestore;
+	private final JMenuItem miRestoreSelected;
+
+	private final JButton btNewSegment;
 
 	private final PopupMenu trayPopup;
 	private final MenuItem tiExit;
@@ -198,6 +204,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 		muRestore = new JMenu("Wiederherstellen");
 
+		miRestoreSelected = new JMenuItem("Ausgewählte");
+		miRestoreSelected.addActionListener(this);
+
 		JMenu muEdit = new JMenu("Bearbeiten");
 		muEdit.add(miSettings);
 
@@ -212,6 +221,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		menuBar.add(muQuestion);
 
 		frm.setJMenuBar(menuBar);
+
+		btNewSegment = new JButton("Erstes Segment Anlegen...");
+		btNewSegment.addActionListener(this);
 
 		pnOperationsOverview = new JPanel();
 		pnOperationsOverview.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -315,11 +327,17 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 		pnOperationsOverview.removeAll();
 		muRestore.removeAll();
+		muRestore.add(miRestoreSelected);
 		muRun.removeAll();
-		muRun.add(miRunAll);
-		muRun.add(miRunSelected);
+		if (segments.size() > 0){
+			muRun.add(miRunSelected);
+			muRun.add(miRunAll);
+			muRun.addSeparator();
+		}
 		muSegments.removeAll();
 		muSegments.add(miAddSegment);
+		if (segments.size() > 0)
+			muSegments.addSeparator();
 
 		Iterator<Segment> iSeg = segments.iterator();
 		Segment seg;
@@ -380,7 +398,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				pnSegment.setBorder(BorderFactory.createTitledBorder(
 						BorderFactory.createLineBorder(OperationPanel.offline, 2, true), seg.getName()));
 			}
-
 			pnOperationsOverview.add(pnSegment, c);
 			if ((ccSeg++) % cols == 0) {
 				c.gridy++;
@@ -389,8 +406,20 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				c.gridx++;
 			}
 		}
+		if (segments.size() > 0) {
+			muRun.addSeparator();
+			muRun.add(muRestore);
+		} else {
+			JPanel pnNewSegmentButtonPanel = new JPanel(new FlowLayout());
+			pnNewSegmentButtonPanel.add(btNewSegment);
 
-		muRun.add(muRestore);
+			JPanel pnIntro = new JPanel(new GridLayout(2, 1));
+			pnIntro.add(new JLabel("Es gibt noch keine Einträge"));
+			pnIntro.add(pnNewSegmentButtonPanel);
+
+			pnOperationsOverview.add(pnIntro);
+		}
+
 		pnOperationsOverview.repaint();
 
 		UIFx.packAndCenter(frm);
@@ -456,7 +485,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 	@Override
 	public final void actionPerformed(ActionEvent e) {
-		if (e.getSource() == miAddSegment) {
+		if (e.getSource() == miAddSegment || e.getSource() == btNewSegment) {
 			SegmentEditorDialog sed = new SegmentEditorDialog(frm, null, segments, this);
 			sed.setVisible(true);
 			if (sed.getAnswer() == SegmentEditorDialog.OK) {
@@ -509,6 +538,25 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			runAll();
 			frm.setVisible(false);
 			showFromTray = false;
+		} else if (e.getSource() == miRestoreSelected) {
+			Vector<Operation> operations = new Vector<Operation>();
+			Iterator<Segment> iSeg = segments.iterator();
+			Iterator<Operation> iOp;
+			Operation o;
+			while (iSeg.hasNext()) {
+				iOp = iSeg.next().iterator();
+				while (iOp.hasNext()) {
+					o = iOp.next();
+					if (o.isSelected()) {
+						operations.add(o);
+					}
+				}
+			}
+			SynchronisationProcessDialog spd = new SynchronisationProcessDialog("Wiederherstellen", frm,
+					settings);
+			RestorationProcess rp = new RestorationProcess(operations, null, spd);
+			rp.execute();
+			spd.setVisible(true);
 		} else if (e.getSource() instanceof SegmentMenuItem) {
 			Segment s = ((SegmentMenuItem) e.getSource()).getSegment();
 			String[] segNames = new String[segments.size() - 1];
