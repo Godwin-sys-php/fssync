@@ -50,8 +50,6 @@ public class OperationPanel extends JPanel implements MouseListener {
 		ckOperation = new OperationCheckBox(operation);
 		if (!operation.isOnline()) {
 			ckOperation.setEnabled(false);
-		} else {
-			ckOperation.setSelected(operation.isSelected());
 		}
 		np = new NumberPanel(n);
 		np.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

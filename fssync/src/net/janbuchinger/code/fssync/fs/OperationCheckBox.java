@@ -10,7 +10,7 @@ public class OperationCheckBox extends JCheckBox implements ActionListener {
 	private final Operation operation;
 
 	public OperationCheckBox(Operation operation) {
-		super();
+		super("", operation.isSelected());
 		this.operation = operation;
 		addActionListener(this);
 	}
