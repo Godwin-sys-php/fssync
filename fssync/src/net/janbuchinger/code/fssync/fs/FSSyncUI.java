@@ -141,7 +141,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		} else {
 			long lenHelp = new File(docsDir, "help.html").length();
 			if (lenHelp <= 14828L) { // v0.4/v0.5 to v0.6
-				docsNames = new String[] { "res/help.html", "res/gui.png" };
+				docsNames = new String[] { "res/help.html", "res/gui.png", "res/settings.png" };
 			}
 		}
 		for (int i = 0; i < docsNames.length; i++) {
