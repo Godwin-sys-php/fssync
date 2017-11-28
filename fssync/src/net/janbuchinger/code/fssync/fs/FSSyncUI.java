@@ -131,15 +131,22 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			FSFx.hideWindowsFile(programDir);
 		}
 
+		String[] docsNames = new String[0];
+
 		if (!docsDir.exists()) {
 			docsDir.mkdir();
-			String[] names = new String[] { "res/about.html", "res/help.html",
-					"res/requestContinueRestore.png", "res/requestForeignFileHandling.png",
-					"res/requestSourceForRestore.png", "res/requestRestoreMode.png", "res/settings.png",
-					"res/gui.png", "res/disk-128.png" };
-			for (int i = 0; i < names.length; i++) {
-				FSFx.copyResourceFile(getClass(), names[i], new File(docsDir, new File(names[i]).getName()));
+			docsNames = new String[] { "res/about.html", "res/help.html", "res/requestContinueRestore.png",
+					"res/requestForeignFileHandling.png", "res/requestSourceForRestore.png",
+					"res/requestRestoreMode.png", "res/settings.png", "res/gui.png", "res/disk-128.png" };
+		} else {
+			long lenHelp = new File(docsDir, "help.html").length();
+			if (lenHelp <= 14828L) { // v0.4/v0.5 to v0.6
+				docsNames = new String[] { "res/help.html", "res/gui.png" };
 			}
+		}
+		for (int i = 0; i < docsNames.length; i++) {
+			FSFx.copyResourceFile(getClass(), docsNames[i],
+					new File(docsDir, new File(docsNames[i]).getName()));
 		}
 
 		URL aboutURL = null, helpURL = null;
