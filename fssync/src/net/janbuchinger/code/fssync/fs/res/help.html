@@ -43,6 +43,8 @@
 <p><b>Klick auf Nummer:</b> Operation zum Bearbeiten &ouml;ffnen.</p>
 <p><b>Klick auf Pfad:</b> Ordner im Dateiexplorer &ouml;ffnen.</p>
 <p><b>Klick auf Pfeil:</b> Operation ausf&uuml;hren.</p>
+<p><b>Checkbox Auswahl:</b> Operation zum Ausf&uuml;hren Ausw&auml;hlen.</p>
+<p><b>Oranger Rahmen:</b> Operation sollte ausgef&uuml;hrt werden.</p>
 
 <h2>II :: Einstellungen :: Bearbeiten &gt; Einstellungen...</h2>
 <img src="settings.png">
@@ -50,8 +52,11 @@
 <p><b>Viele Informationen w&auml;hrend der Synchronisation anzeigen:</b> Es wird Information zu jeder behandelten Datei angezeigt.</p>
 <p><b>Ordner f&uuml;r Logdateien:</b> Der Ordner in dem allenfalls Logdateien abgelegt werden sollen.</p>
 <p><b>Log immer Speichern:</b> Es wird am Ende jeder Synchronisation eine Logdatei gespeichert.</p>
-<p><b>Zusammenfassung vor &auml;nderung zeigen:</b> Es wird ein Dialog mit einer Zusammenfassung aller zu kopierenden und zu l&ouml;schenden Dateien angezeigt. Es besteht die M&ouml;glichkeit Dateien an/abzuw&auml;hlen, Konflikte zu bearbeiten und die Operation abzubrechen.</p>
+<p><b>Zusammenfassung vor &Auml;nderung zeigen:</b> Es wird ein Dialog mit einer Zusammenfassung aller zu kopierenden und zu l&ouml;schenden Dateien angezeigt. Es besteht die M&ouml;glichkeit Dateien an/abzuw&auml;hlen, Konflikte zu bearbeiten und die Operation abzubrechen.</p>
 <p><b>Dateibrowser:</b> Das Kommando um einen Dateiexplorer zu &ouml;ffnen.</p>
+<p><b>Als Tray Icon Starten:</b> Das Programm startet und wird als Trayicon angezeigt anstelle davon dass das Programmfenster ge&ouml;ffnet wird.</p>
+<p><b>Ins Tray Schliessen:</b> Das Programm wird beim Schliessen des Fensters im Traymen&uuml; fortgesetzt anstatt zu enden.</p>
+<p><b>Ins Tray Minimieren:</b> Das Programmfenster wird beim Minimieren versteckt und das Trayicon wird angezeigt.</p>
 
 <h2>IIIa :: Neues Segment Anlegen :: Segmente &gt; Segment hinzuf&uuml;gen...</h2>
 <p>Es erscheint ein Dialog der einen Namen fordert. Optional k&ouml;nnen Synchronisationsoperationen hinzugef&uuml;gt, ver&auml;ndert oder entfernt werden.</p>
@@ -61,7 +66,7 @@
 <p><b>Quelle:</b> das Quellverzeichnis.</p>
 <p><b>Ziel:</b> das Zielverzeichnis dessen Inhalt mit dem Inhalt des Quellverzeichnisses synchronisiert werden soll.</p>
 <h3>Ausnahmen</h3>
-<p><b>Liste:</b> Verzeichnisse welche von der Synchronisation auszuschliessen sind. Die Eintr&auml;ge sind relativ zum Quellverzeichnis.</p>
+<p><b>Liste:</b> Verzeichnisse welche von der Synchronisation auszuschliessen sind. Die Eintr&auml;ge sind relativ zum Quellverzeichnis. Die Ausnahmen, die beim Speichern der Operation nicht mehr im Dateisysten existieren werden automatisch aus der Liste gel&ouml;scht.</p>
 <p><b>+ Button:</b> Verzeichnis Hinzuf&uuml;gen.</p>
 <p><b>- Button:</b> Ausgew&auml;hltes Verzeichnis L&ouml;schen.</p>
 <h3>Optionen</h3>
@@ -73,6 +78,10 @@
 <p><b>Neu:</b> Es wird die neuere Datei bevorzugt.</p>
 <p><b>Alt:</b> Es wird die &auml;ltere Datei bevorzugt.</p>
 <p><b>&Auml;nderungsdatum ignorieren wenn Pr&uuml;fsumme und L&auml;nge gleichgeblieben:</b> Es werden Dateien deren Modifikationsdatum nicht mit dem zuletzt synchronisierten Datum &uuml;bereinstimmt zus&auml;tzlich anhand der Dateigr&ouml;sse und einer Pr&uuml;fsumme verglichen. Wenn sie identisch scheint wird sie ignoriert.</p>
+<h3>Timing</h3>
+<p><b>Letzte Synchronisierung:</b> Der Zeitpunkt der letzten Synchronisierung.</p>
+<p><b>Intervall:</b> Das Intervall in Tagen, Stunden oder Minuten in dem die Operation ausgeführt werden sollte. "0" wenn sie nie fällig werden soll.</p>
+<p><b>Erinnern:</b> Es wird eine Nachricht aus dem Trayicon angezeigt wenn die Operation f&auml;llig wird. Wenn Intervall "0" ist dann wird Erinnern automatisch ausgeschaltet.</p>
 <h2>IIIc :: Operation L&ouml;schen :: - Button</h2>
 <p>In der Liste ausgew&auml;hlte Operation wird gel&ouml;scht.</p>
 <h2>IIId :: Operation Bearbeiten :: Doppelklick auf Liste</h2>
