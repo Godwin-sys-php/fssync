@@ -264,7 +264,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		c.gridy++;
 		c.gridx = 0;
 		c.gridwidth = 1;
-		pnTiming.add(new JLabel("Intervall (Tage)"), c);
+		pnTiming.add(new JLabel("Intervall"), c);
 		c.weightx = 1;
 		c.gridx++;
 		pnTiming.add(tfInterval, c);
