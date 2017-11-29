@@ -117,7 +117,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 		click = 0;
 
-		frm = new JFrame("FSSync 0.5a");
+		frm = new JFrame("FSSync 0.6a");
 		frm.addWindowListener(this);
 		frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -147,7 +147,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		} else {
 			long lenHelp = new File(docsDir, "help.html").length();
 			if (lenHelp <= 14828L) { // v0.4/v0.5 to v0.6
-				docsNames = new String[] { "res/help.html", "res/gui.png", "res/settings.png" };
+				docsNames = new String[] { "res/help.html", "res/about.html", "res/gui.png", "res/settings.png" };
 			}
 		}
 		for (int i = 0; i < docsNames.length; i++) {
