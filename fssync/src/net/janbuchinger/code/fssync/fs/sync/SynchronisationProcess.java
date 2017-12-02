@@ -504,7 +504,7 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						while (fileIterator.hasNext()) {
 							file = fileIterator.next();
 							deleteActions.add(new DeleteAction(file, file.getAbsolutePath().substring(
-									destinationBasePathLengthPlusOne), DeleteAction.del_destination));
+									destinationBasePathLengthPlusOne), DeleteAction.del_destination, false));
 						}
 						fileIterator = changedForeignFiles.iterator();
 						while (fileIterator.hasNext()) {
@@ -611,11 +611,11 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					remoteFileExists = new File(operation.getRemotePath(), file_db.getRelativePath()).exists();
 					if (!sourceFileExists && remoteFileExists) {
 						deleteActions.add(new DeleteAction(new File(operation.getRemotePath(), file_db
-								.getRelativePath()), file_db.getRelativePath(), DeleteAction.del_destination));
+								.getRelativePath()), file_db.getRelativePath(), DeleteAction.del_destination, false));
 					} else if (!remoteFileExists && sourceFileExists) {
 						if (isBiDirectional)
 							deleteActions.add(new DeleteAction(new File(operation.getSourcePath(), file_db
-									.getRelativePath()), file_db.getRelativePath(), DeleteAction.del_source));
+									.getRelativePath()), file_db.getRelativePath(), DeleteAction.del_source, false));
 					} else if (!sourceFileExists && !remoteFileExists) {
 						SwingUtilities.invokeLater(new RunStatusUpdate("Datei verschwunden! Lösche Eintrag: "
 								+ file_db.getRelativePath(), true, spd));

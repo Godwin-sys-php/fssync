@@ -28,10 +28,13 @@ public class DeleteAction {
 
 	private final String relativePath;
 
-	public DeleteAction(File f, String relativePath, int location) {
+	private final boolean modeRestore;
+
+	public DeleteAction(File f, String relativePath, int location, boolean modeRestore) {
 		this.location = location;
 		this.f = f;
 		this.relativePath = relativePath;
+		this.modeRestore = modeRestore;
 
 		isSelected = true;
 	}
@@ -54,7 +57,14 @@ public class DeleteAction {
 
 	@Override
 	public String toString() {
-		return "löschen" + (location == del_destination ? " >> x " : " x << ") + relativePath;
+		String s = (!isSelected && !modeRestore ? "kopieren" : "löschen");
+		if (modeRestore && !isSelected)
+			s += " >< ";
+		else
+			s += (isSelected ? (location == del_destination ? " >> x " : " x << ")
+					: (location == del_destination ? " << " : " >> "));
+		s += relativePath;
+		return s;
 	}
 
 	public String getRelativePath() {

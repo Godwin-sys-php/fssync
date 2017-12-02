@@ -292,7 +292,7 @@ public class RestorationProcess extends SwingWorker<Void, Void> implements Prope
 						rf = db.getFileByPath(f.getPath().substring(sourceBasePathLengthPlusOne));
 						if (rf == null) {
 							deleteActions.add(new DeleteAction(f, f.getPath().substring(
-									sourceBasePathLengthPlusOne), DeleteAction.del_source));
+									sourceBasePathLengthPlusOne), DeleteAction.del_source, true));
 						}
 						if (spd.isCancelled()) {
 							SwingUtilities.invokeLater(new RunStatusUpdate("# Operation Abgebrochen", false,

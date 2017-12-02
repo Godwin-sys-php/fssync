@@ -80,6 +80,6 @@ public final class CopyAction {
 
 	@Override
 	public String toString() {
-		return (isNew ? "neu" : "mod") + (direction == DIR_BACKUP ? " >> " : " << ") + relativePath;
+		return (isNew ? "neu" : "mod") + (isSelected ? (direction == DIR_BACKUP ? " >> " : " << ") : " >< ") + relativePath;
 	}
 }
