@@ -59,6 +59,9 @@ public final class OperationSummary {
 	private final Vector<DeleteAction> deleteActions;
 
 	private final SynchronisationProcessDialog spd;
+	
+	private int nCopyActionsSelected;
+	private int nDeleteActionsSelected;
 
 	private final boolean isRestore;
 
@@ -77,6 +80,9 @@ public final class OperationSummary {
 		this.deleteActions = deleteActions;
 
 		this.isRestore = isRestore;
+		
+		nCopyActionsSelected = 0;
+		nDeleteActionsSelected = 0;
 
 		updateSizeSourceNew = 0;
 		updateSizeDestinationNew = 0;
@@ -97,14 +103,11 @@ public final class OperationSummary {
 		CopyAction copyAction1;
 		CopyAction copyAction2;
 
-		// CopyAction conflict;
-
 		while (i1 < copyActions.size()) {
 			copyAction1 = copyActions.get(i1);
 			relativePath = copyAction1.getRelativePath();
 			iCopyActions = copyActions.iterator();
 			i2 = 0;
-			// conflict = null;
 			while (iCopyActions.hasNext()) {
 				copyAction2 = iCopyActions.next();
 				if (i2 <= i1) {
@@ -140,6 +143,9 @@ public final class OperationSummary {
 		Iterator<CopyAction> iCopyActions = copyActions.iterator();
 		CopyAction copyAction;
 
+		nCopyActionsSelected = 0;
+		nDeleteActionsSelected = 0;
+		
 		updateSizeSourceNew = 0;
 		updateSizeSourceModified = 0;
 		updateSizeSourceModifiedOld = 0;
@@ -154,6 +160,7 @@ public final class OperationSummary {
 			copyAction = iCopyActions.next();
 			if (!copyAction.isSelected())
 				continue;
+			nCopyActionsSelected++;
 			if (copyAction.getDirection() == CopyAction.DIR_RESTORE) {
 				if (copyAction.isNew()) {
 					updateSizeSourceNew += copyAction.getSource().length();
@@ -178,10 +185,20 @@ public final class OperationSummary {
 		DeleteAction deleteAction;
 		while (iDeleteActions.hasNext()) {
 			deleteAction = iDeleteActions.next();
-			if (deleteAction.getLocation() == DeleteAction.del_source) {
-				rmSizeSource += deleteAction.getFile().length();
+			if(deleteAction.isSelected()){
+				nDeleteActionsSelected++;
+				if (deleteAction.getLocation() == DeleteAction.del_source) {
+					rmSizeSource += deleteAction.getFile().length();
+				} else {
+					rmSizeDestination += deleteAction.getFile().length();
+				}
 			} else {
-				rmSizeDestination += deleteAction.getFile().length();
+				nCopyActionsSelected++;
+				if (deleteAction.getLocation() == DeleteAction.del_source) {
+					updateSizeDestinationNew += deleteAction.getFile().length();
+				} else {
+					updateSizeSourceNew += deleteAction.getFile().length();
+				}
 			}
 			if (spd.isCancelled()) {
 				throw new SpiderCancelledException();
@@ -302,62 +319,90 @@ public final class OperationSummary {
 
 	public void addDestinationNew(long length) {
 		updateSizeDestinationNew += length;
+		nCopyActionsSelected++;
 	}
 
 	public void addDestinationModified(long length, long lengthOld) {
 		updateSizeDestinationModified += length;
 		updateSizeDestinationModifiedOld += lengthOld;
+		nCopyActionsSelected++;
 	}
 
 	public void removeDestinationNew(long length) {
 		updateSizeDestinationNew -= length;
+		nCopyActionsSelected--;
 	}
 
 	public void removeDestinationModified(long length, long lengthOld) {
 		updateSizeDestinationModified -= length;
 		updateSizeDestinationModifiedOld -= lengthOld;
+		nCopyActionsSelected--;
 	}
 
 	public void addSourceNew(long length) {
 		updateSizeSourceNew += length;
+		nCopyActionsSelected++;
 	}
 
 	public void addSourceModified(long length, long lengthOld) {
 		updateSizeSourceModified += length;
 		updateSizeSourceModifiedOld += lengthOld;
+		nCopyActionsSelected++;
 	}
 
 	public void removeSourceNew(long length) {
 		updateSizeSourceNew -= length;
+		nCopyActionsSelected--;
 	}
 
 	public void removeSourceModified(long length, long lengthOld) {
 		updateSizeSourceModified -= length;
 		updateSizeSourceModifiedOld -= lengthOld;
+		nCopyActionsSelected--;
 	}
 
 	public void addRmDestination(long length) {
 		rmSizeDestination += length;
-		if (!isRestore)
+		if (!isRestore){
 			updateSizeSourceNew -= length;
+			nDeleteActionsSelected++;
+			nCopyActionsSelected--;
+		}
 	}
 
 	public void addRmSource(long length) {
 		rmSizeSource += length;
-		if (!isRestore)
+		if (!isRestore){
 			updateSizeDestinationNew -= length;
+			nDeleteActionsSelected++;
+			nCopyActionsSelected--;
+		}
 	}
 
 	public void removeRmDestination(long length) {
 		rmSizeDestination -= length;
-		if (!isRestore)
+		if (!isRestore){
 			updateSizeSourceNew += length;
+			nDeleteActionsSelected--;
+			nCopyActionsSelected++;
+		}
 	}
 
 	public void removeRmSource(long length) {
 		rmSizeSource -= length;
-		if (!isRestore)
+		if (!isRestore){
 			updateSizeDestinationNew += length;
+			nDeleteActionsSelected--;
+			nCopyActionsSelected++;
+		}
+	}
+
+	public final int getnCopyActionsSelected() {
+		return nCopyActionsSelected;
+	}
+
+	public final int getnDeleteActionsSelected() {
+		return nDeleteActionsSelected;
 	}
 
 	public final boolean shouldDisplayDialog() {
