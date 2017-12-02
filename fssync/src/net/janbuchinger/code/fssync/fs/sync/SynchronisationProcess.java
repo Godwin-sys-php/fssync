@@ -681,8 +681,8 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					}
 				}
 
-				if (deleteActions.size() > 0)
-					SwingUtilities.invokeLater(new RunStatusUpdate("# " + deleteActions.size()
+				if (operationSummary.getnDeleteActionsSelected() > 0)
+					SwingUtilities.invokeLater(new RunStatusUpdate("# " + operationSummary.getnDeleteActionsSelected()
 							+ " Dateien Löschen", false, spd));
 				iDeleteActions = deleteActions.iterator();
 				while (iDeleteActions.hasNext()) {
@@ -765,8 +765,8 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				}
 
 				SwingUtilities.invokeLater(new RunSetDeterminate(true, spd));
-				if (copyActions.size() > 0)
-					SwingUtilities.invokeLater(new RunStatusUpdate("# " + copyActions.size()
+				if (operationSummary.getnCopyActionsSelected() > 0)
+					SwingUtilities.invokeLater(new RunStatusUpdate("# " + operationSummary.getnCopyActionsSelected()
 							+ " Dateien kopieren", false, spd));
 
 				updateSize = operationSummary.getUpdateSizeTotal();
