@@ -59,18 +59,6 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 	private final String syncTitle;
 
-	/**
-	 * Instantiation of <code>SynchronisationProcess</code>
-	 * 
-	 * @param segments
-	 *            The complete segments list.
-	 * @param runSegment
-	 *            A boolean array that indicates the segment/s to be run.
-	 * @param settings
-	 *            The <code>Settings</code>.
-	 * @param spd
-	 *            A <code>SynchronisationProcessDialog</code>.
-	 */
 	public SynchronisationProcess(Vector<Operation> operations, String syncTitle, Settings settings,
 			SynchronisationProcessDialog spd) {
 		// this.runSegment = runSegment;
@@ -90,10 +78,14 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 		boolean changed = false;
 
+		long syncStart = System.currentTimeMillis();
 		try {
 			// Iterator<Segment> iSeg = segments.iterator();
 			// int segCounter = 0;
 			// Segment segment;
+
+//			long syncStart;
+			long opStart;
 
 			Iterator<Operation> iOp;
 			Operation operation;
@@ -199,11 +191,13 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					SwingUtilities.invokeLater(new RunStatusUpdate("# # # " + syncTitle + " Ausführen", false,
 							spd));
 
+
 			/*
 			 * loop through the operations
 			 */
 			iOp = operations.iterator();
 			while (iOp.hasNext()) {
+				opStart = System.currentTimeMillis();
 				/*
 				 * set the current operation, continue if operation is offline
 				 */
@@ -919,10 +913,14 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 				if (!changed) {
 					SwingUtilities.invokeLater(new RunStatusUpdate("# # Keine " + GC.Ae()
-							+ "nderungen Gefunden", false, spd));
+							+ "nderungen Gefunden nach "
+							+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - opStart),
+							false, spd));
 				} else {
 					SwingUtilities.invokeLater(new RunStatusUpdate("# # Alle " + GC.Ae()
-							+ "nderungen Angewandt", false, spd));
+							+ "nderungen Angewandt nach "
+							+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - opStart),
+							false, spd));
 					db.incrementVersion();
 				}
 				try {
@@ -938,9 +936,13 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 			}
 
 			removePropertyChangeListener(this);
-			SwingUtilities.invokeLater(new RunFinished("# # # Alles Erledigt", null, spd));
+			SwingUtilities.invokeLater(new RunFinished("# # # Alles Erledigt nach "
+					+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - syncStart), null,
+					spd));
 		} catch (Exception e) {
-			SwingUtilities.invokeLater(new RunFinished("# Fehler: " + e.getMessage(), e, spd));
+			SwingUtilities.invokeLater(new RunFinished("# Fehler nach "
+					+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - syncStart) + " : "
+					+ e.getMessage(), e, spd));
 			try {
 				if (dbEdit != null && dbDestination != null) {
 					if (changed)
@@ -978,7 +980,7 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 			e.printStackTrace();
 		}
 	}
-
+	
 	// process() is not used because the output became disordered
 	// @Override
 	// protected void process(List<StatusMessage> chunks) {
