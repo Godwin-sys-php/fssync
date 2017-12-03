@@ -5,6 +5,8 @@ Bugs
 
 Improvements
 -opening directories with spaces in browser should now work
+-showing now how long the SynchronisationProcess lasted
+-Copy / Delete Action labels make more sense when unselected
 
 New Features
 -updating documents upon new version
