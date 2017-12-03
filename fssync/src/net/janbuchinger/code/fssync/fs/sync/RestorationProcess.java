@@ -326,10 +326,12 @@ public class RestorationProcess extends SwingWorker<Void, Void> implements Prope
 				while (iDeleteActions.hasNext()) {
 					da = iDeleteActions.next();
 					if (da.isSelected()) {
+						changed = true;
 						da.getFile().delete();
 						SwingUtilities.invokeLater(new RunStatusUpdate(da.toString(), true, spd));
 					}
 				}
+				
 				enoughSpace = true;
 
 				while (operation.getSource().getFreeSpace() < (updateSize - updateSizeOverwrite)) {

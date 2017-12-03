@@ -244,7 +244,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			trayIcon.addMouseListener(this);
 			tray = SystemTray.getSystemTray();
 			trayPopup = new PopupMenu();
-			tiExit = new MenuItem("Schliessen");
+			tiExit = new MenuItem("Beenden");
 			tiExit.addActionListener(this);
 			tiRunAll = new MenuItem("Alle Ausführen");
 			tiRunAll.addActionListener(this);
