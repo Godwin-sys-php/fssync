@@ -790,6 +790,10 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 								continue;
 							if ((ix == 0 && !copyAction.isNew()) || (ix == 1 && copyAction.isNew())) {
 								changed = true;
+								SwingUtilities.invokeLater(new RunStatusUpdate("Kopiere "
+										+ copyAction.toString(), true, spd));
+								FileUtils.copyFile(copyAction.getSource(), copyAction.getDestination());
+								copied += copyAction.getSource().length();
 								if (copyAction.isNew()) {
 									db.add(new RelativeFile(copyAction.getRelativePath(), copyAction
 											.getSource().length(), copyAction.getSource().lastModified(),
@@ -802,10 +806,6 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 											.getSource().length(), copyAction.getSource().lastModified(),
 											FSSync.getChecksum(copyAction.getSource())));
 								}
-								SwingUtilities.invokeLater(new RunStatusUpdate("Kopiere "
-										+ copyAction.toString(), true, spd));
-								FileUtils.copyFile(copyAction.getSource(), copyAction.getDestination());
-								copied += copyAction.getSource().length();
 								try {
 									setProgress((int) ((100.0 / updateSize) * copied));
 								} catch (IllegalArgumentException e) {
