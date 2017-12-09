@@ -53,15 +53,12 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 	private final Vector<Operation> operations;
 
-	// private final boolean[] runSegment;
-
 	private final boolean showSummary;
 
 	private final String syncTitle;
 
 	public SynchronisationProcess(Vector<Operation> operations, String syncTitle, Settings settings,
 			SynchronisationProcessDialog spd) {
-		// this.runSegment = runSegment;
 		this.operations = operations;
 		this.syncTitle = syncTitle;
 		this.spd = spd;
@@ -69,7 +66,6 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 		showSummary = settings.isShowSummary();
 	}
 
-	// @SuppressWarnings("unused")
 	@Override
 	protected final Void doInBackground() throws Exception {
 
@@ -80,11 +76,6 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 		long syncStart = System.currentTimeMillis();
 		try {
-			// Iterator<Segment> iSeg = segments.iterator();
-			// int segCounter = 0;
-			// Segment segment;
-
-//			long syncStart;
 			long opStart;
 
 			Iterator<Operation> iOp;
@@ -188,9 +179,8 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 			if (syncTitle != null)
 				if (!syncTitle.equals(""))
-					SwingUtilities.invokeLater(new RunStatusUpdate("# # # " + syncTitle + " Ausführen", false,
-							spd));
-
+					SwingUtilities
+							.invokeLater(new RunStatusUpdate("# # # " + syncTitle + " Ausführen", false, spd));
 
 			/*
 			 * loop through the operations
@@ -203,20 +193,19 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				 */
 				operation = iOp.next();
 				if (!operation.isOnline()) {
-					SwingUtilities.invokeLater(new RunStatusUpdate("# # Operation offline "
-							+ operation.toString(), false, spd));
+					SwingUtilities.invokeLater(
+							new RunStatusUpdate("# # Operation offline " + operation.toString(), false, spd));
 					continue;
 				}
 
-				SwingUtilities.invokeLater(new RunStatusUpdate("# # Operation " + operation.toString(), false,
-						spd));
+				SwingUtilities
+						.invokeLater(new RunStatusUpdate("# # Operation " + operation.toString(), false, spd));
 				SwingUtilities.invokeLater(new RunStatusTextUpdate("Analysieren...", spd));
 				SwingUtilities.invokeLater(new RunSetDeterminate(false, spd));
 
 				changed = false;
 				isBiDirectional = operation.isSyncBidirectional();
 
-				// dbEdit = new File(operation.getSource(), ".fs.db.tmp");
 				dbEdit = OnlineDB.getCorrectFile(operation.getSource().listFiles(new EditDBsFilenameFilter()),
 						operation.getDbOriginal());
 				dbDestination = new File(operation.getRemotePath(), ".fs.db");
@@ -228,7 +217,6 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					}
 					FileUtils.copyFile(dbDestination, dbEdit);
 				}
-				// FileUtils.copyFile(dbDestination, dbEdit);
 				db = new OnlineDB(dbEdit);
 
 				copyActions = new Vector<CopyAction>();
@@ -266,21 +254,22 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				iRemoteFiles = remoteFiles.iterator();
 
 				SwingUtilities.invokeLater(new RunSetDeterminate(true, spd));
-				SwingUtilities.invokeLater(new RunStatusUpdate("# Fehlersuche und Erkennung von " + GC.Ae()
-						+ "nderungen im Zieldateisystem", false, spd));
+				SwingUtilities.invokeLater(new RunStatusUpdate(
+						"# Fehlersuche und Erkennung von " + GC.Ae() + "nderungen im Zieldateisystem", false,
+						spd));
 
 				nRemoteFiles = remoteFiles.size();
 				counter = 0;
 
 				while (iRemoteFiles.hasNext()) {
 					file_destination = iRemoteFiles.next();
-					relativePath = file_destination.getAbsolutePath().substring(
-							destinationBasePathLengthPlusOne);
+					relativePath = file_destination.getAbsolutePath()
+							.substring(destinationBasePathLengthPlusOne);
 					if (relativePath.startsWith(".fs.") && relativePath.endsWith(".db")) {
 						continue;
 					}
-					file_db = db.getFileByPath(file_destination.getAbsolutePath().substring(
-							destinationBasePathLengthPlusOne));
+					file_db = db.getFileByPath(
+							file_destination.getAbsolutePath().substring(destinationBasePathLengthPlusOne));
 					if (file_db != null) {
 
 						file_source = new File(operation.getSourcePath(), file_db.getRelativePath());
@@ -334,19 +323,18 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 							if (operation.isIgnoreModifiedWhenEqual()) {
 								if (checksum_db.equals(checksum_destination)
 										&& length_db == length_destination) {
-									SwingUtilities
-											.invokeLater(new RunStatusUpdate(
-													"Modifikationsdatum ignoriert! Ziel: "
-															+ df.format(modified_destination) + " db: "
-															+ df.format(modified_db) + " "
-															+ file_db.getRelativePath(), true, spd));
+									SwingUtilities.invokeLater(new RunStatusUpdate(
+											"Modifikationsdatum ignoriert! Ziel: "
+													+ df.format(modified_destination) + " db: "
+													+ df.format(modified_db) + " " + file_db.getRelativePath(),
+											true, spd));
 									continue;
 								}
 							}
 							changedForeignFiles.add(file_destination);
 							if (!isBiDirectional) {
-								SwingUtilities.invokeLater(new RunStatusUpdate("Fremd Geändert "
-										+ file_destination.getAbsolutePath(), false, spd));
+								SwingUtilities.invokeLater(new RunStatusUpdate(
+										"Fremd Geändert " + file_destination.getAbsolutePath(), false, spd));
 							}
 						} else {
 							if (!checksum_db.equals(checksum_destination) || length_db != length_destination) {
@@ -373,8 +361,8 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					} else {
 						newForeignFiles.add(file_destination);
 						if (!isBiDirectional)
-							SwingUtilities.invokeLater(new RunStatusUpdate("Fremd Neu "
-									+ file_destination.getAbsolutePath(), false, spd));
+							SwingUtilities.invokeLater(new RunStatusUpdate(
+									"Fremd Neu " + file_destination.getAbsolutePath(), false, spd));
 					}
 					counter++;
 					setProgress((int) ((100.0 / nRemoteFiles) * counter));
@@ -388,8 +376,9 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				SwingUtilities.invokeLater(new RunSetDeterminate(false, spd));
 
 				if (emptyDirs.size() > 0) {
-					SwingUtilities.invokeLater(new RunStatusUpdate("# " + emptyDirs.size()
-							+ " Leere Verzeichnisse L" + GC.oe() + "schen", false, spd));
+					SwingUtilities.invokeLater(new RunStatusUpdate(
+							"# " + emptyDirs.size() + " Leere Verzeichnisse L" + GC.oe() + "schen", false,
+							spd));
 
 					fileIterator = emptyDirs.iterator();
 					while (fileIterator.hasNext()) {
@@ -398,16 +387,18 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						do {
 							if (file.listFiles().length == 0) {
 								file.delete();
-								SwingUtilities.invokeLater(new RunStatusUpdate("Leeres Verzeichnis L"
-										+ GC.oe() + "schen " + file.getAbsolutePath(), true, spd));
+								SwingUtilities.invokeLater(new RunStatusUpdate(
+										"Leeres Verzeichnis L" + GC.oe() + "schen " + file.getAbsolutePath(),
+										true, spd));
 								file = file.getParentFile();
 							} else
 								hold = true;
 						} while (!hold);
 						if (spd.isCancelled()) {
-							cancelSync("# W" + GC.ae() + "hrend des L" + GC.oe()
-									+ "schens Leerer Verzeichnisse Abgebrochen!", dbEdit, dbDestination,
-									changed);
+							cancelSync(
+									"# W" + GC.ae() + "hrend des L" + GC.oe()
+											+ "schens Leerer Verzeichnisse Abgebrochen!",
+									dbEdit, dbDestination, changed);
 							return null;
 						}
 					}
@@ -417,9 +408,9 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 				if ((corruptedFilesDestination.size() + corruptedFilesSource.size() + lostFiles.size()) > 0) {
 
-					SwingUtilities.invokeLater(new RunStatusUpdate("# "
-							+ (corruptedFilesDestination.size() + corruptedFilesSource.size() + lostFiles
-									.size()) + " korrupte Dateien Gefunden", false, spd));
+					SwingUtilities.invokeLater(new RunStatusUpdate("# " + (corruptedFilesDestination.size()
+							+ corruptedFilesSource.size() + lostFiles.size()) + " korrupte Dateien Gefunden",
+							false, spd));
 
 					getContinueRestore = new GetContinueRestore(spd);
 					SwingUtilities.invokeAndWait(getContinueRestore);
@@ -431,15 +422,15 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 							file = fileIterator.next();
 							relativePath = file.getAbsolutePath().substring(destinationBasePathLengthPlusOne);
 							file2 = new File(operation.getSourcePath(), relativePath);
-							copyActions.add(new CopyAction(file2, file, relativePath, false,
-									CopyAction.DIR_BACKUP));
+							copyActions.add(
+									new CopyAction(file2, file, relativePath, false, CopyAction.DIR_BACKUP));
 							SwingUtilities.invokeLater(new RunStatusUpdate(
 									"Zieldatei zum Wiederherstellen Einreihen " + file.getAbsolutePath(),
 									false, spd));
 							if (spd.isCancelled()) {
-								cancelSync("# W" + GC.ae()
-										+ "hrend des Einreihens von Zieldateien Abgebrochen!", dbEdit,
-										dbDestination, changed);
+								cancelSync(
+										"# W" + GC.ae() + "hrend des Einreihens von Zieldateien Abgebrochen!",
+										dbEdit, dbDestination, changed);
 								return null;
 							}
 						}
@@ -448,15 +439,15 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 							file = fileIterator.next();
 							relativePath = file.getAbsolutePath().substring(sourceBasePathLengthPlusOne);
 							file2 = new File(operation.getRemotePath(), relativePath);
-							copyActions.add(new CopyAction(file2, file, relativePath, false,
-									CopyAction.DIR_RESTORE));
+							copyActions.add(
+									new CopyAction(file2, file, relativePath, false, CopyAction.DIR_RESTORE));
 							SwingUtilities.invokeLater(new RunStatusUpdate(
 									"Quelldatei zum Wiederherstellen Einreihen " + file.getAbsolutePath(),
 									false, spd));
 							if (spd.isCancelled()) {
-								cancelSync("# W" + GC.ae()
-										+ "hrend des Einreihens von Quelldateien Abgebrochen!", dbEdit,
-										dbDestination, changed);
+								cancelSync(
+										"# W" + GC.ae() + "hrend des Einreihens von Quelldateien Abgebrochen!",
+										dbEdit, dbDestination, changed);
 								return null;
 							}
 						}
@@ -464,25 +455,24 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						fileIterator = corruptedFilesDestination.iterator();
 						while (fileIterator.hasNext()) {
 							file = fileIterator.next();
-							SwingUtilities.invokeLater(new RunStatusUpdate("Zieldatei fehlerhaft "
-									+ file.getAbsolutePath(), false, spd));
+							SwingUtilities.invokeLater(new RunStatusUpdate(
+									"Zieldatei fehlerhaft " + file.getAbsolutePath(), false, spd));
 						}
 						fileIterator = corruptedFilesSource.iterator();
 						while (fileIterator.hasNext()) {
 							file = fileIterator.next();
-							SwingUtilities.invokeLater(new RunStatusUpdate("Quelldatei fehlerhaft "
-									+ file.getAbsolutePath(), false, spd));
+							SwingUtilities.invokeLater(new RunStatusUpdate(
+									"Quelldatei fehlerhaft " + file.getAbsolutePath(), false, spd));
 						}
 						fileIterator = lostFiles.iterator();
 						while (fileIterator.hasNext()) {
 							file = fileIterator.next();
-							relativePath = file
-									.getAbsolutePath()
-									.substring(
-											file.getAbsolutePath().startsWith(operation.getRemotePath()) ? destinationBasePathLengthPlusOne
-													: sourceBasePathLengthPlusOne);
-							SwingUtilities.invokeLater(new RunStatusUpdate("Ziel- und Quelldatei fehlerhaft "
-									+ relativePath, false, spd));
+							relativePath = file.getAbsolutePath()
+									.substring(file.getAbsolutePath().startsWith(operation.getRemotePath())
+											? destinationBasePathLengthPlusOne
+											: sourceBasePathLengthPlusOne);
+							SwingUtilities.invokeLater(new RunStatusUpdate(
+									"Ziel- und Quelldatei fehlerhaft " + relativePath, false, spd));
 						}
 						cancelOp("# Operation Abgebrochen", dbEdit, dbDestination, changed);
 						break;
@@ -503,16 +493,17 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						fileIterator = newForeignFiles.iterator();
 						while (fileIterator.hasNext()) {
 							file = fileIterator.next();
-							deleteActions.add(new DeleteAction(file, file.getAbsolutePath().substring(
-									destinationBasePathLengthPlusOne), DeleteAction.del_destination, false));
+							deleteActions.add(new DeleteAction(file,
+									file.getAbsolutePath().substring(destinationBasePathLengthPlusOne),
+									DeleteAction.del_destination, false));
 						}
 						fileIterator = changedForeignFiles.iterator();
 						while (fileIterator.hasNext()) {
 							file = fileIterator.next();
 							relativePath = file.getAbsolutePath().substring(destinationBasePathLengthPlusOne);
 							file2 = new File(operation.getSourcePath(), relativePath);
-							copyActions.add(new CopyAction(file2, file, relativePath, false,
-									CopyAction.DIR_BACKUP));
+							copyActions.add(
+									new CopyAction(file2, file, relativePath, false, CopyAction.DIR_BACKUP));
 						}
 					} // else ignore
 				}
@@ -521,17 +512,15 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					while (fileIterator.hasNext()) {
 						file = fileIterator.next();
 						relativePath = file.getAbsolutePath().substring(destinationBasePathLengthPlusOne);
-						copyActions.add(new CopyAction(file,
-								new File(operation.getSourcePath(), relativePath), relativePath, true,
-								CopyAction.DIR_RESTORE));
+						copyActions.add(new CopyAction(file, new File(operation.getSourcePath(), relativePath),
+								relativePath, true, CopyAction.DIR_RESTORE));
 					}
 					fileIterator = changedForeignFiles.iterator();
 					while (fileIterator.hasNext()) {
 						file = fileIterator.next();
 						relativePath = file.getAbsolutePath().substring(destinationBasePathLengthPlusOne);
-						copyActions.add(new CopyAction(file,
-								new File(operation.getSourcePath(), relativePath), relativePath, false,
-								CopyAction.DIR_RESTORE));
+						copyActions.add(new CopyAction(file, new File(operation.getSourcePath(), relativePath),
+								relativePath, false, CopyAction.DIR_RESTORE));
 					}
 				}
 
@@ -561,8 +550,8 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				SwingUtilities.invokeLater(new RunSetDeterminate(true, spd));
 				while (iSourceFiles.hasNext()) {
 					sourceFile = iSourceFiles.next();
-					file_db = db.getFileByPath(sourceFile.getAbsolutePath().substring(
-							sourceBasePathLengthPlusOne));
+					file_db = db.getFileByPath(
+							sourceFile.getAbsolutePath().substring(sourceBasePathLengthPlusOne));
 					if (file_db != null) {
 						modified_source = sourceFile.lastModified();
 						modified_db = file_db.getModified();
@@ -570,12 +559,11 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 							if (operation.isIgnoreModifiedWhenEqual()) {
 								if (file_db.getChecksum().equals(FSSync.getChecksum(sourceFile))
 										&& file_db.getLength() == sourceFile.length()) {
-									SwingUtilities
-											.invokeLater(new RunStatusUpdate(
-													"Modifikationsdatum ignoriert! Quelle: "
-															+ df.format(modified_source) + " db: "
-															+ df.format(modified_db) + " "
-															+ file_db.getRelativePath(), true, spd));
+									SwingUtilities.invokeLater(new RunStatusUpdate(
+											"Modifikationsdatum ignoriert! Quelle: "
+													+ df.format(modified_source) + " db: "
+													+ df.format(modified_db) + " " + file_db.getRelativePath(),
+											true, spd));
 									continue;
 								}
 							}
@@ -586,13 +574,14 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						}
 					} else {
 						relativePath = sourceFile.getAbsolutePath().substring(sourceBasePathLengthPlusOne);
-						copyActions.add(new CopyAction(sourceFile, new File(operation.getRemotePath(),
-								relativePath), relativePath, true, CopyAction.DIR_BACKUP));
+						copyActions.add(
+								new CopyAction(sourceFile, new File(operation.getRemotePath(), relativePath),
+										relativePath, true, CopyAction.DIR_BACKUP));
 					}
 					if (spd.isCancelled()) {
-						cancelSync("# W" + GC.ae()
-								+ "hrend des Analysierens des Quelldateisystems Abgebrochen!", dbEdit,
-								dbDestination, changed);
+						cancelSync(
+								"# W" + GC.ae() + "hrend des Analysierens des Quelldateisystems Abgebrochen!",
+								dbEdit, dbDestination, changed);
 						return null;
 					}
 					setProgress((int) ((100.0 / nSourceFiles) * countSourceFiles++));
@@ -610,32 +599,28 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					sourceFileExists = new File(operation.getSourcePath(), file_db.getRelativePath()).exists();
 					remoteFileExists = new File(operation.getRemotePath(), file_db.getRelativePath()).exists();
 					if (!sourceFileExists && remoteFileExists) {
-						deleteActions.add(new DeleteAction(new File(operation.getRemotePath(), file_db
-								.getRelativePath()), file_db.getRelativePath(), DeleteAction.del_destination, false));
+						deleteActions.add(new DeleteAction(
+								new File(operation.getRemotePath(), file_db.getRelativePath()),
+								file_db.getRelativePath(), DeleteAction.del_destination, false));
 					} else if (!remoteFileExists && sourceFileExists) {
 						if (isBiDirectional)
-							deleteActions.add(new DeleteAction(new File(operation.getSourcePath(), file_db
-									.getRelativePath()), file_db.getRelativePath(), DeleteAction.del_source, false));
+							deleteActions.add(new DeleteAction(
+									new File(operation.getSourcePath(), file_db.getRelativePath()),
+									file_db.getRelativePath(), DeleteAction.del_source, false));
 					} else if (!sourceFileExists && !remoteFileExists) {
-						SwingUtilities.invokeLater(new RunStatusUpdate("Datei verschwunden! Lösche Eintrag: "
-								+ file_db.getRelativePath(), true, spd));
+						SwingUtilities.invokeLater(new RunStatusUpdate(
+								"Datei verschwunden! Lösche Eintrag: " + file_db.getRelativePath(), true,
+								spd));
 						changed = true;
 						db.removeFileByPath(file_db.getRelativePath());
 					}
 					if (spd.isCancelled()) {
-						cancelSync("# W" + GC.ae()
-								+ "hrend dem Suchen nach zu löschenden Dateien Abgebrochen!", dbEdit,
-								dbDestination, changed);
+						cancelSync(
+								"# W" + GC.ae() + "hrend dem Suchen nach zu löschenden Dateien Abgebrochen!",
+								dbEdit, dbDestination, changed);
 						return null;
 					}
 				}
-
-				// lostFiles.add(new File(
-				// "/home/jay/Schreibtisch/a/Namenloser Ordner/FSSync-Log-2017-08-15-00-22-57.txt"));
-				// corruptedFilesSource.add(new File(
-				// "/home/jay/Schreibtisch/a/Namenloser Ordner/FSSync-Log-2017-08-15-00-22-57.txt"));
-				// corruptedFilesDestination.add(new File(
-				// "/home/jay/Schreibtisch/a/Namenloser Ordner/FSSync-Log-2017-08-15-00-22-57.txt"));
 
 				/*
 				 * eliminate duplicates
@@ -682,8 +667,9 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				}
 
 				if (operationSummary.getnDeleteActionsSelected() > 0)
-					SwingUtilities.invokeLater(new RunStatusUpdate("# " + operationSummary.getnDeleteActionsSelected()
-							+ " Dateien Löschen", false, spd));
+					SwingUtilities.invokeLater(new RunStatusUpdate(
+							"# " + operationSummary.getnDeleteActionsSelected() + " Dateien Löschen", false,
+							spd));
 				iDeleteActions = deleteActions.iterator();
 				while (iDeleteActions.hasNext()) {
 					deleteAction = iDeleteActions.next();
@@ -694,17 +680,13 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						db.removeFileByPath(deleteAction.getRelativePath());
 					} else {
 						file = deleteAction.getFile();
-						file2 = new File(
-								deleteAction.getLocation() == DeleteAction.del_destination ? operation.getSource()
-										: operation.getTarget(), deleteAction.getRelativePath());
-						copyActions
-								.add(new CopyAction(
-										file,
-										file2,
-										deleteAction.getRelativePath(),
-										false,
-										deleteAction.getLocation() == DeleteAction.del_destination ? CopyAction.DIR_RESTORE
-												: CopyAction.DIR_BACKUP));
+						file2 = new File(deleteAction.getLocation() == DeleteAction.del_destination
+								? operation.getSource()
+								: operation.getTarget(), deleteAction.getRelativePath());
+						copyActions.add(new CopyAction(file, file2, deleteAction.getRelativePath(), false,
+								deleteAction.getLocation() == DeleteAction.del_destination
+										? CopyAction.DIR_RESTORE
+										: CopyAction.DIR_BACKUP));
 					}
 					if (spd.isCancelled()) {
 						cancelSync("# Während des Löschens Abgebrochen!", dbEdit, dbDestination, changed);
@@ -728,9 +710,10 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				}
 
 				if (!enoughSpace) {
-					cancelOp("# Operation Abgebrochen, nicht gen" + GC.ue()
-							+ "gend Speicherplatz auf dem Zieldatentr" + GC.ae() + "ger", dbEdit,
-							dbDestination, changed);
+					cancelOp(
+							"# Operation Abgebrochen, nicht gen" + GC.ue()
+									+ "gend Speicherplatz auf dem Zieldatentr" + GC.ae() + "ger",
+							dbEdit, dbDestination, changed);
 					break;
 				}
 
@@ -754,9 +737,10 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						}
 					}
 					if (!enoughSpace) {
-						cancelOp("# Operation Abgebrochen, nicht gen" + GC.ue()
-								+ "gend Speicherplatz auf dem Quelldatentr" + GC.ae() + "ger", dbEdit,
-								dbDestination, changed);
+						cancelOp(
+								"# Operation Abgebrochen, nicht gen" + GC.ue()
+										+ "gend Speicherplatz auf dem Quelldatentr" + GC.ae() + "ger",
+								dbEdit, dbDestination, changed);
 						break;
 					}
 					if (operation.getSource().getFreeSpace() < operationSummary.getUpdateSizeSource()) {
@@ -766,8 +750,9 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 
 				SwingUtilities.invokeLater(new RunSetDeterminate(true, spd));
 				if (operationSummary.getnCopyActionsSelected() > 0)
-					SwingUtilities.invokeLater(new RunStatusUpdate("# " + operationSummary.getnCopyActionsSelected()
-							+ " Dateien kopieren", false, spd));
+					SwingUtilities.invokeLater(new RunStatusUpdate(
+							"# " + operationSummary.getnCopyActionsSelected() + " Dateien kopieren", false,
+							spd));
 
 				updateSize = operationSummary.getUpdateSizeTotal();
 				copied = 0;
@@ -790,44 +775,19 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 								continue;
 							if ((ix == 0 && !copyAction.isNew()) || (ix == 1 && copyAction.isNew())) {
 								changed = true;
-								SwingUtilities.invokeLater(new RunStatusUpdate("Kopiere "
-										+ copyAction.toString(), true, spd));
-								FileUtils.copyFile(copyAction.getSource(), copyAction.getDestination());
-								copied += copyAction.getSource().length();
-								if (copyAction.isNew()) {
-									db.add(new RelativeFile(copyAction.getRelativePath(), copyAction
-											.getSource().length(), copyAction.getSource().lastModified(),
-											FSSync.getChecksum(copyAction.getSource())));
-									if (!copyAction.getDestination().getParentFile().exists()) {
-										copyAction.getDestination().getParentFile().mkdirs();
-									}
-								} else {
-									db.updateFile(new RelativeFile(copyAction.getRelativePath(), copyAction
-											.getSource().length(), copyAction.getSource().lastModified(),
-											FSSync.getChecksum(copyAction.getSource())));
-								}
-								try {
-									setProgress((int) ((100.0 / updateSize) * copied));
-								} catch (IllegalArgumentException e) {
-									setProgress(100);
-								}
-								tSplit = (System.currentTimeMillis() - tStart) / 1000;
-								if (tSplit > 0) {
-									SwingUtilities.invokeLater(new RunStatusTextUpdate("Dateien Kopieren... "
-											+ ((copied / 1024 / 1024) / tSplit) + " MiB/sec", spd));
-								}
+
+								copied = copy(copyAction, db, copied, updateSize, tStart);
+
 								counter++;
 								if (spd.isCancelled()) {
 									if (copied > 0) {
-										SwingUtilities.invokeLater(new RunStatusUpdate("# "
-												+ counter
-												+ " Dateien Kopiert "
-												+ (copied / 1024 / 1024)
-												+ " MByte in "
-												+ tSplit
-												+ " Sekunden"
-												+ (tSplit > 0 ? ", " + ((copied / 1024 / 1024) / tSplit)
-														+ " MiB/sec" : ""), false, spd));
+										SwingUtilities.invokeLater(new RunStatusUpdate("# " + counter
+												+ " Dateien Kopiert " + (copied / 1024 / 1024) + " MByte in "
+												+ tSplit + " Sekunden"
+												+ (tSplit > 0
+														? ", " + ((copied / 1024 / 1024) / tSplit) + " MiB/sec"
+														: ""),
+												false, spd));
 									}
 									cancelSync("# W" + GC.ae() + "hrend des Kopierens Abgebrochen!", dbEdit,
 											dbDestination, changed);
@@ -853,44 +813,19 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						if (!copyAction.isSelected())
 							continue;
 						changed = true;
-						SwingUtilities.invokeLater(new RunStatusUpdate("Kopiere " + copyAction.toString(),
-								true, spd));
-						FileUtils.copyFile(copyAction.getSource(), copyAction.getDestination());
-						copied += copyAction.getSource().length();
-						if (copyAction.isNew()) {
-							db.add(new RelativeFile(copyAction.getRelativePath(), copyAction.getSource()
-									.length(), copyAction.getSource().lastModified(), FSSync
-									.getChecksum(copyAction.getSource())));
-							if (!copyAction.getDestination().getParentFile().exists()) {
-								copyAction.getDestination().getParentFile().mkdirs();
-							}
-						} else {
-							db.updateFile(new RelativeFile(copyAction.getRelativePath(), copyAction
-									.getSource().length(), copyAction.getSource().lastModified(), FSSync
-									.getChecksum(copyAction.getSource())));
-						}
-						try {
-							setProgress((int) ((100.0 / updateSize) * copied));
-						} catch (IllegalArgumentException e) {
-							setProgress(100);
-						}
-						tSplit = (System.currentTimeMillis() - tStart) / 1000;
-						if (tSplit > 0) {
-							SwingUtilities.invokeLater(new RunStatusTextUpdate("Dateien Kopieren... "
-									+ ((copied / 1024 / 1024) / tSplit) + " MiB/sec", spd));
-						}
+						
+						copied = copy(copyAction, db, copied, updateSize, tStart);
+						
 						counter++;
 						if (spd.isCancelled()) {
 							if (copied > 0) {
-								SwingUtilities.invokeLater(new RunStatusUpdate("# "
-										+ counter
-										+ " Dateien Kopiert "
-										+ (copied / 1024 / 1024)
-										+ " MByte in "
-										+ tSplit
-										+ " Sekunden"
-										+ (tSplit > 0 ? ", " + ((copied / 1024 / 1024) / tSplit) + " MiB/sec"
-												: ""), false, spd));
+								SwingUtilities
+										.invokeLater(new RunStatusUpdate("# " + counter + " Dateien Kopiert "
+												+ (copied / 1024 / 1024) + " MByte in " + tSplit + " Sekunden"
+												+ (tSplit > 0
+														? ", " + ((copied / 1024 / 1024) / tSplit) + " MiB/sec"
+														: ""),
+												false, spd));
 							}
 							cancelSync("# W" + GC.ae() + "hrend des Kopierens Abgebrochen!", dbEdit,
 									dbDestination, changed);
@@ -907,20 +842,26 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 				if (copied > 0) {
 					SwingUtilities.invokeLater(new RunStatusUpdate("# " + counter + " Dateien Kopiert "
 							+ (copied / 1024 / 1024) + " MiB in " + tSplit + " Sekunden"
-							+ (tSplit > 0 ? ", " + ((copied / 1024 / 1024) / tSplit) + " MiB/sec" : ""),
-							false, spd));
+							+ (tSplit > 0 ? ", " + ((copied / 1024 / 1024) / tSplit) + " MiB/sec" : ""), false,
+							spd));
 				}
 
 				if (!changed) {
-					SwingUtilities.invokeLater(new RunStatusUpdate("# # Keine " + GC.Ae()
-							+ "nderungen Gefunden nach "
-							+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - opStart),
-							false, spd));
+					SwingUtilities
+							.invokeLater(
+									new RunStatusUpdate(
+											"# # Keine " + GC.Ae() + "nderungen Gefunden nach "
+													+ UIFx.formatMillisAsHoursMinutesSeconds(
+															System.currentTimeMillis() - opStart),
+											false, spd));
 				} else {
-					SwingUtilities.invokeLater(new RunStatusUpdate("# # Alle " + GC.Ae()
-							+ "nderungen Angewandt nach "
-							+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - opStart),
-							false, spd));
+					SwingUtilities
+							.invokeLater(
+									new RunStatusUpdate(
+											"# # Alle " + GC.Ae() + "nderungen Angewandt nach "
+													+ UIFx.formatMillisAsHoursMinutesSeconds(
+															System.currentTimeMillis() - opStart),
+											false, spd));
 					db.incrementVersion();
 				}
 				try {
@@ -936,9 +877,10 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 			}
 
 			removePropertyChangeListener(this);
-			SwingUtilities.invokeLater(new RunFinished("# # # Alles Erledigt nach "
-					+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - syncStart), null,
-					spd));
+			SwingUtilities.invokeLater(new RunFinished(
+					"# # # Alles Erledigt nach "
+							+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - syncStart),
+					null, spd));
 		} catch (Exception e) {
 			SwingUtilities.invokeLater(new RunFinished("# Fehler nach "
 					+ UIFx.formatMillisAsHoursMinutesSeconds(System.currentTimeMillis() - syncStart) + " : "
@@ -954,6 +896,57 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private long copy(CopyAction copyAction, OnlineDB db, long copied, long updateSize, long tStart)
+			throws IOException {
+//		SwingUtilities.invokeLater(new RunStatusUpdate("Kopiere " + copyAction.toString(), true, spd));
+//		FileUtils.copyFile(copyAction.getSource(), copyAction.getDestination());
+//		copied += copyAction.getSource().length();
+//		if (copyAction.isNew()) {
+//			db.add(new RelativeFile(copyAction.getRelativePath(), copyAction.getSource().length(),
+//					copyAction.getSource().lastModified(), FSSync.getChecksum(copyAction.getSource())));
+//			if (!copyAction.getDestination().getParentFile().exists()) {
+//				copyAction.getDestination().getParentFile().mkdirs();
+//			}
+//		} else {
+//			db.updateFile(new RelativeFile(copyAction.getRelativePath(), copyAction.getSource().length(),
+//					copyAction.getSource().lastModified(), FSSync.getChecksum(copyAction.getSource())));
+//		}
+//		try {
+//			setProgress((int) ((100.0 / updateSize) * copied));
+//		} catch (IllegalArgumentException e) {
+//			setProgress(100);
+//		}
+//		tSplit = (System.currentTimeMillis() - tStart) / 1000;
+//		if (tSplit > 0) {
+//			SwingUtilities.invokeLater(new RunStatusTextUpdate(
+//					"Dateien Kopieren... " + ((copied / 1024 / 1024) / tSplit) + " MiB/sec", spd));
+//		}
+		SwingUtilities.invokeLater(new RunStatusUpdate("Kopiere " + copyAction.toString(), true, spd));
+		FileUtils.copyFile(copyAction.getSource(), copyAction.getDestination());
+		copied += copyAction.getSource().length();
+		if (copyAction.isNew()) {
+			db.add(new RelativeFile(copyAction.getRelativePath(), copyAction.getSource().length(),
+					copyAction.getSource().lastModified(), FSSync.getChecksum(copyAction.getSource())));
+			if (!copyAction.getDestination().getParentFile().exists()) {
+				copyAction.getDestination().getParentFile().mkdirs();
+			}
+		} else {
+			db.updateFile(new RelativeFile(copyAction.getRelativePath(), copyAction.getSource().length(),
+					copyAction.getSource().lastModified(), FSSync.getChecksum(copyAction.getSource())));
+		}
+		try {
+			setProgress((int) ((100.0 / updateSize) * copied));
+		} catch (IllegalArgumentException e) {
+			setProgress(100);
+		}
+		long tSplit = (System.currentTimeMillis() - tStart) / 1000;
+		if (tSplit > 0) {
+			SwingUtilities.invokeLater(new RunStatusTextUpdate(
+					"Dateien Kopieren... " + ((copied / 1024 / 1024) / tSplit) + " MiB/sec", spd));
+		}
+		return copied;
 	}
 
 	private final void cancelSync(String message, File dbTmp, File dbDestination, boolean changed) {
@@ -980,7 +973,7 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 			e.printStackTrace();
 		}
 	}
-	
+
 	// process() is not used because the output became disordered
 	// @Override
 	// protected void process(List<StatusMessage> chunks) {
