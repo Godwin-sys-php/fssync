@@ -1,0 +1,33 @@
+0.7a
+Bugs
+-fixed entering file data in database before successful copying.
+
+Improvements
+-Quickinfo/Tooltip on ui diagram clickable items
+
+
+0.6a
+Bugs
+-fixed disappearing ui when double clicking tray while running from tray
+-fixed timing / reminding
+
+Improvements
+-opening directories with spaces in browser should now work
+-showing now how long the SynchronisationProcess lasted
+-Copy / Delete Action labels make more sense when unselected
+
+New Features
+-updating documents upon new version
+-start screen with add segment button
+
+0.5a
+Bugs
+-fixed not saving operation upon opening OperationEditorDialog via click on panel
+
+Improvements
+-ui automatically updates
+
+New Features
+-checkbox selection in ui
+-tray icon
+-operation timing & reminding

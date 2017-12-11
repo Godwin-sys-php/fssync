@@ -1,0 +1,154 @@
+<html>
+<head>
+<title>Hilfe</title>
+</head>
+<body>
+
+<h1>Vorwort</h1>
+
+<h2 style="color: red;">0 :: Alpha Version</h2>
+<p style="color: red; font-weight: bold;">Diese Version ist eine Alpha Version; das bedeutet dass das Programm noch nicht sehr umfassend getestet und auf Fehler &uuml;berpr&uuml;ft wurde.</p>
+<p style="color: red; font-weight: bold;">Insbesondere der Programmteil der zum Retten von defekten Dateien zust&auml;ndig ist wurde noch nicht getestet.</p>
+
+<h2>1 :: Begriffe und Funktion des Programmes</h2>
+<p>Fssync steht als Abk&uuml;rzung f&uuml;r &quot;Filesystem Synchronisator&quot;. Das Programm ist in erster Linie ein Backup-Programm zur Sicherung von Dateien auf mehreren Datentr&auml;gern. Dieser Prozess l&auml;uft nicht automatisch. Es liegt in der Hand des Benutzers zu erw&auml;gen in welchem Intervall die Daten abgeglichen werden sollen.</p>
+<h3>Segment</h3>
+<p>Ein Segment hat einen Namen und 0 oder mehr Operationen.</p>
+<p>Wenn ein Segment ausgef&uuml;hrt wird, werden alle enthaltene Operationen die verf&uuml;gbar sind ausgef&uuml;hrt.</p>
+<p>nach dem Hinzuf&uuml;gen oder &auml;ndern eines Segmentes werden die Segmente sortiert. Es werden Segmente die Operationen enthalten die als Zielverzeichnis das Quellverzeichnis (oder ein Unterverzeichnis) einer anderen Operation (in einem anderen Segment) haben, dieser vorangestellt.</p>
+<p>Es ist vermutlich empfehlenswert dass bei der Planung des Datenflusses eher viele Segmente mit wenigen Operationen angelegt werden als wenige Segmente mit vielen Operationen.</p>
+<h3>Operation</h3>
+<p>Eine Operation hat einen Quell- und einen Zielordner. Wenn die Operation ausgef&uuml;hrt wird werden Ziel- und Quellordner verglichen und Synchronisiert (in den gleichen Zustand gebracht).</p>
+<p>Des Weiteren kann eine Operation Ausnahmen (Ordner die im Quellverzeichnis ignoriert werden) haben.</p>
+<p><b>Unidirektionale Synchronisation</b> (Es wird nur vom Quell- ins Zielverzeichnis kopiert.)</p>
+<p>Bsp.: <b>/home/joe/Desktop &gt;&gt; /media/joe/backup1/Desktop</b></p>
+<p><b>Bidirektionale Synchronisation</b> (Es wird in beide Richtungen kopiert, wenn &Auml;nderungen und neue Dateien im Zielverzeichnis erkannt werden, werden sie auch in das Quellverzeichnis geholt.)</p>
+<p>Bsp.: <b>/home/joe/Music &lt;&gt; /media/joe/backup1/Music</b></p>
+<p>Mehrere Operationen k&ouml;nnen das gleiche Quellverzeichnis haben. Ein Quellverzeichnis kann mehrere Zielverzeichnisse haben.</p>
+<p>Ein Zielverzeichnis kann nur in einer einzigen Operation als Zielverzeichnis verwendet werden. Ein Zielverzeichnis kann nur ein Quellverzeichnis haben.</p>
+<p>Das Zielverzeichnis von einer Operation kann das Quellverzeichnis einer anderen Operation sein.</p>
+
+<h2>2 :: Speicherung von Programmdateien</h2>
+<p>Neben der ausf&uuml;hrbaren Programmdatei wird beim ersten Start ein versteckter Ordner im Benutzerverzeichnis angelegt (Linux: &quot;/home/*benutzer*/.fssync&quot; / Windows: &quot;C:\Users\*benutzer*\.fssync&quot;). Darin werden die Einstellungen und die Synchronisationskonfiguration abgelegt. Dieser Ordner sollte auch gesichert werden. Sollte die Datei mit der Synchronisationskonfigration verloren gehen k&ouml;nnen die Operationen aber auch wieder nachgetragen werden.</p>
+<p>Des Weiteren wird aus Darstellungsgr&uuml;nden ein Ordner namens &quot;docs&quot; erstellt um diese Hilfedatei mit Bildern und den Text f&uuml;r den &quot;&uuml;ber&quot;-Dialog zu speichern.</p>
+
+<h2>3 :: Speicherung von Informationen aus Dateisystemen in Datenbankdateien</h2>
+<p>Um die Datenintegrit&auml;t zu &uuml;berpr&uuml;fen, f&uuml;r die Bidirektionale Synchronisierung und die Versionierung von Dateien wird eine versteckte Datenbankdatei in den zu synchronisierenden Verzeichnissen abgelegt. Im Quellverzeichnis heisst sie &quot;.fs.edit.db&quot; zum Bearbeiten und im Zielverzeichnis wird sie als &quot;.fs.db&quot; als Duplikat gespeichert. Diese Dateien sind vom Synchronisationsprozess ausgeschlossen.</p> 
+<p>Beim Anlegen einer Operation sollte daher beachtet werden dass durch die h&auml;ufigen Zugriffe auf die Datenbankdatei der Quelldatentr&auml;ger der schnellere sein sollte.</p>
+
+<h1>Hilfe</h1>
+
+<h2>I :: Hauptfenster</h2>
+<img src="gui.png">
+<p><b>Klick auf Nummer:</b> Operation zum Bearbeiten &ouml;ffnen.</p>
+<p><b>Klick auf Pfad:</b> Ordner im Dateiexplorer &ouml;ffnen.</p>
+<p><b>Klick auf Pfeil:</b> Operation ausf&uuml;hren.</p>
+<p><b>Checkbox Auswahl:</b> Operation zum Ausf&uuml;hren Ausw&auml;hlen.</p>
+<p><b>Oranger Rahmen:</b> Operation sollte ausgef&uuml;hrt werden.</p>
+
+<h2>II :: Einstellungen :: Bearbeiten &gt; Einstellungen...</h2>
+<img src="settings.png">
+<p><b>Segmente in ? Spalten anzeigen:</b> Die Anzahl Spalten in der die Segmente grafisch Dargestellt werden.</p>
+<p><b>Viele Informationen w&auml;hrend der Synchronisation anzeigen:</b> Es wird Information zu jeder behandelten Datei angezeigt.</p>
+<p><b>Ordner f&uuml;r Logdateien:</b> Der Ordner in dem allenfalls Logdateien abgelegt werden sollen.</p>
+<p><b>Log immer Speichern:</b> Es wird am Ende jeder Synchronisation eine Logdatei gespeichert.</p>
+<p><b>Zusammenfassung vor &Auml;nderung zeigen:</b> Es wird ein Dialog mit einer Zusammenfassung aller zu kopierenden und zu l&ouml;schenden Dateien angezeigt. Es besteht die M&ouml;glichkeit Dateien an/abzuw&auml;hlen, Konflikte zu bearbeiten und die Operation abzubrechen.</p>
+<p><b>Dateibrowser:</b> Das Kommando um einen Dateiexplorer zu &ouml;ffnen.</p>
+<p><b>Als Tray Icon Starten:</b> Das Programm startet und wird als Trayicon angezeigt anstelle davon dass das Programmfenster ge&ouml;ffnet wird.</p>
+<p><b>Ins Tray Schliessen:</b> Das Programm wird beim Schliessen des Fensters im Traymen&uuml; fortgesetzt anstatt zu enden.</p>
+<p><b>Ins Tray Minimieren:</b> Das Programmfenster wird beim Minimieren versteckt und das Trayicon wird angezeigt.</p>
+
+<h2>IIIa :: Neues Segment Anlegen :: Segmente &gt; Segment hinzuf&uuml;gen...</h2>
+<p>Es erscheint ein Dialog der einen Namen fordert. Optional k&ouml;nnen Synchronisationsoperationen hinzugef&uuml;gt, ver&auml;ndert oder entfernt werden.</p>
+<h2>IIIb :: Neue Operation Anlegen :: + Button</h2>
+<p>Es wird ein Dialog ge&ouml;ffnet um eine neue Operation anzulegen</p>
+<h3>Synchronisation</h3>
+<p><b>Quelle:</b> das Quellverzeichnis.</p>
+<p><b>Ziel:</b> das Zielverzeichnis dessen Inhalt mit dem Inhalt des Quellverzeichnisses synchronisiert werden soll.</p>
+<h3>Ausnahmen</h3>
+<p><b>Liste:</b> Verzeichnisse welche von der Synchronisation auszuschliessen sind. Die Eintr&auml;ge sind relativ zum Quellverzeichnis. Die Ausnahmen, die beim Speichern der Operation nicht mehr im Dateisysten existieren werden automatisch aus der Liste gel&ouml;scht.</p>
+<p><b>+ Button:</b> Verzeichnis Hinzuf&uuml;gen.</p>
+<p><b>- Button:</b> Ausgew&auml;hltes Verzeichnis L&ouml;schen.</p>
+<h3>Optionen</h3>
+<!--p><b>Dateiversionen Speichern:</b> Ge&auml;nderte Dateien werden im Ziel umbenannt und nicht &uuml;berschrieben.</p-->
+<p><b>Bidirektional Synchronisieren:</b> Es werden Dateien in beide Richtungen abgeglichen und kopiert.</p>
+<p><b>Priorit&auml;t bei Konflikt:</b></p>
+<p><b>Quelle:</b> Es wird die Datei aus dem Quellordner bevorzugt und in das Zielverzeichnis kopiert.</p>
+<p><b>Ziel:</b> Es wird die Datei aus dem Zielordner bevorzugt und in das Quellverzeichnis geholt.</p>
+<p><b>Neu:</b> Es wird die neuere Datei bevorzugt.</p>
+<p><b>Alt:</b> Es wird die &auml;ltere Datei bevorzugt.</p>
+<p><b>&Auml;nderungsdatum ignorieren wenn Pr&uuml;fsumme und L&auml;nge gleichgeblieben:</b> Es werden Dateien deren Modifikationsdatum nicht mit dem zuletzt synchronisierten Datum &uuml;bereinstimmt zus&auml;tzlich anhand der Dateigr&ouml;sse und einer Pr&uuml;fsumme verglichen. Wenn sie identisch scheint wird sie ignoriert.</p>
+<h3>Timing</h3>
+<p><b>Letzte Synchronisierung:</b> Der Zeitpunkt der letzten Synchronisierung.</p>
+<p><b>Intervall:</b> Das Intervall in Tagen, Stunden oder Minuten in dem die Operation ausgeführt werden sollte. "0" wenn sie nie fällig werden soll.</p>
+<p><b>Erinnern:</b> Es wird eine Nachricht aus dem Trayicon angezeigt wenn die Operation f&auml;llig wird. Wenn Intervall "0" ist dann wird Erinnern automatisch ausgeschaltet.</p>
+<h2>IIIc :: Operation L&ouml;schen :: - Button</h2>
+<p>In der Liste ausgew&auml;hlte Operation wird gel&ouml;scht.</p>
+<h2>IIId :: Operation Bearbeiten :: Doppelklick auf Liste</h2>
+<p>Gew&auml;hlte Operation wird zum Bearbeiten Ge&ouml;ffnet.</p>
+<h2>IIIe :: Operation Speichern :: Speichern-Button</h2>
+<p><b>Das Speichern funktioniert im Moment nur wenn Ziel- und Quellordner verf&uuml;gbar sind.</b></p>
+<p>Die Operation wird gespeichert. Wenn keine Datenbankdatei im Zielordner gefunden wird, wird eine neue angelegt.</p>
+<p>Das bestehende Zieldateisystem kann dazu eingelesen werden um bereits vorhandene Duplikate (in Quell- und Zieldateisystem) zu identifizieren und in der Datenbank zu registrieren.</p>
+
+<h2>IVa :: Segment Bearbeiten :: Segmente &gt; &quot;Segment Name&quot;</h2>
+<p>Gew&auml;hltes Segment wird zum Bearbeiten Ge&ouml;ffnet.</p>
+<h2>IVb :: Segment L&ouml;schen :: L&ouml;schen-Button</h2>
+<p>Das ge&ouml;ffnete Segment wird Gel&ouml;scht.</p>
+
+<h2>V :: Segment Ausf&uuml;hren :: Ausf&uuml;hren &gt; &quot;Segment Name&quot;</h2>
+<p>Es wird ein Synchronisationsprozess f&uuml;r das ausgew&auml;hlte Segment gestartet. Der Prozess sollte durchg&auml;ngig abbrechbar sein, beim Kopieren wird die aktuelle Datei fertigkopiert bevor abgebrochen wird.</p>
+<p>Alle verf&uuml;gbaren Operationen werden ausgef&uuml;hrt.</p>
+<h2>Va :: Integrit&auml;tspr&uuml;fung und Analyse des Zieldateisystems</h2>
+<p>Es wird das Zieldateisystem eingelesen und alle bekannten Dateien werden auf ihre Integrit&auml;t &uuml;berpr&uuml;ft.</p>
+<h3>Besch&auml;digte Dateien</h3>
+<p>Wenn besch&auml;digte Dateien auftauchen wird versucht sie vom anderen Datentr&auml;ger wiederherzustellen:</p>
+<img src="requestContinueRestore.png">
+<p>Wenn fortgesetzt wird, wird versucht die identische Datei wieder herzustellen. Wenn die Quelldatei sich ver&auml;ndert hat wird sie sp&auml;ter verarbeitet.</p>
+<p style="color: red; font-weight: bold;">Die Wiederherstellung von defekten Dateien wurde noch nicht getestet, es empfiehlt sich daher vermutlich die Operation hier abzubrechen und den defekten Datentr&auml;ger zu ersetzen (angenommen der Datentr&auml;ger ist defekt...).</p>
+<h3>Unerwartete &Auml;nderungen</h3>
+<p>Wenn bei der unidirektionalen Synchronisation &Auml;nderungen im Zieldateisystem festgestellt werden erscheint ein Dialog um das weitere Vorgehen abzufragen:</p>
+<img src="requestForeignFileHandling.png">
+<p><b>&Auml;nderungen Ignorieren</b>: Es werden die &Auml;nderungen im Zieldateisystem nicht beachtet. Dabei k&ouml;nnte es passieren dass eine ge&auml;nderte Datei im Zieldateisystem mit einer ge&auml;nderten Datei aus dem Quelldateisystem &uuml;berschrieben wird und Daten verloren gehen.</p>
+<p><b>&Auml;nderungen Holen (Bidirektional Synchronisieren)</b>: Es wird die Bidirektionale Synchronisation eingeschalten um &Auml;nderungen ins Quelldateisystem zu holen.</p>
+<p><b>&Auml;nderungen L&ouml;schen</b>: Es werden alle im Zieldateisystem neuen Dateien gel&ouml;scht und ge&auml;nderte Dateien mit der Quelldatei &uuml;berschrieben.</p>
+<p>Wenn &Auml;nderungen erkannt werden obwohl keine gemacht wurden kann man probieren in den Operationsoptionen &quot;&Auml;nderungsdatum ignorieren wenn Pr&uuml;fsumme und L&auml;nge gleichgeblieben&quot; zu aktivieren.</p>
+<p>In Folge der Integrit&auml;tspr&uuml;fung werden alle leeren Verzeichnisse im Zielverzeichnis gel&ouml;scht.</p>
+<p>Wenn defekte Dateien erkannt werden, wird versucht diese wiederherzustellen. In der Zusammenfassung werden die Dateien dann nochmals angezeigt.</p>
+<h2>Vb :: Analyse des Quelldateisystems</h2>
+<p>Es wird das Quelldateisystem eingelesen um neue und ge&auml;nderte Dateien zu finden.</p>
+<h2>Vc :: zu l&ouml;schende Dateien suchen</h2>
+<p>Es werden alle Dateien in der Datenbank darauf untersucht ob sie an beiden Orten vorhanden sind. Wenn eine Datei im Quellverzeichnis fehlt wird sie im auch Zielverzeichnis gel&ouml;scht. Bei bidirektionalem Synchronisieren werden auch die Dateien welche im Zielverzeichnis fehlen im Quellverzeichnis gel&ouml;scht.</p>
+<h2>Vd :: Zusammenfassung</h2>
+<p>Wenn in den Optionen ausgew&auml;hlt oder wenn Konflikte oder fehlerhafte Dateien gefunden wurden wird die Zusammenfassung angezeigt.</p>
+<p>Es k&ouml;nnen Dateien aus- und abgew&auml;hlt werden. Wenn zu kopierende Dateien abgew&auml;hlt werden, werden diese f&uuml;r diese Synchronisation ignoriert und beim n&auml;chsten Synchronisieren wieder erfasst.</p>
+<p>Eine zu l&ouml;schende abgew&auml;hlte Datei, wird allerdings wiederhergestellt; *Immer dran denken dass dieses Feature erst funktioniert <i>nachdem</i> die Datei zuvor bereits synchronisiert wurde... * ;)</p>
+<h3>Farben</h3>
+<p><b style="color:green;">Gr&uuml;n:</b> Datei wird kopiert</p>
+<p><b style="color:gray;">Grau:</b> Datei wird ignoriert</p>
+<p><b style="color:red;">Rot:</b> Datei wird gel&ouml;scht</p>
+<h3>Bei bidirektionalem Synchronisieren</h3>
+<p><b style="color:green; background: yellow;">Gr&uuml;n auf Gelb:</b> Es besteht ein Konflikt, diese Datei wird kopiert</p>
+<p><b style="color:yellow; background: red;">Gelb auf Rot:</b> Es besteht ein Konflikt, diese Datei wird &uuml;berschrieben und &Auml;nderungen gehen verloren.</p>
+<p><b style="color:white; background: gray;">Weiss auf Grau:</b> Es besteht ein Konflikt der ignoriert wird, es bleiben beide Versionen bestehen.</p>
+<h2>Ve :: L&ouml;schen &amp; Kopieren</h2>
+<p>Es wird zuerst die Liste mit den zu l&ouml;schenden, danach die Liste mit zu kopierenden Dateien abgearbeitet.</p>
+
+<h2>VI :: Segment Wiederherstellen :: Ausf&uuml;hren &gt; Wiederherstellen &gt; &quot;Segment Name&quot;</h2>
+<p>Falls ein Quelldatentr&auml;ger ausf&auml;llt k&ouml;nnen mit der Wiederherstellenfunktion die Dateien vom Zieldatentr&auml;ger zur&uuml;ck in den Quellordner geholt werden. Wenn eine Operation wiederhergestellt wird werden alle Dateien vom Zieldatentr&auml;ger geholt; dabei k&ouml;nnten Dateien mit &auml;lteren Versionen &uuml;berschrieben werden. Daher sollte diese Funktion normalerweise nur ausgef&uuml;hrt werden wenn zum Beispiel ungewollte &Auml;nderungen wie Sch&auml;den im Quelldateisystem aufgetreten sind oder ein Datentr&auml;ger erneuert werden musste oder nachdem das Betriebssystem neu installiert wurde.</p>
+<p>Wenn ein Segment mehrere Operationen mit dem selben Quellverzeichnis zum Wiederherstellen hat erscheint ein Dialog um eine der Operationen auszuw&auml;hlen:</p>
+<img src="requestSourceForRestore.png">
+<h2>VIa :: Wiederherstellungsmodus</h2>
+<img src="requestRestoreMode.png">
+<p><b>Nur besch&auml;digte Dateien Wiederherstellen:</b> Es werden nur unge&auml;nderte Dateien (&Auml;nderungsdatum) welche eine andere Gr&ouml;sse oder Pr&uuml;fsumme als in der Datenbank haben gesucht.</p>
+<p><b>Nur ge&auml;nderte Dateien Wiederherstellen:</b> Es werden nur ge&auml;nderte Dateien (&Auml;nderungsdatum der Datei im Quellordner) gesucht.</p>
+<p><b>Alle Dateien Wiederherstellen:</b> Es werden alle Dateien aus der Datenbank Wiederhergestellt.</p>
+<p><b>Neue Dateien l&ouml;schen:</b> Dateien die seit der letzten Synchronisation neu im Quelldateisystem erschienen sind werden gel&ouml;scht.</p>
+<h2>VIb :: Zusammenfassung</h2>
+<p>Bevor der Wiederherstellungsprozess durchgef&uuml;hrt wird der Zusammenfassungsdialog angezeigt. Es wird hier nicht nach Konflikten gesucht. Die Zusammenfassung wird beim Wiederherstellen immer wenn es etwas zu tun gibt angezeigt. So kann der Wiederherstellungsprozess immer abgebrochen werden.</p>
+<p>Dateien die zum L&ouml;schen abgew&auml;hlt werden, werden hier ignoriert.</p>
+<h2>VIc :: Wiederherstellen</h2>
+<p>Es werden auch hier zuerst die zu l&ouml;schenden und dann die zu kopierenden Dateien abgearbeitet.</p>
+
+</body>
+</html>
