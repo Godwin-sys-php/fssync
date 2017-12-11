@@ -1,3 +1,11 @@
+0.7a
+Bugs
+-fixed entering file data in database before successful copying.
+
+Improvements
+-Quickinfo/Tooltip on ui diagram clickable items
+
+
 0.6a
 Bugs
 -fixed disappearing ui when double clicking tray while running from tray
