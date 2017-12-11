@@ -7,7 +7,14 @@
  */
 
 // Apply the java-library plugin to add support for Java Library
-apply plugin: 'java-library'
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'net.janbuchinger.code.fssync.FSSync'
+
+version = '0.7a'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -25,5 +32,33 @@ dependencies {
 
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
+    
+    // Apache 2.0
+    compile 'com.google.code.gson:gson:2.8.2'
+    
+    // Apache 2.0
+    compile 'commons-io:commons-io:2.5'
+    
+    // Apache 2.0
+	compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
+    
+    // Apache 2.0
+    compile 'com.github.janbuchinger:mishmash:0.3'
 }
 
+allprojects {
+	repositories {
+		maven { url "https://jitpack.io" }
+	}
+}
+
+sourceSets.main.resources { srcDirs = ["src/main/java"]; exclude "**/*.java" }
+jar {
+    manifest {
+        attributes 'Main-Class': 'net.janbuchinger.code.fssync.FSSync',
+        	'Implementation-Title': 'FSSync',
+        	'Implementation-Version': version
+    }
+	baseName = project.name
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
