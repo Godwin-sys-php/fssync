@@ -117,7 +117,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 		click = 0;
 
-		frm = new JFrame("FSSync 0.6a");
+		frm = new JFrame("FSSync 0.7a");
 		frm.addWindowListener(this);
 		frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 

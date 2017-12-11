@@ -52,20 +52,24 @@ public class OperationPanel extends JPanel implements MouseListener {
 			ckOperation.setEnabled(false);
 		}
 		np = new NumberPanel(n);
+		np.setToolTipText("Bearbeiten");
 		np.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		np.addMouseListener(this);
 		ap = new ArrowPanel(operation.isSyncBidirectional());
 		if (operation.isOnline()) {
+			ap.setToolTipText("Ausführen");
 			ap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			ap.addMouseListener(this);
 		}
 		lbSrc = new JLabel(operation.getSource().getPath());
 		if (operation.isSourceOnline() && settings.getFileBrowser().length() > 0) {
+			lbSrc.setToolTipText("Öffnen");
 			lbSrc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			lbSrc.addMouseListener(this);
 		}
 		lbTrg = new JLabel(operation.getTarget().getPath());
 		if (operation.isTargetOnline() && settings.getFileBrowser().length() > 0) {
+			lbTrg.setToolTipText("Öffnen");
 			lbTrg.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			lbTrg.addMouseListener(this);
 		}
