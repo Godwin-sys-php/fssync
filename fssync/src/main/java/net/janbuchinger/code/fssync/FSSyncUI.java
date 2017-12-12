@@ -113,11 +113,13 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private boolean showFromTray;
 
 	public FSSyncUI() {
+		String version = "0.7a";
+		
 		showFromTray = false;
 
 		click = 0;
 
-		frm = new JFrame("FSSync 0.7a");
+		frm = new JFrame("FSSync " + version);
 		frm.addWindowListener(this);
 		frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -138,16 +140,32 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		}
 
 		String[] docsNames = new String[0];
-
-		if (!docsDir.exists()) {
+		File versionFile = new File(docsDir, "version");
+		if (!docsDir.exists() || !versionFile.exists()) {
 			docsDir.mkdir();
 			docsNames = new String[] { "res/about.html", "res/help.html", "res/requestContinueRestore.png",
 					"res/requestForeignFileHandling.png", "res/requestSourceForRestore.png",
 					"res/requestRestoreMode.png", "res/settings.png", "res/gui.png", "res/disk-128.png" };
+			try {
+				FileUtils.writeStringToFile(versionFile, version, Charset.defaultCharset());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
-			long lenHelp = new File(docsDir, "help.html").length();
-			if (lenHelp <= 14828L) { // v0.4/v0.5 to v0.6
-				docsNames = new String[] { "res/help.html", "res/about.html", "res/gui.png", "res/settings.png" };
+			try {
+				String versionFileString = FileUtils.readFileToString(versionFile, Charset.defaultCharset());
+				if(!versionFileString.equals(version)) {
+					docsNames = new String[] { "res/about.html", "res/help.html", "res/requestContinueRestore.png",
+							"res/requestForeignFileHandling.png", "res/requestSourceForRestore.png",
+							"res/requestRestoreMode.png", "res/settings.png", "res/gui.png", "res/disk-128.png" };
+					try {
+						FileUtils.writeStringToFile(versionFile, version, Charset.defaultCharset());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		for (int i = 0; i < docsNames.length; i++) {
