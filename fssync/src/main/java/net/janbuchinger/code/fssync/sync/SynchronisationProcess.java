@@ -677,9 +677,13 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					deleteAction = iDeleteActions.next();
 					if (deleteAction.isSelected()) {
 						changed = true;
-						SwingUtilities.invokeLater(new RunStatusUpdate(deleteAction.toString(), false, spd));
-						deleteAction.getFile().delete();
-						db.removeFileByPath(deleteAction.getRelativePath());
+						SwingUtilities.invokeLater(new RunStatusUpdate(deleteAction.toString(), true, spd));
+						if (deleteAction.getFile().delete()) {
+							db.removeFileByPath(deleteAction.getRelativePath());
+						} else {
+							SwingUtilities.invokeLater(new RunStatusUpdate(
+									"Fehler beim Löschen: " + deleteAction.getRelativePath(), false, spd));
+						}
 					} else {
 						file = deleteAction.getFile();
 						file2 = new File(
