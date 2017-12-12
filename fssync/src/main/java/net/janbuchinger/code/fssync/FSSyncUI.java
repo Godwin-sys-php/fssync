@@ -526,8 +526,10 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				iOp = iSeg.next().iterator();
 				while (iOp.hasNext()) {
 					op = iOp.next();
-					if (op.isSelected())
+					if (op.isSelected()) {
 						operations.add(op);
+						op.setSelected(false);
+					}
 				}
 			}
 			runOperations(operations, "Ausgewählte Operationen");
