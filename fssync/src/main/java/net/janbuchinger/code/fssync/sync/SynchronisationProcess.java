@@ -66,6 +66,7 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 		showSummary = settings.isShowSummary();
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	protected final Void doInBackground() throws Exception {
 
@@ -266,9 +267,9 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 					}
 					file_db = db.getFileByPath(
 							file_destination.getAbsolutePath().substring(destinationBasePathLengthPlusOne));
+					file_source = new File(operation.getSourcePath(), file_db.getRelativePath());
 					if (file_db != null) {
 
-						file_source = new File(operation.getSourcePath(), file_db.getRelativePath());
 						length_source = file_source.length();
 						modified_source = file_source.lastModified();
 						checksum_source = FSSync.getChecksum(file_source);
@@ -282,6 +283,15 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 						destinationFileIsGood = false;
 
 						if (modified_db != modified_destination) {
+							if (modified_destination == modified_source && length_destination == length_source
+									&& checksum_destination.equals(checksum_source)) {
+								db.updateFile(new RelativeFile(file_db.getRelativePath(), length_destination,
+										modified_destination, checksum_destination));
+								changed = true;
+								SwingUtilities.invokeLater(new RunStatusUpdate(
+										"Datenbank aktualisiert: " + file_db.getRelativePath(), false, spd));
+								continue;
+							}
 							/*
 							 * print diagnostics
 							 */
@@ -354,6 +364,16 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 							}
 						}
 					} else {
+						if (file_source.exists()) {
+							length_destination = file_destination.length();
+							modified_destination = file_destination.lastModified();
+							checksum_destination = FSSync.getChecksum(file_destination);
+							db.add(new RelativeFile(
+									file_destination.getPath().substring(destinationBasePathLengthPlusOne),
+									length_destination, modified_destination, checksum_destination));
+							changed = true;
+							continue;
+						}
 						newForeignFiles.add(file_destination);
 						if (!isBiDirectional)
 							SwingUtilities.invokeLater(
