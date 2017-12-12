@@ -52,7 +52,15 @@ allprojects {
 	}
 }
 
-sourceSets.main.resources { srcDirs = ["src/main/java"]; exclude "**/*.java" }
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources"
+        }
+    }
+}
+
+// sourceSets.main.resources { srcDirs = ["src/main/java"]; exclude "**/*.java" }
 jar {
     manifest {
         attributes 'Main-Class': 'net.janbuchinger.code.fssync.FSSync',
@@ -61,4 +69,13 @@ jar {
     }
 	baseName = project.name
 	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
 }
