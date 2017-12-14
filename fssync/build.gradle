@@ -34,6 +34,9 @@ dependencies {
     //testImplementation 'junit:junit:4.12'
     
     // Apache 2.0
+	compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.11.2'
+    
+    // Apache 2.0
     compile 'com.google.code.gson:gson:2.8.2'
     
     // Apache 2.0
