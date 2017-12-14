@@ -4,7 +4,11 @@ Bugs
 
 Improvements
 -Quickinfo/Tooltip on ui diagram clickable items
+-fall back algorithm in case the database is out of sync with the fs
+-made opening from tray open with single click
 
+New Features
+-check for new version on startup
 
 0.6a
 Bugs
