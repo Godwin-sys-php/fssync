@@ -57,6 +57,11 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
+import org.apache.commons.io.FileUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import net.janbuchinger.code.fssync.sync.RestorationProcess;
 import net.janbuchinger.code.fssync.sync.SynchronisationProcess;
 import net.janbuchinger.code.fssync.sync.ui.SynchronisationProcessDialog;
@@ -65,11 +70,6 @@ import net.janbuchinger.code.mishmash.GC;
 import net.janbuchinger.code.mishmash.PropFx;
 import net.janbuchinger.code.mishmash.ui.UIFx;
 import net.janbuchinger.code.mishmash.ui.dialog.InfoDialog;
-
-import org.apache.commons.io.FileUtils;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 public final class FSSyncUI implements WindowListener, ActionListener, MouseListener {
 
@@ -104,8 +104,6 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private final URL helpURL;
 	private final URL aboutURL;
 
-	private long click;
-
 	private UIChangeWatcher uiChangeWatcher;
 
 	private TrayReminder trayReminder;
@@ -114,10 +112,8 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 
 	public FSSyncUI() {
 		String version = "0.7a";
-		
-		showFromTray = false;
 
-		click = 0;
+		showFromTray = false;
 
 		frm = new JFrame("FSSync " + version);
 		frm.addWindowListener(this);
@@ -154,10 +150,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		} else {
 			try {
 				String versionFileString = FileUtils.readFileToString(versionFile, Charset.defaultCharset());
-				if(!versionFileString.equals(version)) {
-					docsNames = new String[] { "res/about.html", "res/help.html", "res/requestContinueRestore.png",
-							"res/requestForeignFileHandling.png", "res/requestSourceForRestore.png",
-							"res/requestRestoreMode.png", "res/settings.png", "res/gui.png", "res/disk-128.png" };
+				if (!versionFileString.equals(version)) {
+					docsNames = new String[] { "res/about.html", "res/help.html",
+							"res/requestContinueRestore.png", "res/requestForeignFileHandling.png",
+							"res/requestSourceForRestore.png", "res/requestRestoreMode.png",
+							"res/settings.png", "res/gui.png", "res/disk-128.png" };
 					try {
 						FileUtils.writeStringToFile(versionFile, version, Charset.defaultCharset());
 					} catch (IOException e) {
@@ -290,11 +287,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		}
 
 		if (settings.getFileBrowser().equals("")) {
-			int answer = JOptionPane
-					.showConfirmDialog(
-							frm,
-							"Linux: Soll nach einem Dateiexplorer gesucht werden? (Dabei öffnet sich vermutlich ein Fenster)",
-							"Dateiexplorer fehlt", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int answer = JOptionPane.showConfirmDialog(frm,
+					"Linux: Soll nach einem Dateiexplorer gesucht werden? (Dabei öffnet sich vermutlich ein Fenster)",
+					"Dateiexplorer fehlt", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (answer == JOptionPane.YES_OPTION) {
 				String cmd = settings.findFileBrowser();
 				if (cmd.length() == 0) {
@@ -307,6 +302,9 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 				}
 			}
 		}
+		RunCheckForNewVersion rcfnv = new RunCheckForNewVersion(version, this);
+		Thread tCheckVersion = new Thread(rcfnv);
+		tCheckVersion.start();
 	}
 
 	private void rebuildTrayMenu() {
@@ -348,7 +346,7 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		muRestore.add(miRestoreSelected);
 		muRestore.addSeparator();
 		muRun.removeAll();
-		if (segments.size() > 0){
+		if (segments.size() > 0) {
 			muRun.add(miRunSelected);
 			muRun.add(miRunAll);
 			muRun.addSeparator();
@@ -500,6 +498,14 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			trayReminder.stop();
 			trayReminder = null;
 		}
+	}
+
+	public void notifyNewVersion(String newVersion) {
+		if (!frm.isVisible()) {
+			openFromTray();
+		}
+		JOptionPane.showMessageDialog(frm, new NewVersionMessageComponent(newVersion), "Neue Version",
+				JOptionPane.WARNING_MESSAGE);
 	}
 
 	@Override
@@ -701,15 +707,16 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == trayIcon && !showFromTray) {
-			if (System.currentTimeMillis() - click < 500) {
-				refresh();
-				frm.setVisible(true);
-				startUIChangeWatcher();
-				tray.remove(trayIcon);
-				stopTrayReminder();
-			}
-			click = System.currentTimeMillis();
+			openFromTray();
 		}
+	}
+
+	private void openFromTray() {
+		refresh();
+		frm.setVisible(true);
+		startUIChangeWatcher();
+		tray.remove(trayIcon);
+		stopTrayReminder();
 	}
 
 	@Override
