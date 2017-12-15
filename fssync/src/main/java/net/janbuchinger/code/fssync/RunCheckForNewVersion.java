@@ -38,7 +38,7 @@ public class RunCheckForNewVersion implements Runnable {
 		try {
 			URL url = new URL("http://code.janbuchinger.net/fssync/currentVersion");
 			String currentVersion = IOUtils.toString(url.openStream(), Charset.forName("UTF-8"));
-			if (!currentVersion.equals(version)) {
+			if (!currentVersion.trim().equals(version)) {
 				SwingUtilities.invokeLater(new RunNotifyNewVersion(ui, currentVersion));
 			}
 		} catch (MalformedURLException e) {
