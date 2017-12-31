@@ -66,7 +66,6 @@ public class SynchronisationProcess extends SwingWorker<Void, Void> implements P
 		showSummary = settings.isShowSummary();
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	protected final Void doInBackground() throws Exception {
 
