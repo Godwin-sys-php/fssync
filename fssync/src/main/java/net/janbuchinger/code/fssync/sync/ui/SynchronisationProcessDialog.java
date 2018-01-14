@@ -49,6 +49,7 @@ import net.janbuchinger.code.fssync.Operation;
 import net.janbuchinger.code.fssync.Settings;
 import net.janbuchinger.code.fssync.sync.OperationSummary;
 import net.janbuchinger.code.mishmash.ui.UIFx;
+import net.janbuchinger.code.mishmash.ui.models.StringListModel;
 
 import org.apache.commons.io.FileUtils;
 
@@ -58,7 +59,7 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 	private final JLabel processStatus;
 	private final JProgressBar progressBar;
 	private final JList<String> statusUpdate;
-	private final SynchronisationStatusListModel lmStatusUpdate;
+	private final StringListModel lmStatusUpdate;
 	private final JButton btCancel;
 	private final JMenuItem miSaveLog;
 	private boolean cancelled;
@@ -101,7 +102,7 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		pnProgressStatus.add(processStatus);
 		pnProgressStatus.add(progressBar);
 
-		lmStatusUpdate = new SynchronisationStatusListModel();
+		lmStatusUpdate = new StringListModel();
 		statusUpdate = new JList<String>(lmStatusUpdate);
 
 		btCancel = new JButton("Abbrechen");
@@ -309,7 +310,7 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 	}
 
 	public synchronized final void addStatus(String status) {
-		lmStatusUpdate.addStatus(status);
+		lmStatusUpdate.addElement(status);
 		log.add(status);
 		statusUpdate.ensureIndexIsVisible(lmStatusUpdate.getSize() - 1);
 	}
