@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,11 @@ public class CopyActionTableCellRenderer extends DefaultTableCellRenderer {
 			boolean hasFocus, int row, int column) {
 		super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-		if (column == 2 || column == 3)
+		if (column == 2 || column == 3) {
 			setHorizontalAlignment(JLabel.RIGHT);
-		else
+		} else {
 			setHorizontalAlignment(JLabel.LEFT);
+		}
 
 		CopyAction ca = ((CopyActionTableModel) table.getModel()).getRow(row);
 
