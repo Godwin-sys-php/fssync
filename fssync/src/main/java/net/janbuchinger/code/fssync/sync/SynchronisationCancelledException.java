@@ -16,8 +16,8 @@
 package net.janbuchinger.code.fssync.sync;
 
 @SuppressWarnings("serial")
-public class SpiderCancelledException extends Exception {
-	public SpiderCancelledException() {
-		super("Spider Cancelled");
+public class SynchronisationCancelledException extends Exception {
+	public SynchronisationCancelledException() {
+		super("Synchronisation Cancelled");
 	}
 }
