@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,35 @@ package net.janbuchinger.code.fssync;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 @SuppressWarnings("serial")
-public class OperationPanel extends JPanel implements MouseListener {
+public class OperationPanel extends JPanel implements MouseListener, ActionListener {
 
 	private final Operation operation;
 	private final NumberPanel np;
 	private final ArrowPanel ap;
 	private final JLabel lbSrc, lbTrg;
 	private final OperationCheckBox ckOperation;
-	// private final OperationPanelObserver opo;
 	private final FSSyncUI ui;
 
 	private final Settings settings;
 
-	public final static Color online = Color.green.darker(), unsure = Color.red.darker(),
-			offline = Color.gray;
+	private final JMenuItem miAlternativeSync;
+
+	public final static Color online = Color.green.darker(), unsure = Color.red.darker(), offline = Color.gray;
 
 	public OperationPanel(FSSyncUI ui, Operation operation, int n, Settings settings) {
 		super(new FlowLayout(FlowLayout.LEFT));
@@ -55,20 +60,28 @@ public class OperationPanel extends JPanel implements MouseListener {
 		np.setToolTipText("Bearbeiten");
 		np.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		np.addMouseListener(this);
-		ap = new ArrowPanel(operation.isSyncBidirectional());
+		ap = new ArrowPanel(operation.isSyncBidirectional(), operation.isAlwaysQuickSync());
+		miAlternativeSync = new JMenuItem(
+				operation.isAlwaysQuickSync() ? "Synchronisieren und Überprüfen" : "Schnell Synchronisieren");
 		if (operation.isOnline()) {
-			ap.setToolTipText("Ausführen");
+			ap.setToolTipText(operation.isAlwaysQuickSync() ? "Ausführen (Schnell Synchronisieren)"
+					: "Ausführen (Synchronisieren und Überprüfen)");
 			ap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			ap.addMouseListener(this);
+			miAlternativeSync.addActionListener(this);
+			JPopupMenu menu = new JPopupMenu();
+			menu.add(miAlternativeSync);
+			ap.setComponentPopupMenu(menu);
+
 		}
 		lbSrc = new JLabel(operation.getSource().getPath());
-		if (operation.isSourceOnline() && settings.getFileBrowser().length() > 0) {
+		if (operation.isSourceOnline()) {
 			lbSrc.setToolTipText("Öffnen");
 			lbSrc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			lbSrc.addMouseListener(this);
 		}
 		lbTrg = new JLabel(operation.getTarget().getPath());
-		if (operation.isTargetOnline() && settings.getFileBrowser().length() > 0) {
+		if (operation.isTargetOnline()) {
 			lbTrg.setToolTipText("Öffnen");
 			lbTrg.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			lbTrg.addMouseListener(this);
@@ -80,7 +93,6 @@ public class OperationPanel extends JPanel implements MouseListener {
 		add(lbTrg);
 		if (operation.isSourceOnline()) {
 			lbSrc.setForeground(online);
-			// srcOnline = true;
 		} else if (operation.getSource().exists()) {
 			lbSrc.setForeground(unsure);
 		} else {
@@ -126,29 +138,44 @@ public class OperationPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getButton() != MouseEvent.BUTTON1)
+		if (e.getButton() != MouseEvent.BUTTON1) {
 			return;
-		if (e.getSource() == ap) {
-			Vector<Operation> operations = new Vector<Operation>();
-			operations.add(operation);
-			ui.runOperations(operations, null);
+		} else if (e.getSource() == ap) {
+			ui.runOperation(operation);
 		} else if (e.getSource() == np) {
-			OperationEditorDialog oed = new OperationEditorDialog(ui.getFrame(), operation, ui.getSegments());
+			Segments segments = Segments.getSegments(false);
+			OperationEditorDialog oed = new OperationEditorDialog(ui.getFrame(), operation, segments);
+			ui.stopUIChangeWatcher();
 			oed.setVisible(true);
 			if (oed.getAnswer() == OperationEditorDialog.SAVE) {
-				ui.stopUIChangeWatcher();
-				ui.getSegments().sort();
-				ui.getSegments().save();
+				segments.sort();
+				segments.save();
 				ui.refresh();
-				ui.startUIChangeWatcher();
 			}
+			ui.startUIChangeWatcher();
 		} else if (e.getSource() instanceof JLabel) {
 			try {
-				String[] cmd = { settings.getFileBrowser(), ((JLabel) e.getSource()).getText() };
-				Runtime.getRuntime().exec(cmd);
+				String browser = settings.getFileBrowser();
+				String path = ((JLabel) e.getSource()).getText();
+				if (browser.length() == 0) {
+					if (Desktop.isDesktopSupported()) {
+						File file = new File(path);
+						Desktop.getDesktop().browse(file.toURI());
+					}
+				} else {
+					String[] cmd = { browser, path };
+					Runtime.getRuntime().exec(cmd);
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == miAlternativeSync) {
+			ui.runOperation(operation, !operation.isAlwaysQuickSync());
 		}
 	}
 
