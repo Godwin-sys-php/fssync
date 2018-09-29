@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Settings {
+	private static transient Settings SETTINGS;
+	public static Settings getSettings() {
+		if(SETTINGS == null) {
+			File settingsFile = FSSyncPaths.getSettingsFile();
+			Gson g = new Gson();
+			try {
+				SETTINGS = g.fromJson(FileUtils.readFileToString(settingsFile, Charset.defaultCharset()), Settings.class);
+				SETTINGS.setSettingsFile(settingsFile);
+			} catch (IOException e) {
+				SETTINGS = new Settings(settingsFile);
+			}
+		}
+		return SETTINGS;
+	}
+	
 	private transient File settingsFile;
 
 	private boolean alwaysSaveLog;
@@ -38,8 +53,10 @@ public class Settings {
 	private boolean startToTray;
 	private boolean closeToTray;
 	private boolean minimizeToTray;
+	private boolean ignoreNewVersion;
 
-	public Settings(File settingsFile) {
+	private Settings(File settingsFile) {
+		super();
 		this.settingsFile = settingsFile;
 		alwaysSaveLog = false;
 		columns = 1;
@@ -53,6 +70,8 @@ public class Settings {
 		startToTray = false;
 		closeToTray = false;
 		minimizeToTray = false;
+		
+		ignoreNewVersion = false;
 	}
 
 	public final void write() {
@@ -171,5 +190,13 @@ public class Settings {
 
 	public final void setMinimizeToTray(boolean minimizeToTray) {
 		this.minimizeToTray = minimizeToTray;
+	}
+
+	public boolean isIgnoreNewVersion() {
+		return ignoreNewVersion;
+	}
+
+	public void setIgnoreNewVersion(boolean ignoreNewVersion) {
+		this.ignoreNewVersion = ignoreNewVersion;
 	}
 }
