@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,19 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Vector;
 
-import net.janbuchinger.code.fssync.sync.ui.SynchronisationProcessDialog;
+import javax.swing.SwingWorker;
+
 import net.janbuchinger.code.mishmash.FSFx;
 
 public class RemoteFileVisitor implements FileVisitor<Path> {
 
-	private final SynchronisationProcessDialog spd;
+	private final SwingWorker<Void, Void> spd;
 	private final File target;
 	private final Vector<File> remoteFiles;
 	private final Vector<File> emptyDirs;
 
 	public RemoteFileVisitor(File target, Vector<File> remoteFiles, Vector<File> emptyDirs,
-			SynchronisationProcessDialog spd) {
+			SwingWorker<Void, Void> spd) {
 		this.spd = spd;
 		this.target = target;
 		this.remoteFiles = remoteFiles;
@@ -54,13 +55,15 @@ public class RemoteFileVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-		if (spd.isCancelled())
+		if (spd.isCancelled()) {
 			return FileVisitResult.TERMINATE;
-		if (file.getParent().toString().equals(target.getPath())) {
+
+		} else if (file.getParent().toString().equals(target.getPath())) {
 			filename = file.getFileName().toString();
-			if (filename.startsWith(".fs.") && filename.endsWith(".db"))
+			if (filename.startsWith(".fs.") && filename.endsWith(".db")) {
 				// System.err.println(filename);
 				return FileVisitResult.CONTINUE;
+			}
 		}
 		remoteFiles.add(file.toFile());
 		return FileVisitResult.CONTINUE;
@@ -75,5 +78,4 @@ public class RemoteFileVisitor implements FileVisitor<Path> {
 	public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 		return FileVisitResult.CONTINUE;
 	}
-
 }
