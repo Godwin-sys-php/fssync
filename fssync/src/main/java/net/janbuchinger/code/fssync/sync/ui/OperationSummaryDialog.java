@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import net.janbuchinger.code.fssync.Operation;
 import net.janbuchinger.code.fssync.sync.OperationSummary;
 import net.janbuchinger.code.mishmash.ui.UIFx;
 
@@ -224,15 +225,15 @@ public final class OperationSummaryDialog extends JDialog implements ActionListe
 		} else if (e.getSource() == btSelectSource) {
 			tmCopy.select(CopyActionTableModel.sel_dir_source);
 		} else if (e.getSource() == btSelectDestination) {
-			tmCopy.select(CopyActionTableModel.sel_dir_destination);
+			tmCopy.select(CopyActionTableModel.sel_dir_target);
 		} else if (e.getSource() == btPrioSource) {
-			tmCopy.select(CopyActionTableModel.sel_source);
+			tmCopy.select(Operation.PRIORITY_SOURCE);
 		} else if (e.getSource() == btPrioDestination) {
-			tmCopy.select(CopyActionTableModel.sel_destination);
+			tmCopy.select(Operation.PRIORITY_TARGET);
 		} else if (e.getSource() == btPrioNew) {
-			tmCopy.select(CopyActionTableModel.sel_new);
+			tmCopy.select(Operation.PRIORITY_NEW);
 		} else if (e.getSource() == btPrioOld) {
-			tmCopy.select(CopyActionTableModel.sel_old);
+			tmCopy.select(Operation.PRIORITY_OLD);
 		}
 	}
 
