@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
 
-import net.janbuchinger.code.fssync.sync.ui.SynchronisationProcessDialog;
+import javax.swing.SwingWorker;
 
 public final class OperationSummary {
 	// updateSizeSourceModified - updateSizeSourceModifiedOld
@@ -58,8 +58,8 @@ public final class OperationSummary {
 	private final Vector<Vector<CopyAction>> copyActionsDuplicates;
 	private final Vector<DeleteAction> deleteActions;
 
-	private final SynchronisationProcessDialog spd;
-	
+	private final SwingWorker<Void, Void> sp;
+
 	private int nCopyActionsSelected;
 	private int nDeleteActionsSelected;
 
@@ -67,9 +67,9 @@ public final class OperationSummary {
 
 	public OperationSummary(File source, File destination, Vector<File> corruptFilesSource,
 			Vector<File> corruptFilesDestination, Vector<File> lostFiles, Vector<CopyAction> copyActions,
-			Vector<DeleteAction> deleteActions, SynchronisationProcessDialog spd, boolean isRestore)
-			throws SpiderCancelledException {
-		this.spd = spd;
+			Vector<DeleteAction> deleteActions, SwingWorker<Void, Void> sp, boolean isRestore,
+			boolean isBiDirectional) throws SynchronizationCancelledException {
+		this.sp = sp;
 
 		this.corruptFilesSource = corruptFilesSource;
 		this.corruptFilesDestination = corruptFilesDestination;
@@ -80,7 +80,7 @@ public final class OperationSummary {
 		this.deleteActions = deleteActions;
 
 		this.isRestore = isRestore;
-		
+
 		nCopyActionsSelected = 0;
 		nDeleteActionsSelected = 0;
 
@@ -96,40 +96,51 @@ public final class OperationSummary {
 		rmSizeSource = 0;
 		rmSizeDestination = 0;
 
-		int i1 = 0;
-		int i2;
-		String relativePath;
-		Iterator<CopyAction> iCopyActions = copyActions.iterator();
-		CopyAction copyAction1;
-		CopyAction copyAction2;
+		// if bidirectional then check for conflicts
+		if (isBiDirectional) {
+			int i1 = 0;
+			int i2;
+			String relativePath;
+			Iterator<CopyAction> iCopyActions;
+			CopyAction copyAction1;
+			CopyAction copyAction2;
+			Vector<CopyAction> duplicate;
 
-		while (i1 < copyActions.size()) {
-			copyAction1 = copyActions.get(i1);
-			relativePath = copyAction1.getRelativePath();
-			iCopyActions = copyActions.iterator();
-			i2 = 0;
-			while (iCopyActions.hasNext()) {
-				copyAction2 = iCopyActions.next();
-				if (i2 <= i1) {
-					i2++;
+			while (i1 < copyActions.size()) {
+				copyAction1 = copyActions.get(i1);
+				if (copyAction1.getConflict() != null) {
+					i1++;
 					continue;
 				}
-				if (copyAction2.getConflict() != null)
-					continue;
-				if (copyAction2.getRelativePath().equals(relativePath)) {
-					copyAction2.setConflict(copyAction1);
-					copyAction1.setConflict(copyAction2);
-					if (copyAction2.getDirection() == CopyAction.DIR_BACKUP)
-						copyAction1.setSelected(false);
-					else
-						copyAction2.setSelected(false);
-					break;
+				relativePath = copyAction1.getRelativePath();
+				iCopyActions = copyActions.iterator();
+				i2 = 0;
+				while (iCopyActions.hasNext()) {
+					copyAction2 = iCopyActions.next();
+					if (i2 <= i1) {
+						i2++;
+					} else if (copyAction2.getConflict() != null) {
+						// do nothing
+					} else if (copyAction2.getRelativePath().equals(relativePath)) {
+						copyAction2.setConflict(copyAction1);
+						copyAction1.setConflict(copyAction2);
+						duplicate = new Vector<>();
+						duplicate.add(copyAction1);
+						duplicate.add(copyAction2);
+						copyActionsDuplicates.add(duplicate);
+						if (copyAction2.getDirection() == CopyAction.DIR_BACKUP) {
+							copyAction1.setSelected(false);
+						} else {
+							copyAction2.setSelected(false);
+						}
+						break;
+					}
+					if (sp.isCancelled()) {
+						throw new SynchronizationCancelledException();
+					} 
 				}
-				if (spd.isCancelled()) {
-					throw new SpiderCancelledException();
-				}
+				i1++;
 			}
-			i1++;
 		}
 
 		reCalcAll();
@@ -138,14 +149,14 @@ public final class OperationSummary {
 		freeSpaceSource = source.getFreeSpace();
 	}
 
-	public void reCalcAll() throws SpiderCancelledException {
+	public void reCalcAll() throws SynchronizationCancelledException {
 
 		Iterator<CopyAction> iCopyActions = copyActions.iterator();
 		CopyAction copyAction;
 
 		nCopyActionsSelected = 0;
 		nDeleteActionsSelected = 0;
-		
+
 		updateSizeSourceNew = 0;
 		updateSizeSourceModified = 0;
 		updateSizeSourceModifiedOld = 0;
@@ -176,8 +187,8 @@ public final class OperationSummary {
 					updateSizeDestinationModifiedOld += copyAction.getDestination().length();
 				}
 			}
-			if (spd.isCancelled()) {
-				throw new SpiderCancelledException();
+			if (sp.isCancelled()) {
+				throw new SynchronizationCancelledException();
 			}
 		}
 
@@ -185,7 +196,7 @@ public final class OperationSummary {
 		DeleteAction deleteAction;
 		while (iDeleteActions.hasNext()) {
 			deleteAction = iDeleteActions.next();
-			if(deleteAction.isSelected()){
+			if (deleteAction.isSelected()) {
 				nDeleteActionsSelected++;
 				if (deleteAction.getLocation() == DeleteAction.del_source) {
 					rmSizeSource += deleteAction.getFile().length();
@@ -200,8 +211,8 @@ public final class OperationSummary {
 					updateSizeSourceNew += deleteAction.getFile().length();
 				}
 			}
-			if (spd.isCancelled()) {
-				throw new SpiderCancelledException();
+			if (sp.isCancelled()) {
+				throw new SynchronizationCancelledException();
 			}
 		}
 
@@ -363,7 +374,7 @@ public final class OperationSummary {
 
 	public void addRmDestination(long length) {
 		rmSizeDestination += length;
-		if (!isRestore){
+		if (!isRestore) {
 			updateSizeSourceNew -= length;
 			nDeleteActionsSelected++;
 			nCopyActionsSelected--;
@@ -372,7 +383,7 @@ public final class OperationSummary {
 
 	public void addRmSource(long length) {
 		rmSizeSource += length;
-		if (!isRestore){
+		if (!isRestore) {
 			updateSizeDestinationNew -= length;
 			nDeleteActionsSelected++;
 			nCopyActionsSelected--;
@@ -381,7 +392,7 @@ public final class OperationSummary {
 
 	public void removeRmDestination(long length) {
 		rmSizeDestination -= length;
-		if (!isRestore){
+		if (!isRestore) {
 			updateSizeSourceNew += length;
 			nDeleteActionsSelected--;
 			nCopyActionsSelected++;
@@ -390,7 +401,7 @@ public final class OperationSummary {
 
 	public void removeRmSource(long length) {
 		rmSizeSource -= length;
-		if (!isRestore){
+		if (!isRestore) {
 			updateSizeDestinationNew += length;
 			nDeleteActionsSelected--;
 			nCopyActionsSelected++;
@@ -412,6 +423,10 @@ public final class OperationSummary {
 
 	public boolean hasCorruptFiles() {
 		return corruptFilesSource.size() + corruptFilesDestination.size() + lostFiles.size() > 0;
+	}
+	
+	public boolean hasConflicts() {
+		return copyActionsDuplicates.size() > 0;
 	}
 
 	public final boolean isRestore() {
