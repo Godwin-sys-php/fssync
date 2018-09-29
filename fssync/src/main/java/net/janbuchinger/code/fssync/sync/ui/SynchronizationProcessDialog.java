@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.SwingWorker;
+
+import org.apache.commons.io.FileUtils;
 
 import net.janbuchinger.code.fssync.Operation;
 import net.janbuchinger.code.fssync.Settings;
@@ -51,10 +54,8 @@ import net.janbuchinger.code.fssync.sync.OperationSummary;
 import net.janbuchinger.code.mishmash.ui.UIFx;
 import net.janbuchinger.code.mishmash.ui.models.StringListModel;
 
-import org.apache.commons.io.FileUtils;
-
 @SuppressWarnings("serial")
-public final class SynchronisationProcessDialog extends JDialog implements ActionListener {
+public final class SynchronizationProcessDialog extends JDialog implements ActionListener {
 
 	private final JLabel processStatus;
 	private final JProgressBar progressBar;
@@ -62,7 +63,6 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 	private final StringListModel lmStatusUpdate;
 	private final JButton btCancel;
 	private final JMenuItem miSaveLog;
-	private boolean cancelled;
 	private boolean finished;
 	private final Settings settings;
 	private Exception exception;
@@ -70,7 +70,12 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 	private final Vector<String> log;
 	private final boolean verbose;
 
-	public SynchronisationProcessDialog(String title, JFrame d, Settings settings) {
+	private final SwingWorker<Void, Void> sp;
+
+	private ProgressBarCountDownThread pbcdt;
+
+	public SynchronizationProcessDialog(String title, JFrame d, Settings settings,
+			SwingWorker<Void, Void> sp) {
 		super(d, title, true);
 
 		this.verbose = settings.isVerbose();
@@ -79,7 +84,8 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 
 		this.settings = settings;
 
-		cancelled = false;
+		this.sp = sp;
+
 		finished = false;
 
 		exception = null;
@@ -113,9 +119,9 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		JPanel pnContent = new JPanel(new BorderLayout());
 		pnContent.setPreferredSize(new Dimension(350, 400));
 		pnContent.add(pnProgressStatus, BorderLayout.NORTH);
-		JScrollPane sp = new JScrollPane(statusUpdate);
-		sp.getHorizontalScrollBar().setUnitIncrement(15);
-		pnContent.add(sp, BorderLayout.CENTER);
+		JScrollPane scp = new JScrollPane(statusUpdate);
+		scp.getHorizontalScrollBar().setUnitIncrement(15);
+		pnContent.add(scp, BorderLayout.CENTER);
 		pnContent.add(pnBtCancel, BorderLayout.SOUTH);
 
 		setContentPane(pnContent);
@@ -128,9 +134,11 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 	@Override
 	public synchronized final void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btCancel) {
-			cancelled = true;
 			if (!finished) {
+				sp.cancel(false);
 				btCancel.setEnabled(false);
+				setProcessStatusText("Prozess wird Abgebrochen...");
+				addStatus("Prozess wird so bald wie möglich Beendet, bitte um einen Moment Geduld...");
 			} else {
 				setVisible(false);
 			}
@@ -141,8 +149,8 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 
 	public synchronized final void saveLog() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-		File file = new File(settings.getLogFilesDir(), "FSSync-Log-" + sdf.format(System.currentTimeMillis())
-				+ ".txt");
+		File file = new File(settings.getLogFilesDir(),
+				"FSSync-Log-" + sdf.format(System.currentTimeMillis()) + ".txt");
 		StringBuilder data = new StringBuilder();
 		Iterator<String> iStatusUpdate = log.iterator();
 		while (iStatusUpdate.hasNext()) {
@@ -166,12 +174,10 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		processStatus.setText(text);
 	}
 
-	public synchronized final boolean isCancelled() {
-		return cancelled;
-	}
-
 	public synchronized final void setProgress(int progress) {
-		progressBar.setValue(progress);
+		if (!finished) {
+			progressBar.setValue(progress);
+		}
 	}
 
 	public synchronized final void setFinished(String finalStatus) {
@@ -179,14 +185,16 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		if (settings.isAlwaysSaveLog() || exception != null) {
 			saveLog();
 		}
-		setDeterminate(true);
+		finished = true;
+		abortCountDown();
+		progressBar.setIndeterminate(false);
+		progressBar.setValue(100);
 		miSaveLog.setEnabled(true);
 		btCancel.setText("Schliessen");
 		btCancel.setEnabled(true);
-		progressBar.setValue(100);
 		progressBar.setEnabled(false);
 		processStatus.setText("Fertig");
-		finished = true;
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 
 	public synchronized final void setCancelled(String finalStatus) {
@@ -194,17 +202,21 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		if (settings.isAlwaysSaveLog() || exception != null) {
 			saveLog();
 		}
-		setDeterminate(true);
+		finished = true;
+		abortCountDown();
+		progressBar.setIndeterminate(false);
 		miSaveLog.setEnabled(true);
 		btCancel.setText("Schliessen");
 		btCancel.setEnabled(true);
 		progressBar.setEnabled(false);
 		processStatus.setText("Abgebrochen");
-		finished = true;
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 
 	public synchronized final void setDeterminate(boolean flag) {
-		progressBar.setIndeterminate(!flag);
+		if (!finished) {
+			progressBar.setIndeterminate(!flag);
+		}
 	}
 
 	public static final int foreign_integrate = 0;
@@ -227,8 +239,8 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		btIgnore.setSelected(true);
 		JOptionPane.showMessageDialog(this, pnButtons, "Unerwartete Änderungen im Zieldateisystem",
 				JOptionPane.WARNING_MESSAGE);
-		return btIntegrate.isSelected() ? foreign_integrate : btIgnore.isSelected() ? foreign_ignore
-				: foreign_restore;
+		return btIntegrate.isSelected() ? foreign_integrate
+				: btIgnore.isSelected() ? foreign_ignore : foreign_restore;
 	}
 
 	public synchronized final boolean requestContinueRestore() {
@@ -254,6 +266,7 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		JPanel pnButtons = new JPanel(new GridLayout(sources.size() + 1, 1));
 		pnButtons.add(lbInfo);
 		JRadioButton rb;
+		SimpleDateFormat sdf = UIFx.getDateTimeFormat();
 		int newestVersion = -1;
 		long newestDate = 0;
 		for (int i = 0; i < sources.size(); i++) {
@@ -264,7 +277,8 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		}
 		int c = 0;
 		for (Operation o : sources) {
-			rb = new JRadioButton(o.getRemotePath() + (c == newestVersion ? " (Neueste Version)" : ""));
+			rb = new JRadioButton(o.getTargetPath() + " [" + sdf.format(o.getDbOriginal().lastModified()) + "] "
+					+ (c == newestVersion ? " (Neueste Version)" : ""));
 			if (c == newestVersion)
 				rb.setSelected(true);
 			c++;
@@ -315,19 +329,47 @@ public final class SynchronisationProcessDialog extends JDialog implements Actio
 		statusUpdate.ensureIndexIsVisible(lmStatusUpdate.getSize() - 1);
 	}
 
-	public synchronized final void addStatusVerbose(String status) {
-		if (verbose) {
-			addStatus(status);
-		} else {
-			log.add(status);
-		}
-	}
-
 	public synchronized boolean approveSummary(OperationSummary operationSummary, boolean isBiDirectional,
 			int priorityOnConflict) {
 		OperationSummaryDialog osd = new OperationSummaryDialog(this, operationSummary, isBiDirectional);
 		osd.getModel().select(priorityOnConflict);
 		osd.setVisible(true);
 		return osd.isApproved();
+	}
+
+	public final void startCountDown(long t) {
+		if (t > 0) {
+			if (pbcdt != null) {
+				pbcdt.cancel(false);
+			} else {
+				pbcdt = new ProgressBarCountDownThread(this, t);
+				pbcdt.execute();
+			}
+		} else {
+			progressBar.setIndeterminate(true);
+		}
+	}
+
+	public final void abortCountDown() {
+		if (pbcdt != null) {
+			pbcdt.cancel(false);
+			pbcdt = null;
+		}
+	}
+
+	public final void setCountDownPaused(boolean paused) {
+		if (pbcdt != null) {
+			pbcdt.setPaused(paused);
+		}
+	}
+
+	public void passMessages(Vector<StatusMessage> messages) {
+		for(StatusMessage message : messages) {
+			if(!message.isVerbose() || (verbose && message.isVerbose())) {
+				lmStatusUpdate.addElement(message.getMessage());
+			}
+			log.add(message.getMessage());
+		}
+		statusUpdate.ensureIndexIsVisible(lmStatusUpdate.getSize() - 1);
 	}
 }
