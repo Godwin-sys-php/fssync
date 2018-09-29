@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -33,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import net.janbuchinger.code.fssync.sync.OnlineDB;
 import net.janbuchinger.code.mishmash.ui.UIFx;
 import net.janbuchinger.code.mishmash.ui.dialog.DialogEscapeHook;
 
@@ -62,8 +64,6 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 	private long click;
 	private int clickId;
 
-	// private final String[] segNames;
-
 	private final FSSyncUI ui;
 
 	private final Segments segments;
@@ -72,7 +72,6 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 		super(frm, "Neues Segment", true);
 
 		this.ui = ui;
-		// this.segNames = segNames;
 
 		this.segments = segments;
 
@@ -155,12 +154,12 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 
 				for (int i = 0; i < segments.size(); i++) {
 					if (segments.get(i).getName().equals(tfSegmentName.getText())) {
-						JOptionPane.showMessageDialog(this, "Bitte anderen Namen Wählen", "Fehler",
+						JOptionPane.showMessageDialog(this,
+								"Dieser Name ist bereits in Verwendung, bitte anderen Namen Wählen", "Fehler",
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
-
 				s.setName(tfSegmentName.getText());
 				hasChanges = true;
 			}
@@ -189,8 +188,29 @@ public class SegmentEditorDialog extends JDialog implements ActionListener, Mous
 			}
 		} else if (e.getSource() == btRemOp) {
 			if (jlOperations.getSelectedIndex() != -1) {
-				if (JOptionPane.showConfirmDialog(this, "Operation wirklich Löschen?", "Löschen",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+				int answer = JOptionPane.showConfirmDialog(this, "Operation wirklich Löschen?", "Löschen",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (answer == JOptionPane.YES_OPTION) {
+					Operation toDelete = lmOperations.get(jlOperations.getSelectedIndex());
+					answer = JOptionPane.showConfirmDialog(this,
+							"Sollen die Dateisystemindexdatenbanken auch gelöscht werden?", "Datenbanken",
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (answer == JOptionPane.YES_OPTION) {
+						if (!toDelete.isOnline()) {
+							JOptionPane.showMessageDialog(this, "Bitte zuerst alle Datenträger Verbinden.",
+									"Fehler", JOptionPane.ERROR_MESSAGE);
+							return;
+						} else {
+							File dbOriginal = toDelete.getDbOriginal();
+							File dbEdit = OnlineDB.getEditableDBFile(toDelete);
+							if (!dbOriginal.delete()) {
+								System.err.println("Could not delete target database file!");
+							}
+							if (!dbEdit.delete()) {
+								System.err.println("Could not delete target database file!");
+							}
+						}
+					}
 					lmOperations.remove(jlOperations.getSelectedIndex());
 					jlOperations.setSelectedIndices(new int[0]);
 				}
