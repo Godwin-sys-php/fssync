@@ -19,13 +19,13 @@ import net.janbuchinger.code.fssync.sync.OperationSummary;
 
 public class GetSummaryApproval implements Runnable {
 
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 	private boolean isApproved;
 	private final boolean isBiDirectional;
 	private final OperationSummary operationSummary;
 	private final int priorityOnConflict;
 
-	public GetSummaryApproval(SynchronisationProcessDialog spd, OperationSummary operationSummary,
+	public GetSummaryApproval(SynchronizationProcessDialog spd, OperationSummary operationSummary,
 			boolean isBiDirectional, int priorityOnConflict) {
 		this.spd = spd;
 		this.isBiDirectional = isBiDirectional;

@@ -17,12 +17,12 @@ package net.janbuchinger.code.fssync.sync.ui;
 
 public final class GetForeignFileHandling implements Runnable {
 
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 	private int answer;
 
-	public GetForeignFileHandling(SynchronisationProcessDialog spd) {
+	public GetForeignFileHandling(SynchronizationProcessDialog spd) {
 		this.spd = spd;
-		answer = SynchronisationProcessDialog.foreign_ignore;
+		answer = SynchronizationProcessDialog.foreign_ignore;
 	}
 
 	@Override

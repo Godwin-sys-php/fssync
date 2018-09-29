@@ -16,10 +16,10 @@
 package net.janbuchinger.code.fssync.sync.ui;
 
 public class GetContinueRestore implements Runnable {
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 	private boolean continueRestore;
 
-	public GetContinueRestore(SynchronisationProcessDialog spd) {
+	public GetContinueRestore(SynchronizationProcessDialog spd) {
 		this.spd = spd;
 		continueRestore = false;
 	}

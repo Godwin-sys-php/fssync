@@ -16,12 +16,12 @@
 package net.janbuchinger.code.fssync.sync.ui;
 
 public class GetRetryOnOutOfMemory implements Runnable {
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 	private final String storage;
 	private final long updateSize;
 	private boolean retry;
 
-	public GetRetryOnOutOfMemory(SynchronisationProcessDialog spd, String storage, long updateSize) {
+	public GetRetryOnOutOfMemory(SynchronizationProcessDialog spd, String storage, long updateSize) {
 		this.spd = spd;
 		this.storage = storage;
 		this.updateSize = updateSize;
