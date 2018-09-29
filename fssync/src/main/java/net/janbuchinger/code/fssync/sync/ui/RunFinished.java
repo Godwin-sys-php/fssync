@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ package net.janbuchinger.code.fssync.sync.ui;
 
 public class RunFinished implements Runnable {
 
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 	private final Exception exception;
 	private final String message;
 
-	public RunFinished(String message, Exception exception, SynchronisationProcessDialog spd) {
+	public RunFinished(String message, Exception exception, SynchronizationProcessDialog spd) {
 		this.message = message;
 		this.exception = exception;
 		this.spd = spd;
@@ -31,5 +31,6 @@ public class RunFinished implements Runnable {
 	public void run() {
 		spd.setException(exception);
 		spd.setFinished(message);
+		spd.setProcessStatusText(exception != null ? "Abgestürzt" : "Fertig");
 	}
 }
