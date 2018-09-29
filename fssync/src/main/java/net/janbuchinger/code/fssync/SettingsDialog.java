@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -40,20 +38,12 @@ import net.janbuchinger.code.mishmash.ui.dialog.EscapeListener;
 import net.janbuchinger.code.mishmash.ui.userInput.FolderPathTextField;
 import net.janbuchinger.code.mishmash.ui.userInput.JTextFieldWithPopUp;
 
-import org.apache.commons.io.FileUtils;
-
-import com.google.gson.Gson;
-
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog implements ActionListener, EscapeListener {
 
 	private final JButton btOk, btCancel;
 
 	private final JFrame frm;
-
-	private final File settingsFile;
-
-	// private final File programDir;
 
 	private final Settings settings;
 
@@ -77,52 +67,38 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 		super(frm, "Einstellungen", true);
 		this.frm = frm;
 
-		settingsFile = new File(new File(System.getProperty("user.home"), ".fssync"), "settings.json");
-
-		// File programDir = settingsFile.getParentFile();
-
-		Gson g = new Gson();
-
-		Settings s;
-		try {
-			s = g.fromJson(FileUtils.readFileToString(settingsFile, Charset.defaultCharset()), Settings.class);
-			s.setSettingsFile(settingsFile);
-		} catch (IOException e) {
-			s = new Settings(settingsFile);
-		}
-
-		settings = s;
+		settings = Settings.getSettings();
 
 		Integer[] cols = new Integer[10];
 		for (int i = 0; i < cols.length; i++) {
 			cols[i] = new Integer(i + 1);
 		}
 		cbColumns = new JComboBox<Integer>(cols);
-		cbColumns.setSelectedIndex(s.getColumns() - 1);
+		cbColumns.setSelectedIndex(settings.getColumns() - 1);
 
 		ckVerbose = new JCheckBox("Viele Informationen während der Synchronisation Anzeigen");
-		ckVerbose.setSelected(s.isVerbose());
+		ckVerbose.setSelected(settings.isVerbose());
 
 		tfLogFileDir = new FolderPathTextField(this);
-		tfLogFileDir.setPath(s.getLogFilesDir());
+		tfLogFileDir.setPath(settings.getLogFilesDir());
 
 		ckAlwaysSaveLog = new JCheckBox("Log immer Speichern");
-		ckAlwaysSaveLog.setSelected(s.isAlwaysSaveLog());
+		ckAlwaysSaveLog.setSelected(settings.isAlwaysSaveLog());
 
 		ckShowSummary = new JCheckBox("Zusammenfassung vor Änderung zeigen");
-		ckShowSummary.setSelected(s.isShowSummary());
+		ckShowSummary.setSelected(settings.isShowSummary());
 
 		tfFileBrowser = new JTextFieldWithPopUp();
-		tfFileBrowser.setText(s.getFileBrowser());
+		tfFileBrowser.setText(settings.getFileBrowser());
 
 		ckStartToTray = new JCheckBox("Als Tray Icon Starten");
-		ckStartToTray.setSelected(s.isStartToTray());
+		ckStartToTray.setSelected(settings.isStartToTray());
 
 		ckCloseToTray = new JCheckBox("Ins Tray Schliessen");
-		ckCloseToTray.setSelected(s.isCloseToTray());
+		ckCloseToTray.setSelected(settings.isCloseToTray());
 
 		ckMinimizeToTray = new JCheckBox("Ins Tray Minimieren");
-		ckMinimizeToTray.setSelected(s.isMinimizeToTray());
+		ckMinimizeToTray.setSelected(settings.isMinimizeToTray());
 
 		if (!SystemTray.isSupported()) {
 			ckStartToTray.setEnabled(false);
@@ -232,10 +208,6 @@ public class SettingsDialog extends JDialog implements ActionListener, EscapeLis
 	@Override
 	public final void escaping() {
 		actionPerformed(new ActionEvent(btCancel, 0, ""));
-	}
-
-	public Settings getSettings() {
-		return settings;
 	}
 
 	public void updateFileBrowser(String cmd) {
