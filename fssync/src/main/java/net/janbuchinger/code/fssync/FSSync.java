@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,75 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-public class FSSync {
-
+/**
+ * This is the programs main class. In the main method a file lock is obtained
+ * before launching the UI. If the file lock is held by another instance, the
+ * program will show an error message and then terminate.
+ * 
+ * @author Jan Buchinger
+ *
+ */
+public final class FSSync {
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new FSSyncRun());
+		try {
+			// get the lock file
+			File lockFile = FSSyncPaths.getLockFile();
+			// create a RandomAccessFile from the lock file
+			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
+			// get the FileChannel from the RandomAccessFile
+			FileChannel channel = raf.getChannel();
+			// try to obtain a file lock
+			FileLock lock = channel.tryLock();
+			// if the lock could not be obtained
+			if (lock == null) {
+				try {
+					// close the channel
+					channel.close();
+					// close the RandomAccessFile
+					raf.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				// show message that the program is already running.
+				SwingUtilities.invokeLater(new RunAlreadyRunningMessage());
+			} else { // the file lock was successfully obtained
+				// add the shutdown hook to release the file lock and close the channel and the
+				// RandomAccessFile before exiting
+				Runtime.getRuntime().addShutdownHook(new ReleaseApplicationLockThread(lock, channel, raf));
+				// after registering the shutdown hook the UI is launched
+				SwingUtilities.invokeLater(new RunFSSyncUI());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
-	public final static String getChecksum(File file) {
+	/**
+	 * Utility function to create a SHA384 file checksum in hex format.
+	 * 
+	 * @param file
+	 *            the file to create the checksum from.
+	 * 
+	 * @return the SHA384 file checksum in hex format or <code>null</code> if an
+	 *         <code>IOException</code> occurs.
+	 * 
+	 * @see DigestUtils#sha384Hex(InputStream) DigestUtils.sha384Hex(InputStream)
+	 *      from apache commons codec
+	 */
+	public static String createSHA384Hex(File file) {
 		try (InputStream data = new FileInputStream(file)) {
 			return DigestUtils.sha384Hex(data);
 		} catch (IOException e) {
-			// e.printStackTrace();
-			return "";
+			return null;
 		}
 	}
 }
