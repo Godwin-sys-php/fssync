@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,38 +21,66 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import net.janbuchinger.code.fssync.Operation;
 import net.janbuchinger.code.fssync.sync.CopyAction;
 import net.janbuchinger.code.fssync.sync.OperationSummary;
-import net.janbuchinger.code.fssync.sync.SpiderCancelledException;
+import net.janbuchinger.code.fssync.sync.SynchronizationCancelledException;
 import net.janbuchinger.code.mishmash.FSFx;
 import net.janbuchinger.code.mishmash.ui.UIFx;
 
+/**
+ * The table model for the <code>OperationSummaryDialog</code>s files to copy
+ * table.
+ * 
+ * @author Jan Buchinger
+ *
+ */
 @SuppressWarnings("serial")
 public class CopyActionTableModel extends AbstractTableModel {
-
-	public final static int sel_source = 0;
-	public final static int sel_destination = 1;
-	public final static int sel_new = 2;
-	public final static int sel_old = 3;
+	/**
+	 * Selection: Select none
+	 */
 	public final static int sel_none = 4;
+	/**
+	 * Selection: Select all
+	 */
 	public final static int sel_all = 5;
+	/**
+	 * Selection: Select Direction source
+	 */
 	public final static int sel_dir_source = 6;
-	public final static int sel_dir_destination = 7;
+	/**
+	 * Selection: Select Direction target
+	 */
+	public final static int sel_dir_target = 7;
 
+	/**
+	 * The data of the model contains <code>CopyAction</code>s.
+	 */
 	private final Vector<CopyAction> data;
+	/**
+	 * The <code>OperationSummary</code> for updating values upon de/selection and
+	 * de/selection
+	 */
 	private final OperationSummary operationSummary;
-
+	/**
+	 * multi purpose CopyAction
+	 */
 	private CopyAction copyAction;
-
+	/**
+	 * The currently selected conflict priority
+	 */
 	private int selectCurrent;
-
+	/**
+	 * <code>SimpleDateFormat</code> for formatting the file modification date
+	 */
 	private final SimpleDateFormat df;
 
 	public CopyActionTableModel(Vector<CopyAction> data, OperationSummary operationSummary) {
 		this.data = data;
 		this.operationSummary = operationSummary;
 		df = UIFx.initDisplayDateTimeFormat();
-		selectCurrent = sel_destination;
+		selectCurrent = Operation.PRIORITY_SOURCE;
 	}
 
 	@Override
@@ -150,15 +178,15 @@ public class CopyActionTableModel extends AbstractTableModel {
 				if (copyAction.isNew()) {
 					operationSummary.addDestinationNew(copyAction.getSource().length());
 				} else {
-					operationSummary.addDestinationModified(copyAction.getSource().length(), copyAction
-							.getDestination().length());
+					operationSummary.addDestinationModified(copyAction.getSource().length(),
+							copyAction.getDestination().length());
 				}
 			} else {
 				if (copyAction.isNew()) {
 					operationSummary.addSourceNew(copyAction.getSource().length());
 				} else {
-					operationSummary.addSourceModified(copyAction.getSource().length(), copyAction
-							.getDestination().length());
+					operationSummary.addSourceModified(copyAction.getSource().length(),
+							copyAction.getDestination().length());
 				}
 			}
 		} else {
@@ -166,15 +194,15 @@ public class CopyActionTableModel extends AbstractTableModel {
 				if (copyAction.isNew()) {
 					operationSummary.removeDestinationNew(copyAction.getSource().length());
 				} else {
-					operationSummary.removeDestinationModified(copyAction.getSource().length(), copyAction
-							.getDestination().length());
+					operationSummary.removeDestinationModified(copyAction.getSource().length(),
+							copyAction.getDestination().length());
 				}
 			} else {
 				if (copyAction.isNew()) {
 					operationSummary.removeSourceNew(copyAction.getSource().length());
 				} else {
-					operationSummary.removeSourceModified(copyAction.getSource().length(), copyAction
-							.getDestination().length());
+					operationSummary.removeSourceModified(copyAction.getSource().length(),
+							copyAction.getDestination().length());
 				}
 			}
 		}
@@ -188,7 +216,7 @@ public class CopyActionTableModel extends AbstractTableModel {
 	private final void refresh() {
 		try {
 			operationSummary.reCalcAll();
-		} catch (SpiderCancelledException e) {
+		} catch (SynchronizationCancelledException e) {
 			e.printStackTrace();
 		}
 		fireTableDataChanged();
@@ -200,7 +228,7 @@ public class CopyActionTableModel extends AbstractTableModel {
 			while (iData.hasNext())
 				iData.next().setSelected(true);
 			select = selectCurrent;
-			if (operationSummary.getCopyActionsDuplicates().size() == 0) {
+			if (!operationSummary.hasConflicts()) {
 				refresh();
 				return;
 			}
@@ -222,7 +250,7 @@ public class CopyActionTableModel extends AbstractTableModel {
 			}
 			refresh();
 			return;
-		} else if (select == sel_dir_destination) {
+		} else if (select == sel_dir_target) {
 			Iterator<CopyAction> iData = data.iterator();
 			CopyAction copyAction;
 			while (iData.hasNext()) {
@@ -236,29 +264,26 @@ public class CopyActionTableModel extends AbstractTableModel {
 			return;
 		}
 
-		Iterator<Vector<CopyAction>> iConflicts = operationSummary.getCopyActionsDuplicates().iterator();
-		Vector<CopyAction> conflict;
 		CopyAction copyActionA;
 		CopyAction copyActionB;
 
 		boolean selectA;
 
-		while (iConflicts.hasNext()) {
-			conflict = iConflicts.next();
+		for(Vector<CopyAction> conflict : operationSummary.getCopyActionsDuplicates()) {
 			copyActionA = conflict.elementAt(0);
 			copyActionB = conflict.elementAt(1);
 
 			switch (select) {
-			case sel_source:
+			case Operation.PRIORITY_SOURCE:
 				selectA = copyActionA.getDirection() == CopyAction.DIR_BACKUP;
 				break;
-			case sel_destination:
+			case Operation.PRIORITY_TARGET:
 				selectA = copyActionA.getDirection() == CopyAction.DIR_RESTORE;
 				break;
-			case sel_old:
+			case Operation.PRIORITY_OLD:
 				selectA = copyActionA.getSource().lastModified() < copyActionA.getDestination().lastModified();
 				break;
-			case sel_new:
+			case Operation.PRIORITY_NEW:
 			default:
 				selectA = copyActionA.getSource().lastModified() > copyActionA.getDestination().lastModified();
 				break;
