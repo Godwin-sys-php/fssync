@@ -618,7 +618,7 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			}
 
 			if (operation == null) {
-				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional, false,
+				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
 						elasticComparison, alwaysQuickSync, priorityOnConflict, interval, intervalMode,
 						remind);
 			} else {
