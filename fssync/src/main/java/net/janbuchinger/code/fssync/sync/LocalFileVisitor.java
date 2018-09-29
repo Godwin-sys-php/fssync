@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,21 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Iterator;
 import java.util.Vector;
 
-import net.janbuchinger.code.fssync.sync.ui.SynchronisationProcessDialog;
+import javax.swing.SwingWorker;
 
 public class LocalFileVisitor implements FileVisitor<Path> {
 
 	private final Vector<File> localFiles;
 	private final Vector<String> excludes;
 
-	private final SynchronisationProcessDialog spd;
+	private final SwingWorker<Void, Void> spd;
 
 	private final int localBasePathNameCount;
 
 	private final File source;
 
 	public LocalFileVisitor(File source, Vector<File> localFiles, Vector<String> excludes,
-			SynchronisationProcessDialog spd) {
+			SwingWorker<Void, Void> spd) {
 		this.excludes = new Vector<String>();
 		this.excludes.addAll(excludes);
 		this.localFiles = localFiles;
@@ -56,11 +56,9 @@ public class LocalFileVisitor implements FileVisitor<Path> {
 		if (dir.toString().equals(source.getPath()))
 			return FileVisitResult.CONTINUE;
 		iExcludes = excludes.iterator();
-		int dirNameCount = dir.getNameCount();
 		while (iExcludes.hasNext()) {
-			String exclude = iExcludes.next();
 			try {
-				if (exclude.equals(dir.subpath(localBasePathNameCount, dirNameCount).toString())) {
+				if (iExcludes.next().equals(dir.subpath(localBasePathNameCount, dir.getNameCount()).toString())) {
 					iExcludes.remove();
 					return FileVisitResult.SKIP_SUBTREE;
 				}
