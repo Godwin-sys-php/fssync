@@ -18,9 +18,9 @@ package net.janbuchinger.code.fssync.sync.ui;
 public class RunSetDeterminate implements Runnable {
 
 	private final boolean determinate;
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 
-	public RunSetDeterminate(boolean determinate, SynchronisationProcessDialog spd) {
+	public RunSetDeterminate(boolean determinate, SynchronizationProcessDialog spd) {
 		this.determinate = determinate;
 		this.spd = spd;
 	}

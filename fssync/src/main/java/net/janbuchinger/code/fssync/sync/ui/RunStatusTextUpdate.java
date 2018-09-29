@@ -18,9 +18,9 @@ package net.janbuchinger.code.fssync.sync.ui;
 public final class RunStatusTextUpdate implements Runnable {
 
 	private final String message;
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 
-	public RunStatusTextUpdate(String message, SynchronisationProcessDialog spd) {
+	public RunStatusTextUpdate(String message, SynchronizationProcessDialog spd) {
 		this.message = message;
 		this.spd = spd;
 	}

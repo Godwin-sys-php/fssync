@@ -17,10 +17,10 @@ package net.janbuchinger.code.fssync.sync.ui;
 
 public class RunCancelled implements Runnable {
 
-	private final SynchronisationProcessDialog spd;
+	private final SynchronizationProcessDialog spd;
 	private final String message;
 
-	public RunCancelled(String message, SynchronisationProcessDialog spd) {
+	public RunCancelled(String message, SynchronizationProcessDialog spd) {
 		this.message = message;
 		this.spd = spd;
 	}
