@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,27 +25,26 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class ArrowPanel extends JPanel {
-
-	public static final int ONLINE = 0;
-	public static final int OFFLINE = 1;
-	public static final int SYNCHRONIZING = 2;
-
 	private Graphics2D g2d;
 	private Stroke stroke;
+	private Stroke strokeArrow;
 
 	private final int[] xPoints;
 	private final int[] yPoints;
 	private final int nPoints;
 
-	public ArrowPanel(boolean bidirectional) {
+	private final boolean quickSync;
+	
+	public ArrowPanel(boolean bidirectional, boolean quickSync) {
+		this.quickSync = quickSync;
 		setPreferredSize(new Dimension(32, 32));
-
+		strokeArrow = new BasicStroke(2);
 		if (bidirectional) {
-			xPoints = new int[] { 4, 14, 14, 17, 17, 27, 17, 17, 14, 14 };
-			yPoints = new int[] { 16, 6, 12, 12, 6, 16, 26, 21, 21, 26 };
+			xPoints = new int[] {  4, 14, 14, 17, 17, 27, 17, 17, 14, 14 };
+			yPoints = new int[] { 16,  6, 12, 12,  6, 16, 26, 21, 21, 26 };
 		} else {
-			xPoints = new int[] { 4, 17, 17, 27, 17, 17, 4 };
-			yPoints = new int[] { 12, 12, 6, 16, 26, 21, 21 };
+			xPoints = new int[] {  4, 17, 17, 27, 17, 17, 4 };
+			yPoints = new int[] { 12, 12,  6, 16, 26, 21, 21 };
 		}
 		nPoints = xPoints.length;
 	}
@@ -53,10 +52,13 @@ public class ArrowPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		g2d = (Graphics2D) g;
-		stroke = g2d.getStroke();
-		g2d.setStroke(new BasicStroke(2));
-		g2d.fillPolygon(xPoints, yPoints, nPoints);
-
-		g2d.setStroke(stroke);
+		if(quickSync) {
+			stroke = g2d.getStroke();
+			g2d.setStroke(strokeArrow);
+			g2d.drawPolygon(xPoints, yPoints, nPoints);
+			g2d.setStroke(stroke);
+		} else {
+			g2d.fillPolygon(xPoints, yPoints, nPoints);
+		}
 	}
 }
