@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,31 +49,25 @@ public class RecoverSystemVisitor implements FileVisitor<Path> {
 	private File fileInSource;
 	private File fileInDestination;
 	private Path relativePath;
-	// private long lastModified;
 	private String checksum;
 
-	// private boolean isRootDir;
-
-	String filename;
+	private String filename;
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 		if (file.getParent().toString().equals(target.getPath())) {
 			filename = file.getFileName().toString();
 			if (filename.startsWith(".fs.") && filename.endsWith(".db"))
-				// System.err.println(filename);
 				return FileVisitResult.CONTINUE;
 		}
 		relativePath = file.subpath(targetBaseNameCount, file.getNameCount());
 		fileInSource = new File(source, relativePath.toString());
 		if (fileInSource.exists()) {
-			fileInDestination = new File(file.toString());
-			try {
-				checksum = FSSync.getChecksum(fileInDestination);
-				db.add(new RelativeFile(relativePath.toString(), fileInDestination.length(), attrs
-						.lastModifiedTime().toMillis(), checksum));
-			} catch (Exception e) {
-				e.printStackTrace();
+			fileInDestination = file.toFile();
+			checksum = FSSync.createSHA384Hex(fileInDestination);
+			if (checksum != null) {
+				db.add(relativePath.toString(), fileInDestination.length(),
+						attrs.lastModifiedTime().toMillis(), checksum);
 			}
 		}
 		return FileVisitResult.CONTINUE;
