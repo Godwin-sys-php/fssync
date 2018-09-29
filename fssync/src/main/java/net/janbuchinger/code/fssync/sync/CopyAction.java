@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,8 @@ public final class CopyAction {
 
 	@Override
 	public String toString() {
-		return (isNew ? "neu" : "mod") + (isSelected ? (direction == DIR_BACKUP ? " >> " : " << ") : " >< ") + relativePath;
+		return (isNew ? "neu" : "mod")
+				.concat((isSelected ? (direction == DIR_BACKUP ? " >> " : " << ") : " >< "))
+				.concat(relativePath);
 	}
 }
