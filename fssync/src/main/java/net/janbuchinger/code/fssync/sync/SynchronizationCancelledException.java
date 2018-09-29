@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package net.janbuchinger.code.fssync.sync;
 
 @SuppressWarnings("serial")
-public class SynchronisationCancelledException extends Exception {
-	public SynchronisationCancelledException() {
+public class SynchronizationCancelledException extends Exception {
+	public SynchronizationCancelledException() {
 		super("Synchronisation Cancelled");
 	}
 }
