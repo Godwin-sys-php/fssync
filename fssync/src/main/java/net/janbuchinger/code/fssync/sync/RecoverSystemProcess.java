@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package net.janbuchinger.code.fssync.sync;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,17 +43,20 @@ public class RecoverSystemProcess extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-		File fseditdb = new File(source, ".fs.edit.db");
-		int c = 1;
-		while (fseditdb.exists()) {
-			fseditdb = new File(source, ".fs.edit" + (c++) + ".db");
+//		File[] editDbs = source.listFiles(new EditDBsFilenameFilter());
+		File fsdb = new File(target, ".fs.db");
+		
+		if(!fsdb.exists()) {
+			throw new FileNotFoundException("Database file not found.");
+		}
+		
+		File dbEditFile = OnlineDB.getEditableDBFile(source, fsdb);
+		if(dbEditFile == null) {
+			dbEditFile = OnlineDB.nextEditableDBFile(source);
+			FileUtils.copyFile(fsdb, dbEditFile);
 		}
 
-		File fsdb = new File(target, ".fs.db");
-
-		FileUtils.copyFile(fsdb, fseditdb);
-
-		OnlineDB db = new OnlineDB(fseditdb);
+		OnlineDB db = new OnlineDB(dbEditFile);
 
 		visitor.setDB(db);
 		try {
@@ -61,7 +65,7 @@ public class RecoverSystemProcess extends SwingWorker<Void, Void> {
 			e.printStackTrace();
 		}
 
-		FileUtils.copyFile(fseditdb, fsdb);
+		FileUtils.copyFile(dbEditFile, fsdb);
 		return null;
 	}
 
