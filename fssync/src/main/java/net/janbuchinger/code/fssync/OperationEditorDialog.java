@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package net.janbuchinger.code.fssync;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,6 +25,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -41,10 +43,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import bug507401.DangerousPathChecker;
 import net.janbuchinger.code.fssync.sync.OnlineDB;
 import net.janbuchinger.code.fssync.sync.RecoverSystemDialog;
 import net.janbuchinger.code.fssync.sync.RecoverSystemProcess;
-import net.janbuchinger.code.fssync.sync.ui.CopyActionTableModel;
 import net.janbuchinger.code.mishmash.FSFx;
 import net.janbuchinger.code.mishmash.ui.UIFx;
 import net.janbuchinger.code.mishmash.ui.dialog.DialogEscapeHook;
@@ -61,7 +63,9 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 	private StringListModel lmExclude;
 	private JCheckBox ckVersionManagement;
 	private JCheckBox ckBidirectional;
-	private JCheckBox ckIgnoreModifiedWhenEqual;
+	// private JCheckBox ckIgnoreModifiedWhenEqual;
+	private JCheckBox ckElasticComparison;
+	private JCheckBox ckAlwaysQuickSync;
 
 	private JRadioButton rbPrioSource;
 	private JRadioButton rbPrioTarget;
@@ -76,6 +80,19 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 	private JRadioButton rbIntervalHours;
 	private JRadioButton rbIntervalMinutes;
 
+	private JLabel lbRunningTimeAvgQuick;
+	private JLabel lbRunningTimeQuick;
+	private JLabel lbRunCountQuick;
+	private JLabel lbRunningTimeAvgDeep;
+	private JLabel lbRunningTimeDeep;
+	private JLabel lbRunCountDeep;
+	private JLabel lbRunningTimeSync;
+	private JLabel lbRunningTimeAvgSync;
+	private JLabel lbRunCountSync;
+	private JLabel lbMiBCopiedAvg;
+	private JLabel lbFilesCopiedTotal;
+	private JButton btClearStats;
+
 	public final static int CANCEL = 0;
 	public final static int SAVE = 1;
 	private int answer;
@@ -87,12 +104,12 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 	}
 
 	public OperationEditorDialog(JFrame frm, Operation synchronisationOperation, Segments segments) {
-		super(frm, "Synchronisation", true);
+		super(frm, "Operation", true);
 		init(synchronisationOperation, segments, frm);
 	}
 
 	public OperationEditorDialog(JDialog frm, Operation synchronisationOperation, Segments segments) {
-		super(frm, "Synchronisation", true);
+		super(frm, "Operation", true);
 		init(synchronisationOperation, segments, frm);
 	}
 
@@ -121,8 +138,13 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 
 		ckBidirectional = new JCheckBox("Bidirektional Synchronisieren");
 
-		ckIgnoreModifiedWhenEqual = new JCheckBox(
-				"Änderungsdatum ignorieren wenn Prüfsumme und Länge gleichgeblieben");
+		// ckIgnoreModifiedWhenEqual = new JCheckBox(
+		// "Änderungsdatum ignorieren wenn Prüfsumme und Länge gleichgeblieben");
+		// ckIgnoreModifiedWhenEqual.addActionListener(this);
+		ckElasticComparison = new JCheckBox("Elastischer Zeitvergleich (+/- 1 sek)");
+		// ckElasticComparison.addActionListener(this);
+		ckAlwaysQuickSync = new JCheckBox("Schnell Synchronisieren (Integritätsprüfung überspringen)");
+		// ckAlwaysQuickSync.addActionListener(this);
 
 		ButtonGroup bg = new ButtonGroup();
 
@@ -169,6 +191,22 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		pnExclButtons.add(btAddExcl);
 		pnExclButtons.add(btRemExcl);
 
+		lbRunningTimeAvgQuick = new JLabel("---");
+		lbRunningTimeQuick = new JLabel("---");
+		lbRunCountQuick = new JLabel("---");
+		lbRunningTimeAvgDeep = new JLabel("---");
+		lbRunningTimeDeep = new JLabel("---");
+		lbRunCountDeep = new JLabel("---");
+		lbRunningTimeSync = new JLabel("---");
+		lbRunningTimeAvgSync = new JLabel("---");
+		lbRunCountSync = new JLabel("---");
+		lbMiBCopiedAvg = new JLabel("---");
+		lbFilesCopiedTotal = new JLabel("---");
+		btClearStats = new JButton("Statistik Zurücksetzen");
+		btClearStats.addActionListener(this);
+
+		updateStatsLabels();
+
 		btOk = new JButton("Speichern");
 		btOk.addActionListener(this);
 		btCancel = new JButton("Abbrechen");
@@ -183,14 +221,17 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			lmExclude.setStrings(operation.getExcludes());
 			ckVersionManagement.setSelected(operation.isManageVersions());
 			ckBidirectional.setSelected(operation.isSyncBidirectional());
-			ckIgnoreModifiedWhenEqual.setSelected(operation.isIgnoreModifiedWhenEqual());
+			// ckIgnoreModifiedWhenEqual.setSelected(operation.isIgnoreModifiedWhenEqual());
+			ckElasticComparison.setSelected(operation.isCompareElastic());
+			ckAlwaysQuickSync.setSelected(operation.isAlwaysQuickSync());
+			// ckIgnoreModifiedWhenEqual.setEnabled(!ckAlwaysQuickSync.isSelected());
 
 			int priority = operation.getPriorityOnConflict();
-			if (priority == CopyActionTableModel.sel_new) {
+			if (priority == Operation.PRIORITY_NEW) {
 				rbPrioNew.setSelected(true);
-			} else if (priority == CopyActionTableModel.sel_old) {
+			} else if (priority == Operation.PRIORITY_OLD) {
 				rbPrioOld.setSelected(true);
-			} else if (priority == CopyActionTableModel.sel_destination) {
+			} else if (priority == Operation.PRIORITY_TARGET) {
 				rbPrioTarget.setSelected(true);
 			} else {
 				rbPrioSource.setSelected(true);
@@ -201,11 +242,11 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			tfInterval.setText(operation.getInterval() + "");
 			ckRemind.setSelected(operation.isRemind());
 			int intervalMode = operation.getIntervalMode();
-			if (intervalMode == Operation.MD_DAYS) {
+			if (intervalMode == Operation.INTERVAL_DAYS) {
 				rbIntervalDays.setSelected(true);
-			} else if (intervalMode == Operation.MD_HOURS) {
+			} else if (intervalMode == Operation.INTERVAL_HOURS) {
 				rbIntervalHours.setSelected(true);
-			} else if (intervalMode == Operation.MD_MINUTES) {
+			} else if (intervalMode == Operation.INTERVAL_MINUTES) {
 				rbIntervalMinutes.setSelected(true);
 			}
 		} else {
@@ -248,7 +289,11 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		c.gridy++;
 		pnOptions.add(pnPriorityOnConflict, c);
 		c.gridy++;
-		pnOptions.add(ckIgnoreModifiedWhenEqual, c);
+		pnOptions.add(ckElasticComparison, c);
+		// c.gridy++;
+		// pnOptions.add(ckIgnoreModifiedWhenEqual, c);
+		c.gridy++;
+		pnOptions.add(ckAlwaysQuickSync, c);
 		c.gridy++;
 
 		c = UIFx.initGridBagConstraints();
@@ -276,6 +321,67 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		c.gridwidth = 3;
 		pnTiming.add(ckRemind, c);
 
+		JPanel pnStatistics = new JPanel(new GridBagLayout());
+		c = UIFx.initGridBagConstraints();
+		pnStatistics.add(new JLabel("Analyse Schnell Durchschnitt"), c);
+		c.gridx++;
+		c.weightx = 1;
+		pnStatistics.add(lbRunningTimeAvgQuick, c);
+		c.weightx = 0;
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Analyse Schnell Gesamt"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunningTimeQuick, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Anzahl Analysen Schnell"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunCountQuick, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Analyse Genau Durchschnitt"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunningTimeAvgDeep, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Analyse Genau Gesamt"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunningTimeDeep, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Anzahl Analysen Genau"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunCountDeep, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Synchronisation Durchschnitt"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunningTimeAvgSync, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Synchronisation Gesamt"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunningTimeSync, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Anzahl Synchronisationen"), c);
+		c.gridx++;
+		pnStatistics.add(lbRunCountSync, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("MiB Kopiert Durchschnitt"), c);
+		c.gridx++;
+		pnStatistics.add(lbMiBCopiedAvg, c);
+		c.gridx = 0;
+		c.gridy++;
+		pnStatistics.add(new JLabel("Insgesamt Kopierte Dateien"), c);
+		c.gridx++;
+		pnStatistics.add(lbFilesCopiedTotal, c);
+		c.gridx++;
+		c.gridheight = 2;
+		pnStatistics.add(btClearStats, c);
+
 		JPanel pnSyncStretch = new JPanel(new BorderLayout());
 		pnSyncStretch.add(pnSync, BorderLayout.NORTH);
 		pnSyncStretch.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -290,11 +396,21 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 		pnTimingStretch.add(pnTiming, BorderLayout.NORTH);
 		pnTimingStretch.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
+		JPanel pnStatsStretch = new JPanel(new BorderLayout());
+		pnStatsStretch.add(pnStatistics, BorderLayout.NORTH);
+		pnStatsStretch.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
 		JTabbedPane tpOperation = new JTabbedPane();
+		tpOperation.setPreferredSize(new Dimension(525, 250));
+		tpOperation.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+		tpOperation.setTabPlacement(JTabbedPane.TOP);
 		tpOperation.add("Synchronisation", UIFx.initScrollPane(pnSyncStretch, 15));
 		tpOperation.add("Ausnahmen", pnExclude);
 		tpOperation.add("Optionen", UIFx.initScrollPane(pnFurtherStretch, 15));
 		tpOperation.add("Timing", UIFx.initScrollPane(pnTimingStretch, 15));
+		if (operation != null) {
+			tpOperation.add("Statistik", UIFx.initScrollPane(pnStatsStretch, 15));
+		}
 
 		JPanel pnContent = new JPanel(new BorderLayout());
 		pnContent.add(tpOperation, BorderLayout.CENTER);
@@ -302,6 +418,42 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 
 		setContentPane(pnContent);
 		UIFx.packAndCenter(this, frm);
+	}
+
+	private void updateStatsLabels() {
+		if (operation != null) {
+			NumberFormat nf = NumberFormat.getNumberInstance();
+			nf.setMaximumFractionDigits(0);
+			nf.setMinimumIntegerDigits(0);
+			if (operation.getRunCountQuickAnalysis() > 0) {
+				lbRunningTimeAvgQuick.setText(
+						UIFx.formatMillisAsHoursMinutesSeconds(operation.getAverageAnalyseTimeQuick()));
+				lbRunningTimeQuick.setText(
+						UIFx.formatMillisAsHoursMinutesSeconds(operation.getRunningTimeQuickAnalysis()));
+				lbRunCountQuick.setText(nf.format(operation.getRunCountQuickAnalysis()));
+
+			}
+			if (operation.getRunCountDeepAnalysis() > 0) {
+				lbRunningTimeAvgDeep.setText(
+						UIFx.formatMillisAsHoursMinutesSeconds(operation.getAverageAnalyseTimeDeep()));
+				lbRunningTimeDeep.setText(
+						UIFx.formatMillisAsHoursMinutesSeconds(operation.getRunningTimeDeepAnalysis()));
+				lbRunCountDeep.setText(nf.format(operation.getRunCountDeepAnalysis()));
+
+			}
+			if (operation.getRunCountSynchronization() > 0) {
+				lbRunningTimeSync
+						.setText(UIFx.formatMillisAsHoursMinutesSeconds(operation.getRunningTimeDataCopy()));
+				lbRunningTimeAvgSync
+						.setText(UIFx.formatMillisAsHoursMinutesSeconds(operation.getAverageSyncTime()));
+
+				lbRunCountSync.setText(nf.format(operation.getRunCountSynchronization()));
+				lbFilesCopiedTotal.setText(nf.format(operation.getTotalFilesCopiedCount()));
+				nf.setMaximumFractionDigits(2);
+				nf.setMinimumFractionDigits(2);
+				lbMiBCopiedAvg.setText(nf.format(operation.getTransferredMegaBytesAverage()));
+			}
+		}
 	}
 
 	@Override
@@ -319,41 +471,66 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+			try {
+				DangerousPathChecker dpc = new DangerousPathChecker();
+				if (dpc.isDangerous(source)) {
+					JOptionPane.showMessageDialog(this,
+							"Dieser Pfad kann nicht als Quellverzeichnis genutzt werden.", "Fehler",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			} catch (IllegalStateException | IllegalArgumentException e2) {}
 			File target = new File(tfDestination.getPath());
+			if (segments.createsCircularRelation(source, target, operation)) {
+				JOptionPane.showMessageDialog(this, "Zirkulärbezug nicht erlaubt.", "Fehler",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			} else if (!ckBidirectional.isSelected()
+					&& segments.targetIsBidirectionalSource(target, operation)) {
+				int answer = JOptionPane.showConfirmDialog(this,
+						"Es wird davon abgeraten ein Quellverzeichnis einer bidirektionalen Operation "
+								+ "als Zielverzeichnis einer unidirektionalen Operation zu verwenden, "
+								+ "trotzdem fortfahren?",
+						"Warnung", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+				if (answer == JOptionPane.CANCEL_OPTION) {
+					return;
+				}
 
-			Iterator<Segment> iSeg = segments.iterator();
-			Iterator<Operation> iOp;
-			Operation o;
-
-			boolean targetAlreadyInUse = false;
-			while (iSeg.hasNext()) {
-				iOp = iSeg.next().iterator();
-				while (iOp.hasNext()) {
-					o = iOp.next();
-					if (o.getRemotePath().equals(target.getPath())) {
-						if (operation != null) {
-							if (o != operation) {
+			}
+			if (target.exists()) {
+				boolean targetAlreadyInUse = false;
+				for (Segment s : segments.getData()) {
+					for (Operation o : s.getOperations()) {
+						if (o.getTargetPath().equals(target.getPath())) {
+							if (operation != null) {
+								if (o != operation) {
+									targetAlreadyInUse = true;
+									break;
+								}
+							} else {
 								targetAlreadyInUse = true;
 								break;
 							}
-						} else {
-							targetAlreadyInUse = true;
-							break;
 						}
 					}
+					if (targetAlreadyInUse) {
+						break;
+					}
 				}
-				if (targetAlreadyInUse)
-					break;
-			}
-			if (targetAlreadyInUse) {
-				JOptionPane.showMessageDialog(this, "Zielverzeichnis ist bereits in Verwendung!", "Fehler",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			if (!target.exists()) {
+				if (targetAlreadyInUse) {
+					JOptionPane.showMessageDialog(this, "Zielverzeichnis ist bereits in Verwendung!", "Fehler",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			} else { // target directory doesn't exist
 				if (JOptionPane.showConfirmDialog(this, "Soll das Zielverzeichnis erstellt werden?",
-						"Ziel existiert nicht", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-					target.mkdirs();
+						"Ziel existiert nicht", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					if (!target.mkdirs()) {
+						JOptionPane.showMessageDialog(this, "Zielverzeichnis konnte nicht erstellt werden!",
+								"Fehler", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 				} else {
 					return;
 				}
@@ -365,43 +542,62 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			}
 			File fsdb = new File(target, ".fs.db");
 			if (!fsdb.exists()) {
+				File[] targetFiles = target.listFiles();
+				boolean spider = true;
+				if (targetFiles != null) {
+					if (targetFiles.length > 0) {
+						int answer = JOptionPane.showConfirmDialog(this,
+								"Es wurden Dateien im Zielordner aber keine Datenbank gefunden,"
+										+ "\nEs wird jetzt das Zieldateisystem eingelesen um bereits "
+										+ "bestehende Dateipaare zu finden."
+										+ "\nDieser Prozess kann nicht abgebrochen werden.",
+								"Warnung", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+						if (answer == JOptionPane.CANCEL_OPTION) {
+							return;
+						}
+					} else {
+						spider = false;
+					}
+				}
 				try {
 					OnlineDB.initNewDB(source, target);
-					if (JOptionPane.showConfirmDialog(this,
-							"Soll das Zielverzeichnis eingelesen und mit dem Quellsystem verglichen werden?",
-							"Neue Datenbankdatei Aufbauen", JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					FSFx.hideWindowsFile(fsdb);
+					if (spider) {
 						RecoverSystemDialog rsd = new RecoverSystemDialog(this);
 						RecoverSystemProcess rsp = new RecoverSystemProcess(source, target, rsd);
 						rsp.execute();
-						if (!rsd.isDone())
+						if (!rsd.isDone()) {
 							rsd.setVisible(true);
+						}
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				FSFx.hideWindowsFile(fsdb);
 			}
 			boolean manageVersions = ckVersionManagement.isSelected();
 			Vector<String> exclude = lmExclude.getStrings();
 
 			Iterator<String> iExc = exclude.iterator();
 			while (iExc.hasNext()) {
-				if (!new File(source, iExc.next()).exists())
+				if (!new File(source, iExc.next()).exists()) {
 					iExc.remove();
+				}
 			}
 
 			boolean syncBidirectional = ckBidirectional.isSelected();
-			boolean ignoreModifiedWhenEqual = ckIgnoreModifiedWhenEqual.isSelected();
+			// boolean ignoreModifiedWhenEqual = ckIgnoreModifiedWhenEqual.isSelected();
+			boolean elasticComparison = ckElasticComparison.isSelected();
+			boolean alwaysQuickSync = ckAlwaysQuickSync.isSelected();
+
 			int priorityOnConflict = -1;
 			if (rbPrioNew.isSelected()) {
-				priorityOnConflict = CopyActionTableModel.sel_new;
+				priorityOnConflict = Operation.PRIORITY_NEW;
 			} else if (rbPrioOld.isSelected()) {
-				priorityOnConflict = CopyActionTableModel.sel_old;
+				priorityOnConflict = Operation.PRIORITY_OLD;
 			} else if (rbPrioTarget.isSelected()) {
-				priorityOnConflict = CopyActionTableModel.sel_destination;
+				priorityOnConflict = Operation.PRIORITY_TARGET;
 			} else {
-				priorityOnConflict = CopyActionTableModel.sel_source;
+				priorityOnConflict = Operation.PRIORITY_SOURCE;
 			}
 
 			int interval = 0;
@@ -414,16 +610,16 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			}
 			boolean remind = ckRemind.isSelected() && interval != 0 ? ckRemind.isSelected() : false;
 
-			int intervalMode = Operation.MD_DAYS;
+			int intervalMode = Operation.INTERVAL_DAYS;
 			if (rbIntervalHours.isSelected()) {
-				intervalMode = Operation.MD_HOURS;
+				intervalMode = Operation.INTERVAL_HOURS;
 			} else if (rbIntervalMinutes.isSelected()) {
-				intervalMode = Operation.MD_MINUTES;
+				intervalMode = Operation.INTERVAL_MINUTES;
 			}
 
 			if (operation == null) {
-				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional,
-						ignoreModifiedWhenEqual, priorityOnConflict, interval, intervalMode,
+				operation = new Operation(source, target, manageVersions, exclude, syncBidirectional, false,
+						elasticComparison, alwaysQuickSync, priorityOnConflict, interval, intervalMode,
 						remind);
 			} else {
 				operation.setSource(source);
@@ -433,7 +629,9 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 
 				operation.setSyncBidirectional(syncBidirectional);
 				operation.setPriorityOnConflict(priorityOnConflict);
-				operation.setIgnoreModifiedWhenEqual(ignoreModifiedWhenEqual);
+				// operation.setIgnoreModifiedWhenEqual(ignoreModifiedWhenEqual);
+				operation.setCompareElastic(elasticComparison);
+				operation.setAlwaysQuickSync(alwaysQuickSync);
 				operation.setManageVersions(manageVersions);
 
 				operation.setInterval(interval);
@@ -469,12 +667,21 @@ public class OperationEditorDialog extends JDialog implements ActionListener {
 			}
 		} else if (e.getSource() == btRemExcl) {
 			if (jlExclude.getSelectedIndex() > -1) {
-				if (JOptionPane.showConfirmDialog(this, lmExclude.get(jlExclude.getSelectedIndex())
-						+ " wirklich Entfernen?", "Eintrag Löschen", JOptionPane.YES_NO_OPTION,
+				if (JOptionPane.showConfirmDialog(this,
+						lmExclude.get(jlExclude.getSelectedIndex()) + " wirklich Entfernen?",
+						"Eintrag Löschen", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 					lmExclude.remove(jlExclude.getSelectedIndex());
 					jlExclude.setSelectedIndices(new int[0]);
 				}
+			}
+		} else if (e.getSource() == btClearStats) {
+			int answer = JOptionPane.showConfirmDialog(this,
+					"Sollen die Statistiken wirklich zurückgesetzt werden?", "Frage",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (answer == JOptionPane.YES_OPTION) {
+				operation.clearStats();
+				updateStatsLabels();
 			}
 		}
 	}
