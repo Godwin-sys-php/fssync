@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class NewVersionMessageComponent extends JPanel implements HyperlinkListe
 		JTextPane tpMsg = new JTextPane();
 		tpMsg.setContentType("text/html");
 		String msg = "<html><p>Neue Version verfügbar: <b>" + newVersion;
-		msg += "</b><br><a href=\"http://code.janbuchinger.net\">code.janbuchinger.net</a></p></html>";
+		msg += "</b><br><a href=\"https://code.janbuchinger.net\">https://code.janbuchinger.net</a></p></html>";
 		tpMsg.setBackground(getBackground());
 		tpMsg.setEditable(false);
 		tpMsg.addHyperlinkListener(this);
