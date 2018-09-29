@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jan Buchinger
+ * Copyright 2017-2018 Jan Buchinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,47 +15,77 @@
  */
 package net.janbuchinger.code.fssync;
 
-import java.awt.TrayIcon;
-import java.util.Iterator;
+import javax.swing.SwingUtilities;
 
-public class TrayReminder implements Runnable {
-	private final TrayIcon trayIcon;
+/**
+ * The <code>TrayReminderThread</code> class is running when the tray icon is
+ * visible. It notifies the user interface about operations that just became due
+ * so that a message in the tray icon area can be shown.
+ * 
+ * @author Jan Buchinger
+ *
+ */
+public class TrayReminderThread implements Runnable {
+	/**
+	 * The main user interface object
+	 */
+	private final FSSyncUI ui;
+	/**
+	 * A clone of the current segments
+	 */
 	private final Segments segments;
+	/**
+	 * false indicates if the process should be terminated
+	 */
 	private boolean running;
 
-	public TrayReminder(Segments segments, TrayIcon trayIcon) {
-		this.segments = segments;
-		this.trayIcon = trayIcon;
+	/**
+	 * Constructs a new <code>TrayReminderThread</code>.
+	 * 
+	 * @param ui
+	 *            The main user interface object
+	 */
+	public TrayReminderThread(FSSyncUI ui) {
+		// set main user interface field
+		this.ui = ui;
+		// obtain segments clone
+		this.segments = Segments.getSegments(true);
+		// set running true
 		running = true;
 	}
 
+	/**
+	 * The tray reminder thread
+	 */
 	@Override
 	public void run() {
-		Iterator<Segment> iSeg;
-		Iterator<Operation> iOp;
-		Operation o;
+		// process loop
 		while (running) {
-			iSeg = segments.iterator();
-			while (iSeg.hasNext()) {
-				iOp = iSeg.next().iterator();
-				while (iOp.hasNext()) {
-					o = iOp.next();
+			// loop through all segments
+			for (Segment s : segments.getData()) {
+				// and all operations
+				for (Operation o : s.getOperations()) {
+					// to check if any operation just became due
 					if (o.isDue() && o.isRemind() && !o.isReminded()) {
-						trayIcon.displayMessage("Erinnerung", o.toString() + " ist fällig",
-								TrayIcon.MessageType.WARNING);
+						// notify user interface
+						SwingUtilities.invokeLater(new RunRemindTray(ui, o));
+						// exclude current operation from reminding
 						o.setReminded(true);
-						segments.save();
 					}
 				}
 			}
+			// sleep 5 seconds
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		} // end of process loop
 	}
 
+	/**
+	 * exits the process loop to terminate the process
+	 */
 	public final void stop() {
 		running = false;
 	}
