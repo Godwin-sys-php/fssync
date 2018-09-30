@@ -16,8 +16,11 @@
 package net.janbuchinger.code.fssync.sync.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
@@ -222,25 +226,61 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 	public static final int foreign_integrate = 0;
 	public static final int foreign_restore = 1;
 	public static final int foreign_ignore = 2;
+	public static final int foreign_cancelled = 3;
 
 	public synchronized final int requestForeignFileHandling() {
+		Color green = Color.GREEN.darker();
+		Color red = Color.RED.darker();
 		JRadioButton btIntegrate = new JRadioButton("Änderungen Holen (Bidirektional Synchronisieren)");
+		btIntegrate.setForeground(red);
+		JLabel lbIntegrate = new JLabel("<html>Klicken Sie hier wenn Sie ausnahmsweise neue Dateien in das"
+				+ " Zielverzeichnis<br>kopiert oder Dateien im Zielverzeichnis geändert haben.</html>");
+		lbIntegrate.setForeground(red);
 		JRadioButton btIgnore = new JRadioButton("Änderungen Ignorieren");
+		btIgnore.setForeground(green);
+		JLabel lbIgnore = new JLabel("<html>Belassen Sie die Auswahl hier wenn Sie nicht wissen wieso"
+				+ " Änderungen<br>im Zielordner aufgetreten sind.</html>");
+		lbIgnore.setForeground(green);
 		JRadioButton btRestore = new JRadioButton("Änderungen Löschen");
+		JLabel lbRestore = new JLabel(
+				"<html>Klicken Sie hier wenn Sie sicher gehen möchten dass fremde Änderungen"
+						+ " im<br>Zielordner rückgängig gemacht werden und unbekannte Dateien gelöscht"
+						+ " werden.</html>");
+		lbRestore.setForeground(red);
+		btRestore.setForeground(red);
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(btIntegrate);
 		bg.add(btIgnore);
 		bg.add(btRestore);
-		JPanel pnButtons = new JPanel(new GridLayout(3, 1));
 		btIgnore.setSelected(true);
-		pnButtons.add(btIgnore);
-		pnButtons.add(btIntegrate);
-		pnButtons.add(btRestore);
+		JPanel pnButtons = new JPanel(new GridBagLayout());
+		GridBagConstraints c = UIFx.initGridBagConstraints();
+		pnButtons.add(btIgnore, c);
+		c.gridy++;
+		pnButtons.add(lbIgnore, c);
+		c.gridy++;
+		pnButtons.add(new JSeparator(), c);
+		c.gridy++;
+		pnButtons.add(btIntegrate, c);
+		c.gridy++;
+		pnButtons.add(lbIntegrate, c);
+		c.gridy++;
+		pnButtons.add(new JSeparator(), c);
+		c.gridy++;
+		pnButtons.add(btRestore, c);
+		c.gridy++;
+		pnButtons.add(lbRestore, c);
 		btIgnore.setSelected(true);
-		JOptionPane.showMessageDialog(this, pnButtons, "Unerwartete Änderungen im Zieldateisystem",
+		int answer = JOptionPane.showConfirmDialog(this, pnButtons,
+				"Unerwartete Änderungen im Zieldateisystem", JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.WARNING_MESSAGE);
-		return btIntegrate.isSelected() ? foreign_integrate
-				: btIgnore.isSelected() ? foreign_ignore : foreign_restore;
+		if (answer == JOptionPane.CANCEL_OPTION) {
+			sp.cancel(false);
+			return foreign_cancelled;
+		} else {
+			return btIntegrate.isSelected() ? foreign_integrate
+					: btIgnore.isSelected() ? foreign_ignore : foreign_restore;
+		}
 	}
 
 	public synchronized final boolean requestContinueRestore() {
@@ -277,8 +317,8 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 		}
 		int c = 0;
 		for (Operation o : sources) {
-			rb = new JRadioButton(o.getTargetPath() + " [" + sdf.format(o.getDbOriginal().lastModified()) + "] "
-					+ (c == newestVersion ? " (Neueste Version)" : ""));
+			rb = new JRadioButton(o.getTargetPath() + " [" + sdf.format(o.getDbOriginal().lastModified())
+					+ "] " + (c == newestVersion ? " (Neueste Version)" : ""));
 			if (c == newestVersion)
 				rb.setSelected(true);
 			c++;
@@ -364,8 +404,8 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 	}
 
 	public void passMessages(Vector<StatusMessage> messages) {
-		for(StatusMessage message : messages) {
-			if(!message.isVerbose() || (verbose && message.isVerbose())) {
+		for (StatusMessage message : messages) {
+			if (!message.isVerbose() || (verbose && message.isVerbose())) {
 				lmStatusUpdate.addElement(message.getMessage());
 			}
 			log.add(message.getMessage());
