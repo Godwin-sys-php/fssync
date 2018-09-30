@@ -105,9 +105,6 @@ public class SynchronizationProcess extends SwingWorker<Void, Void> {
 	 *            The OperationArguments to be worked through.
 	 * @param syncTitle
 	 *            The batch title.
-	 * @param spd
-	 *            The SynchronisationProcessDialog initialized by the
-	 *            EventDispatchThread.
 	 */
 	public SynchronizationProcess(Vector<OperationArgument> operations, String syncTitle) {
 		this.operationArgs = operations;
@@ -117,6 +114,16 @@ public class SynchronizationProcess extends SwingWorker<Void, Void> {
 		this.showSummary = settings.isShowSummary();
 	}
 
+	/**
+	 * Sets the <code>SynchronizationProcessDialog</code> for this
+	 * <code>SynchronizationProcess</code>.
+	 * <p>
+	 * <b>This must happen before the SynchronizationProcess is executed!</b>
+	 * 
+	 * @param spd
+	 *            The <code>SynchronizationProcessDialog</code> initialized on the
+	 *            EDT.
+	 */
 	public final void setSynchronisationProcessDialog(SynchronizationProcessDialog spd) {
 		this.spd = spd;
 	}

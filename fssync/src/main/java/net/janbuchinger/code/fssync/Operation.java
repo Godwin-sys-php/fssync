@@ -160,9 +160,6 @@ public class Operation {
 	 *            list of directories to exclude
 	 * @param syncBidirectional
 	 *            Option bidirectional synchronization
-	 * @param ignoreModifiedWhenEqual
-	 *            Option ignore modification date when checksum and file length
-	 *            match.
 	 * @param compareElastic
 	 *            Option elastic comparison.
 	 * @param alwaysQuickSync
@@ -177,8 +174,8 @@ public class Operation {
 	 *            option remind due
 	 */
 	public Operation(File source, File target, boolean manageVersions, Vector<String> exclude,
-			boolean syncBidirectional, boolean compareElastic,
-			boolean alwaysQuickSync, int priorityOnConflict, int interval, int intervalMode, boolean remind) {
+			boolean syncBidirectional, boolean compareElastic, boolean alwaysQuickSync, int priorityOnConflict,
+			int interval, int intervalMode, boolean remind) {
 		this.source = source;
 		this.target = target;
 		this.manageVersions = manageVersions;
@@ -460,7 +457,8 @@ public class Operation {
 	/**
 	 * Gets the time when this <code>Operation</code> was previously synchronized.
 	 * 
-	 * @return
+	 * @return the time when this <code>Operation</code> was previously
+	 *         synchronized.
 	 */
 	public final long getLastSynced() {
 		return lastSynced;
@@ -866,7 +864,7 @@ public class Operation {
 	 * <p>
 	 * example:
 	 * <p>
-	 * /home/user >> /media/user/backup/user
+	 * /home/user &gt;&gt; /media/user/backup/user
 	 */
 	@Override
 	public String toString() {

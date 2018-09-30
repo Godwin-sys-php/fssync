@@ -361,6 +361,7 @@ public final class OnlineDB {
 	 * @param target
 	 *            The database file.
 	 * @throws Exception
+	 *             If the database file does not exist.
 	 */
 	public OnlineDB(File target) throws Exception {
 		this(target, null);
@@ -376,6 +377,8 @@ public final class OnlineDB {
 	 *            database.
 	 * 
 	 * @throws Exception
+	 *             a new file is being created that already exists or if an existing
+	 *             file is being opened that does not exist.
 	 */
 	private OnlineDB(File database, String dbId) throws Exception {
 		// the database path String
@@ -905,7 +908,7 @@ public final class OnlineDB {
 		// connect
 		Connection c = connect();
 		Statement st = null;
-		
+
 		try {
 			st = c.createStatement();
 			// execute update
