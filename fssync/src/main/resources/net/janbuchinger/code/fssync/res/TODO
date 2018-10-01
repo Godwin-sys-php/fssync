@@ -19,19 +19,16 @@
 
 10 optimize database writes
 
-11 restore sync.json by searching matching database pairs
+11 sort alphabetically (source directory in segment) first and then by data flow (segment and segments)
 
-12 sort alphabetically (source directory in segment) first and then by data flow (segment and segments)
+12 third operation type: fetch (similar to restore but in SynchronizationProcess) like "source << target"
 
-13 third operation type: fetch (similar to restore but in SynchronizationProcess) like "source << target"
-
-14 style unexpected changes dialog and add info labels about possible data loss
-
-15 Restore Dialog: add quick fix page
+13 Restore Dialog: add quick fix page
 -user name has changed
 -search and delete orphaned databases
 -rename databases after manual copying
+-restore sync.json by searching matching database pairs
 
-16 OperatioSummary: maybe use temporary table in database to make the search for conflicting Operations less expensive
+14 OperatioSummary: maybe use temporary table in database to make the search for conflicting Operations less expensive
 
-17 rearrange segments by user?
+15 rearrange segments by user?
