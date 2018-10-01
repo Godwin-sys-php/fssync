@@ -1,13 +1,37 @@
 1 Extras
 -convert db (windows / unix)
 
-2 versions
--file object id?
+2 file versions
 
-3 sort operations
+3 recognize moved files
 
-4 internationalisation?
+4 ftp targets
 
-5 recognize moved files
+5 internationalization?
 
-6 handle circular configuration in sorting segments?
+6 file extension exclusion
+
+7 pages by source directory filter
+
+8 Error reporting / feedback/feature request
+
+9 always show tray icon setting... 
+
+10 optimize database writes
+
+11 restore sync.json by searching matching database pairs
+
+12 sort alphabetically (source directory in segment) first and then by data flow (segment and segments)
+
+13 third operation type: fetch (similar to restore but in SynchronizationProcess) like "source << target"
+
+14 style unexpected changes dialog and add info labels about possible data loss
+
+15 Restore Dialog: add quick fix page
+-user name has changed
+-search and delete orphaned databases
+-rename databases after manual copying
+
+16 OperatioSummary: maybe use temporary table in database to make the search for conflicting Operations less expensive
+
+17 rearrange segments by user?

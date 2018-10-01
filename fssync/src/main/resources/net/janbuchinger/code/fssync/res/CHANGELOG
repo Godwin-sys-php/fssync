@@ -1,6 +1,42 @@
+0.8a
+Java Version
+changed target version 1.7 to 1.8
+
+Bugs
+-ui refreshes now also when only the target or source of operations change status
+-operation time (instead of 0) is now displayed in synchronization process dialog
+-Restoration failed in a certain case, should not anymore
+-Conflict management for bidirectional synchronization was broken
+-tray menu items are disabled now when running a synchronization from tray
+-fixed disappearing gui glitch when minimizing the main frame during the display of a modal dialog
+
+Improvements
+-circular relations are not allowed anymore
+-segment operations are being sorted now too
+-source directory safety improved (windows)
+-synchronization process dialog can now x-ed after the synchronization process has ended
+-remind for new version dialog can be suppressed
+-warning upon if this executable is ran after a newer version was executed
+-only one instance is allowed to be running
+-optional deleting of databases when deleting operation
+
+Changes
+-When data integrity seems compromised no further actions are taken
+-Access to Restore functionality is new available via a special dialog
+-When Copying a file results in an error the file is skipped and the process continues
+-progress bar now loads the average analysis and synchronization time
+-removed segments menu and added "add segment" and segments to edit menu
+-removed ignore modification time when files are equal
+
+New Features
+-Operation option: quick synchronization
+-Operation option: Elastic time comparison (+/- 1 sec)
+-Restore Selection Dialog
+-Operation Statistics
+
 0.7a
 Bugs
--fixed entering file data in database before successful copying.
+-fixed entering file data in database before successful copying
 
 Improvements
 -Quickinfo/Tooltip on ui diagram clickable items

@@ -237,11 +237,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		boolean showChangelog = false;
 
 		// push program documents during development
-//		try {
-//			FileUtils.writeStringToFile(versionFile, "0.7a", Charset.defaultCharset());
-//		} catch (IOException e2) {
-//			e2.printStackTrace();
-//		}
+		try {
+			FileUtils.writeStringToFile(versionFile, "0.7a", Charset.defaultCharset());
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
 
 		// set true if the version string is not recognized
 		boolean isOldVersion = false;
@@ -254,15 +254,14 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		if (!versionFile.exists()) {
 			showChangelog = true;
 			// push all document files
-			docsNames = new String[] { "res/about.html", "res/help.html", "res/requestContinueRestore.png",
-					"res/requestForeignFileHandling.png", "res/requestSourceForRestore.png",
-					"res/requestRestoreMode.png", "res/settings.png", "res/gui.png", "res/fssyncLogo.png",
-					"res/Apache2.0.txt", "res/NOTICE_Apache_Commons_Codec.txt", "res/CHANGELOG", "res/TODO",
-					"res/LICENSE", "res/operation.png", "res/operationExceptions.png",
-					"res/operationOptions.png", "res/operationTiming.png", "res/segment.png",
-					"res/createMissingSourceDialog.png", "res/restoreDialogAvailable.png",
-					"res/restoreDialogEmpty.png", "res/restoreDialogOutstanding.png",
-					"res/operationStats.png" };
+			docsNames = new String[] { "res/about.html", "res/help.html", "res/requestForeignFileHandling.png",
+					"res/requestSourceForRestore.png", "res/requestRestoreMode.png", "res/settings.png",
+					"res/gui.png", "res/fssyncLogo.png", "res/Apache2.0.txt",
+					"res/NOTICE_Apache_Commons_Codec.txt", "res/CHANGELOG", "res/TODO", "res/LICENSE",
+					"res/operation.png", "res/operationExceptions.png", "res/operationOptions.png",
+					"res/operationTiming.png", "res/segment.png", "res/createMissingSourceDialog.png",
+					"res/restoreDialogAvailable.png", "res/restoreDialogEmpty.png",
+					"res/restoreDialogOutstanding.png", "res/operationStats.png" };
 			try {
 				FileUtils.writeStringToFile(versionFile, version, Charset.defaultCharset());
 			} catch (IOException e) {
@@ -284,12 +283,18 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 							"res/createMissingSourceDialog.png", "res/restoreDialogAvailable.png",
 							"res/restoreDialogEmpty.png", "res/restoreDialogOutstanding.png",
 							"res/requestSourceForRestore.png", "res/requestRestoreMode.png",
-							"res/operationStats.png", "res/gui.png", "res/settings.png" };
-					// try to write current version to version file
-					File oldIconToDelete = new File(docsDir, "disk-128.png");
-					if(oldIconToDelete.exists()) {
-						oldIconToDelete.delete();
+							"res/operationStats.png", "res/gui.png", "res/settings.png",
+							"res/requestForeignFileHandling.png" };
+					// delete old files
+					File oldFileToDelete = new File(docsDir, "disk-128.png");
+					if (oldFileToDelete.exists()) {
+						oldFileToDelete.delete();
 					}
+					oldFileToDelete = new File(docsDir, "requestContinueRestore.png");
+					if (oldFileToDelete.exists()) {
+						oldFileToDelete.delete();
+					}
+					// try to write current version to version file
 					try {
 						FileUtils.writeStringToFile(versionFile, version, Charset.defaultCharset());
 					} catch (IOException e) {
