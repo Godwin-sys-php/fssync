@@ -237,11 +237,11 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		boolean showChangelog = false;
 
 		// push program documents during development
-		try {
-			FileUtils.writeStringToFile(versionFile, "0.7a", Charset.defaultCharset());
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
+//		try {
+//			FileUtils.writeStringToFile(versionFile, "0.7a", Charset.defaultCharset());
+//		} catch (IOException e2) {
+//			e2.printStackTrace();
+//		}
 
 		// set true if the version string is not recognized
 		boolean isOldVersion = false;
