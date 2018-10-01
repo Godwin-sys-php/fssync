@@ -99,7 +99,7 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 		miSaveLog.setEnabled(false);
 
 		if (!settings.isAlwaysSaveLog()) {
-			JMenu menu = new JMenu("Menü");
+			JMenu menu = new JMenu("Logdatei");
 			JMenuBar menuBar = new JMenuBar();
 			menu.add(miSaveLog);
 			menuBar.add(menu);
