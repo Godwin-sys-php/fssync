@@ -662,7 +662,10 @@ public class SynchronizationProcess extends SwingWorker<Void, Void> {
 							setCountDownPaused(false);
 							// the user answer
 							answer = getForeignFileHandling.getAnswer();
-							if (answer == SynchronizationProcessDialog.foreign_integrate) {
+							if (answer == SynchronizationProcessDialog.foreign_cancelled) {
+								cancelSync("Nach dem Auftauchen von fremden Änderungen Abgebrochen.");
+								return null;
+							} else if (answer == SynchronizationProcessDialog.foreign_integrate) {
 								// for this round, bidirectional synchronization is activated
 								isBiDirectional = true;
 							} else if (answer == SynchronizationProcessDialog.foreign_restore) {
@@ -685,16 +688,20 @@ public class SynchronizationProcess extends SwingWorker<Void, Void> {
 									relativePath = file.getPath().substring(destinationBasePathLengthPlusOne);
 									file2 = new File(operation.getSourcePath(), relativePath);
 									file_db = db.getFileByPath(relativePath);
+									// file_db should never be null because it was recently queried
 									if (file_db != null) {
+										// avoid duplicates
 										if (file_db.getModified() == file2.lastModified()) {
+											// overwrite file
 											copyActions.add(new CopyAction(file2, file, relativePath, false,
 													CopyAction.DIR_BACKUP));
-										}
+										} // else the file will be copied anyway, do nothing
 									}
 								}
-							} // else answer is ignore changes
-								// else consider expected changes in remote file system (if bidirectional)
-						} else if (newForeignFiles.size() + changedForeignFiles.size() > 0
+							} // else answer is ignore changes, do nothing
+						}
+						// consider expected changes in remote file system (if bidirectional)
+						if (newForeignFiles.size() + changedForeignFiles.size() > 0
 								&& isBiDirectional) {
 							// add new files from target file system to copy to the source file system to
 							// list of files to copy
@@ -855,7 +862,7 @@ public class SynchronizationProcess extends SwingWorker<Void, Void> {
 					}
 
 					/*
-					 * Synchronisation begins with deleting files and empty directories
+					 * Synchronization begins with deleting files and empty directories
 					 */
 
 					// message to user if there are delete actions selected
@@ -1150,15 +1157,20 @@ public class SynchronizationProcess extends SwingWorker<Void, Void> {
 		return null;
 	}
 
-	// remove a list of empty directories and its parent directories when it was the
-	// last entry
+	/**
+	 * Removes a list of empty directories and its parent directories as long as
+	 * they are empty.
+	 * 
+	 * @param emptyDirs
+	 *            The list of empty directories to be removed.
+	 */
 	private void rmEmptyDirs(Vector<File> emptyDirs) {
 		if (emptyDirs.size() > 0) {
 			message("# " + emptyDirs.size() + " Leere Verzeichnisse Löschen");
 			boolean hold;
 			// iterate through empty directories
 			for (File file : emptyDirs) {
-				// assume the directory the only entry in its parent directory
+				// assume the directory is the last entry in its parent directory
 				hold = false;
 				do {
 					if (!FSFx.hasDirEntries(file.toPath())) {
