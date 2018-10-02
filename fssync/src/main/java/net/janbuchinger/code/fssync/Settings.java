@@ -64,8 +64,7 @@ public class Settings {
 		showSummary = true;
 		verbose = false;
 
-		String os = PropFx.osName().toLowerCase();
-		fileBrowser = os.startsWith("win") ? "explorer" : os.startsWith("mac") ? "finder" : "";
+		fileBrowser =  "";
 
 		startToTray = false;
 		closeToTray = false;
