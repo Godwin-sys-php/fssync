@@ -38,9 +38,11 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -74,7 +76,8 @@ import net.janbuchinger.code.mishmash.ui.dialog.InfoDialog;
  * @author Jan Buchinger
  *
  */
-public final class FSSyncUI implements WindowListener, ActionListener, MouseListener {
+public final class FSSyncUI
+		implements WindowListener, ActionListener, MouseListener, UncaughtExceptionHandler {
 
 	/**
 	 * The main frame
@@ -197,17 +200,34 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 	private TrayReminderThread trayReminder;
 
 	/**
-	 * indicator if an operation or segment is ran from tray, false by default
+	 * indicator if an operation or segment is ran from tray, false by default.
 	 * <p>
-	 * set true it disables left click on the tray icon and the tray menu items
+	 * set true it disables left click on the tray icon and the tray menu items.
 	 */
 	private boolean showFromTray;
+
+	/**
+	 * Date time format for logfiles.
+	 */
+	private final SimpleDateFormat sdfLog;
+
+	/**
+	 * Default uncaught exception handler.
+	 */
+	private final UncaughtExceptionHandler defaultUncaughtExceptionHandler;
 
 	/**
 	 * Constructs the <code>FSSyncUI</code> (main UI class). Used only by
 	 * <code>RunFSSyncUI</code> class.
 	 */
 	public FSSyncUI() {
+		// get the current default exception handler
+		defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+		// Set this class as default uncaught exception handler
+		Thread.setDefaultUncaughtExceptionHandler(this);
+		// initialize the date time format for the log file name
+		sdfLog = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+
 		/*
 		 * Current version
 		 */
@@ -435,28 +455,28 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 		/*
 		 * initialize about menu items
 		 */
-		miAbout = new JMenuItem("About...");
+		miAbout = new JMenuItem("About (Englisch)...");
 		miAbout.addActionListener(this);
 
 		miHelp = new JMenuItem("Hilfe...");
 		miHelp.addActionListener(this);
 
-		miChangeLog = new JMenuItem("Change Log...");
+		miChangeLog = new JMenuItem("Change Log (Englisch)...");
 		miChangeLog.addActionListener(this);
 
-		miLicense = new JMenuItem("License...");
+		miLicense = new JMenuItem("License (Englisch)...");
 		miLicense.addActionListener(this);
 
-		miToDo = new JMenuItem("To Do...");
+		miToDo = new JMenuItem("To Do (Englisch)...");
 		miToDo.addActionListener(this);
 
 		/*
-		 * initialize menu edit
+		 * initialize menu edit (built dynamically in rebuildUserInterface())
 		 */
 		muEdit = new JMenu("Bearbeiten");
 
 		/*
-		 * initialize menu run
+		 * initialize menu run (built dynamically in rebuildUserInterface())
 		 */
 		muRun = new JMenu("Ausführen");
 
@@ -1547,6 +1567,27 @@ public final class FSSyncUI implements WindowListener, ActionListener, MouseList
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				// open the main frame and remove the tray icon
 				openFromTray();
+			}
+		}
+	}
+
+	/**
+	 * Catching uncaught exceptions and writing the stack trace to a file in the log
+	 * files directory
+	 */
+	@Override
+	public void uncaughtException(Thread t, Throwable e) {
+		if (sdfLog != null) {
+			// the file to write to
+			File logFile = new File(settings.getLogFilesDir(),
+					"FSSync-Error-Log-" + sdfLog.format(System.currentTimeMillis()) + ".txt");
+			// save the stack trace to file
+			FSSync.saveErrorLog(logFile, e);
+			// pass the Exception to the defaultUncaughtExceptionHandler
+			if (defaultUncaughtExceptionHandler != null) {
+				defaultUncaughtExceptionHandler.uncaughtException(t, e);
+			} else {
+				// do nothing
 			}
 		}
 	}
