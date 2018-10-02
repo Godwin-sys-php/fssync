@@ -48,9 +48,10 @@
 	<h2>1 :: Begriffe und Funktion des Programmes</h2>
 	<p>Fssync steht als Abk&uuml;rzung f&uuml;r &quot;Filesystem
 		Synchronisator&quot;. Das Programm erstellt Sicherheitskopien von
-		Dateien und überprüft Dateien auf ihre Integrität. Dieser Prozess
-		l&auml;uft nicht automatisch. Es liegt in der Hand des Benutzers zu
-		erw&auml;gen in welchem Intervall die Daten abgeglichen werden sollen.</p>
+		Dateien und &uuml;berpr&uuml;ft Dateien auf ihre Integrit&auml;t.
+		Dieser Prozess l&auml;uft nicht automatisch. Es liegt in der Hand des
+		Benutzers zu erw&auml;gen in welchem Intervall die Daten abgeglichen
+		werden sollen.</p>
 	<h3>Segment</h3>
 	<p>Ein Segment hat einen Namen und 0 oder mehr Operationen.</p>
 	<p>Wenn ein Segment ausgef&uuml;hrt wird, werden alle enthaltene
@@ -125,9 +126,9 @@
 		Quelldatentr&auml;ger der schnellere sein sollte.</p>
 
 	<h2>4 :: Speicherung von Logdateien</h2>
-	<p>Logdateien werden, sofern die Einstellung nicht verändert wurde,
-		im Benutzerverzeichnis abgespeichert.</p>
-	<p>Sollte der Synchronisationsprozess abstürzten wird ein
+	<p>Sofern die Einstellung nicht ver&auml;ndert wurde, werden
+		Logdateien im Benutzerverzeichnis abgespeichert.</p>
+	<p>Sollte ein unerwarteter Fehler auftreten wird automatisch ein
 		Fehlerbericht abgelegt.</p>
 
 	<h1>Hilfe</h1>
@@ -141,7 +142,7 @@
 		<b>Checkbox Auswahl:</b> Operation zum Ausf&uuml;hren Ausw&auml;hlen.
 	</p>
 	<p>
-		<b>Klick auf Nummer:</b> Operation zum Bearbeiten öffnen.
+		<b>Klick auf Nummer:</b> Operation zum Bearbeiten &ouml;ffnen.
 	</p>
 	<p>
 		<b>Klick auf Pfad:</b> Ordner im Dateiexplorer &ouml;ffnen.
@@ -151,13 +152,14 @@
 	</p>
 	<p>
 		<b>Rechtsklick auf Pfeil:</b> Operation im alternativen Modus
-		ausf&uuml;hren (Schnell oder mit Integrit&auml;tsprüfung).
+		ausf&uuml;hren (Schnell oder mit Integrit&auml;tspr&uuml;fung).
 	</p>
 	<p>
-		<b>Gefüllter Pfeil:</b> Operation mit Integritätsprüfung ausführen.
+		<b>Gef&uuml;llter Pfeil:</b> Operation mit
+		Integrit&auml;tspr&uuml;fung ausf&uuml;hren.
 	</p>
 	<p>
-		<b>Umrandeter Pfeil:</b> Operation schnell ausführen.
+		<b>Umrandeter Pfeil:</b> Operation schnell ausf&uuml;hren.
 	</p>
 	<p>
 		<b>Pfeil in eine Richtung:</b> Unidirektionale Operation.
@@ -194,7 +196,11 @@
 	</p>
 	<p>
 		<b>Dateibrowser:</b> Das Kommando um einen Dateiexplorer zu
-		&ouml;ffnen.
+		&ouml;ffnen.<br>Es kann das Feld leergelassen werden um
+		automatisch den Standarddateibrowser zu suchen. Falls das Probleme
+		bereitet kann versucht werden das Kommando f&uuml;r einen Dateibrowser
+		anzugeben das den Ordnerpfad zum &Ouml;ffnen als erstes und einziges
+		Argument versteht.
 	</p>
 	<p>
 		<b>Als Tray Icon Starten:</b> Das Programm startet und wird als
@@ -315,8 +321,8 @@
 	</p>
 	<h3>Statistik</h3>
 	<img src="operationStats.png">
-	<p>Diese Statistik wird als Grundlage für den Fortschrittsbalken im
-		Synchronisationsdialog herangezogen.</p>
+	<p>Diese Statistik wird als Grundlage f&uuml;r den
+		Fortschrittsbalken im Synchronisationsdialog herangezogen.</p>
 	<h3>Operation Speichern :: Speichern-Button</h3>
 	<p>
 		<b>Das Speichern funktioniert nur wenn Ziel- und Quellordner
@@ -332,19 +338,19 @@
 	<h3>Klick auf den Pfeil der entsprechenden Operation</h3>
 	<p>Es wird die entsprechende Operation mit den eingestellten
 		Optionen ausgef&uuml;hrt</p>
-	<h3>Rechtslick auf den Pfeil der entsprechenden Operation für
+	<h3>Rechtslick auf den Pfeil der entsprechenden Operation f&uuml;r
 		alternativen Modus</h3>
 	<p>Es wird die entsprechende Operation im alternativen Modus
-		(Schnell oder mit Integritätsprüfung) ausgef&uuml;hrt</p>
+		(Schnell oder mit Integrit&auml;tspr&uuml;fung) ausgef&uuml;hrt</p>
 	<h3>Men&uuml; Ausf&uuml;hren &gt; Alle</h3>
-	<p>Es werden Alle verfügbaren Optionen ausgeführt.</p>
+	<p>Es werden Alle verf&uuml;gbaren Optionen ausgef&uuml;hrt.</p>
 	<h3>Men&uuml; Ausf&uuml;hren &gt; Ausgew&auml;hlte</h3>
 	<p>Alle verf&uuml;gbaren Operationen werden ausgef&uuml;hrt.</p>
-	<h3>Men&uuml; Ausf&uuml;hren &gt; Fällige</h3>
-	<p>Alle Fälligen Operationen werden ausgef&uuml;hrt.</p>
+	<h3>Men&uuml; Ausf&uuml;hren &gt; F&auml;llige</h3>
+	<p>Alle F&auml;lligen Operationen werden ausgef&uuml;hrt.</p>
 	<h3>Men&uuml; Ausf&uuml;hren &gt; Optionen</h3>
-	<p>Optionen um alle oder ausgewählte in einem speziellen Modus
-		auszuführen</p>
+	<p>Optionen um alle oder ausgew&auml;hlte in einem speziellen Modus
+		auszuf&uuml;hren</p>
 	<h3>Men&uuml; Ausf&uuml;hren &gt; &quot;Segment Name&quot;</h3>
 	<p>Es wird ein Synchronisationsprozess f&uuml;r das
 		ausgew&auml;hlte Segment gestartet.</p>
@@ -355,9 +361,9 @@
 	<p>Es wird das Zieldateisystem eingelesen und alle bekannten
 		Dateien werden auf ihre Integrit&auml;t &uuml;berpr&uuml;ft.</p>
 	<p>Wenn "Schnell synchronisieren" in den Operationsoptionen
-		ausgewählt ist wird das Zieldateisystem nur eingelesen wenn auch
-		"bidirektional synchronisieren" ausgewählt ist und die
-		Integritätsprüfung wird übersprungen.</p>
+		ausgew&auml;hlt ist wird das Zieldateisystem nur eingelesen wenn auch
+		"bidirektional synchronisieren" ausgew&auml;hlt ist und die
+		Integrit&auml;tspr&uuml;fung wird &uuml;bersprungen.</p>
 	<h3>Besch&auml;digte Dateien</h3>
 	<!-- p>Wenn besch&auml;digte Dateien auftauchen wird versucht sie vom
 		anderen Datentr&auml;ger wiederherzustellen:</p>
@@ -387,7 +393,7 @@
 		<b>&Auml;nderungen Holen (Bidirektional Synchronisieren)</b>: Es wird
 		die Bidirektionale Synchronisation eingeschalten um &Auml;nderungen
 		ins Quelldateisystem zu holen. <b style="color: #c60000;">Dabei
-			könnte es Datenverluste im Quellverzeichnis geben</b>.
+			k&ouml;nnte es Datenverluste im Quellverzeichnis geben</b>.
 	</p>
 	<p>
 		<b>&Auml;nderungen L&ouml;schen</b>: Es werden alle im Zieldateisystem
@@ -432,8 +438,8 @@
 	<p>
 		Eine zu l&ouml;schende abgew&auml;hlte Datei, wird allerdings
 		wiederhergestellt; Immer dran denken dass dieses Feature erst
-		verfügbar ist <i>nachdem</i> die Datei zuvor bereits synchronisiert
-		wurde...
+		verf&uuml;gbar ist <i>nachdem</i> die Datei zuvor bereits
+		synchronisiert wurde...
 	</p>
 	<h3>Farben</h3>
 	<p>
@@ -463,20 +469,28 @@
 	<h2>Ve :: L&ouml;schen &amp; Kopieren</h2>
 	<p>Es wird zuerst die Liste mit den zu l&ouml;schenden
 		abgearbeitet; falls dabei leere Verzeichnisse entstehen werden diese
-		gelöscht. Danach wird die Liste mit zu kopierenden Dateien
+		gel&ouml;scht. Danach wird die Liste mit zu kopierenden Dateien
 		abgearbeitet.</p>
-	<p>Bevor eine neue oder geänderte Datei kopiert wird, wird eine
-		Prüfsumme für den Eintrag in der Datenbank erzeugt. Da die Datei so
-		zwei mal eingelesen werden muss wirkt sich das entsprechend negativ
-		auf die Übertragungsgeschwindigkeit pro Datei aus. Daher sind
-		langsamere Übertragungsraten als beim Kopieren gewohnt Teil des
-		Konzeptes...</p>
+	<p>Bevor eine neue oder ge&auml;nderte Datei kopiert wird, wird
+		eine Pr&uuml;fsumme f&uuml;r den Eintrag in der Datenbank erzeugt. Da
+		die Datei so zwei mal eingelesen werden muss wirkt sich das
+		entsprechend negativ auf die &Uuml;bertragungsgeschwindigkeit pro
+		Datei aus. Daher sind langsamere &Uuml;bertragungsraten als beim
+		Kopieren gewohnt Teil des Konzeptes...</p>
 	<p>
-		Falls der Synchronisationsprozess während dem Kopieren abgebrochen
-		wird, wird die momentane Prüfsumme fertig erzeugt und dann abgebrochen
-		bzw. die aktuelle Datei fertigkopiert und dann abgebrochen. <b>Bei
-			grösseren Dateien kann das länger dauern</b>.
+		Falls der Synchronisationsprozess w&auml;hrend dem Kopieren
+		abgebrochen wird, wird die momentane Pr&uuml;fsumme fertig erzeugt und
+		dann abgebrochen bzw. die aktuelle Datei fertigkopiert und dann
+		abgebrochen. <b>Bei gr&ouml;sseren Dateien kann das l&auml;nger
+			dauern</b>.
 	</p>
+
+	<h2>Vf :: Logdatei</h2>
+	<p>Am Ende der Synchronisation kann im
+		Synchronisationsprozessfenster &uuml;ber das Men&uuml; Logdatei &gt;
+		Log Speichern eine detaillierte Liste von Vorg&auml;ngen abgespeichert
+		werden. Im Einstellungsdialog wird der Speicherort festgelegt.
+		Standardm&auml;ssig wird das Benutzerverzeichnis verwendet.</p>
 
 	<h2>VI :: Wiederherstellung :: Men&uuml; Ausf&uuml;hren &gt;
 		Wiederherstellen...</h2>
@@ -495,17 +509,17 @@
 	<img src="restoreDialogEmpty.png">
 	<p>
 		Zur Wiederherstellung muss das Quellverzeichnis existieren. Unter dem
-		Menü <b>Extras &gt; Erzeuge fehlende Quellverzeichnisse...</b> kann
-		ein Assistenzdialog geöffnet werden der dabei hilft fehlende
+		Men&uuml; <b>Extras &gt; Erzeuge fehlende Quellverzeichnisse...</b>
+		kann ein Assistenzdialog ge&ouml;ffnet werden der dabei hilft fehlende
 		Quellverzeichnisse zu erstellen.
 	</p>
 	<img src="createMissingSourceDialog.png">
 	<p>Nachdem der Quellordner erstellt und keine Datenbankdatei
 		gefunden wurde, wird die Operation jetzt als zur wiederherstellung
-		&quot;Ausständig&quot; angezeigt.</p>
+		&quot;Ausst&auml;ndig&quot; angezeigt.</p>
 	<img src="restoreDialogOutstanding.png">
 	<p>Nach dem Wiederherstellen wird die Operation wieder unter den
-		verfügbaren gelistet.</p>
+		verf&uuml;gbaren gelistet.</p>
 	<img src="restoreDialogAvailable.png">
 	<p>Wenn die Auswahl mehrere Operationen mit dem selben
 		Quellverzeichnis zum Wiederherstellen hat erscheint ein Dialog um eine
@@ -514,20 +528,20 @@
 	<h2>VIa :: Wiederherstellungsmodus</h2>
 	<img src="requestRestoreMode.png">
 	<p>
-		<b>Sanft Wiederherstellen:</b> in diesem Modus wird darauf Rücksicht
-		genommen dass keine Datenverluste entstehen.
+		<b>Sanft Wiederherstellen:</b> in diesem Modus wird darauf
+		R&uuml;cksicht genommen dass keine Datenverluste entstehen.
 	</p>
 	<p>
 		<b>Alle Wiederherstellen:</b> Es werden alle Dateien, die in der
-		Datenbank erfasst sind ohne Rücksicht auf Verluste zurück ins
-		Quellverzeichnis kopiert. <span
+		Datenbank erfasst sind ohne R&uuml;cksicht auf Verluste zur&uuml;ck
+		ins Quellverzeichnis kopiert. <span
 			style="color: #c60000; font-weight: bold;"> Hierbei entstehen
 			Datenverluste!</span>
 	</p>
 	<p>
-		<b>Änderungen rückgängig Machen:</b> Es werden alle Dateien die im
-		Quellverzeichnis geändert wurden mit der alten Version aus dem
-		Zielverzeichnis überschrieben. <span
+		<b>&Auml;nderungen r&uuml;ckg&auml;ngig Machen:</b> Es werden alle
+		Dateien die im Quellverzeichnis ge&auml;ndert wurden mit der alten
+		Version aus dem Zielverzeichnis &uuml;berschrieben. <span
 			style="color: #c60000; font-weight: bold;">Hierbei entstehen
 			Datenverluste!</span>
 	</p>
