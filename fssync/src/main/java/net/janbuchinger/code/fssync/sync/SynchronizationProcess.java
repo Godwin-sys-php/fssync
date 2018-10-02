@@ -701,8 +701,7 @@ public class SynchronizationProcess extends SwingWorker<Void, Void> {
 							} // else answer is ignore changes, do nothing
 						}
 						// consider expected changes in remote file system (if bidirectional)
-						if (newForeignFiles.size() + changedForeignFiles.size() > 0
-								&& isBiDirectional) {
+						if (newForeignFiles.size() + changedForeignFiles.size() > 0 && isBiDirectional) {
 							// add new files from target file system to copy to the source file system to
 							// list of files to copy
 							for (File file : newForeignFiles) {
