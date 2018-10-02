@@ -26,11 +26,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -52,6 +49,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
 
+import net.janbuchinger.code.fssync.FSSync;
 import net.janbuchinger.code.fssync.Operation;
 import net.janbuchinger.code.fssync.Settings;
 import net.janbuchinger.code.fssync.sync.OperationSummary;
@@ -78,6 +76,10 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 
 	private ProgressBarCountDownThread pbcdt;
 
+	private final SimpleDateFormat sdfLog;
+
+	private boolean saveLog;
+
 	public SynchronizationProcessDialog(String title, JFrame d, Settings settings,
 			SwingWorker<Void, Void> sp) {
 		super(d, title, true);
@@ -85,6 +87,8 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 		this.verbose = settings.isVerbose();
 
 		log = new Vector<String>();
+
+		saveLog = settings.isAlwaysSaveLog();
 
 		this.settings = settings;
 
@@ -94,11 +98,13 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 
 		exception = null;
 
+		sdfLog = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+
 		miSaveLog = new JMenuItem("Log Speichern");
 		miSaveLog.addActionListener(this);
 		miSaveLog.setEnabled(false);
 
-		if (!settings.isAlwaysSaveLog()) {
+		if (!saveLog) {
 			JMenu menu = new JMenu("Logdatei");
 			JMenuBar menuBar = new JMenuBar();
 			menu.add(miSaveLog);
@@ -152,26 +158,33 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 	}
 
 	public synchronized final void saveLog() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-		File file = new File(settings.getLogFilesDir(),
-				"FSSync-Log-" + sdf.format(System.currentTimeMillis()) + ".txt");
-		StringBuilder data = new StringBuilder();
-		Iterator<String> iStatusUpdate = log.iterator();
-		while (iStatusUpdate.hasNext()) {
-			data.append(iStatusUpdate.next() + "\r\n");
+		if (finished) {
+			File file = new File(settings.getLogFilesDir(),
+					"FSSync-Log-" + sdfLog.format(System.currentTimeMillis()) + ".txt");
+			StringBuilder data = new StringBuilder();
+			for (String status : log) {
+				data.append(status.concat("\r\n"));
+			}
+			try {
+				FileUtils.writeStringToFile(file, data.toString(), Charset.defaultCharset());
+				addStatus("Logdatei Gespeichert: " + file.getPath());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		} else {
+			if (!saveLog) {
+				addStatus("Logdatei wird später gespeichert");
+				saveLog = true;
+			}
 		}
+	}
+
+	private void saveErrorLog() {
 		if (exception != null) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			exception.printStackTrace(pw);
-			data.append(sw.toString());
+			File file = new File(settings.getLogFilesDir(),
+					"FSSync-Error-Log-" + sdfLog.format(System.currentTimeMillis()) + ".txt");
+			FSSync.saveErrorLog(file, exception);
 		}
-		try {
-			FileUtils.writeStringToFile(file, data.toString(), Charset.defaultCharset());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		addStatus("Logdatei Gespeichert " + file.getAbsolutePath());
 	}
 
 	public synchronized final void setProcessStatusText(String text) {
@@ -185,14 +198,15 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 	}
 
 	public synchronized final void setFinished(String finalStatus) {
+		setDeterminate(true);
+		progressBar.setValue(100);
 		addStatus(finalStatus);
-		if (settings.isAlwaysSaveLog() || exception != null) {
+		finished = true;
+		if (saveLog) {
 			saveLog();
 		}
-		finished = true;
+		saveErrorLog();
 		abortCountDown();
-		progressBar.setIndeterminate(false);
-		progressBar.setValue(100);
 		miSaveLog.setEnabled(true);
 		btCancel.setText("Schliessen");
 		btCancel.setEnabled(true);
@@ -202,13 +216,14 @@ public final class SynchronizationProcessDialog extends JDialog implements Actio
 	}
 
 	public synchronized final void setCancelled(String finalStatus) {
+		setDeterminate(true);
 		addStatus(finalStatus);
-		if (settings.isAlwaysSaveLog() || exception != null) {
+		finished = true;
+		if (saveLog) {
 			saveLog();
 		}
-		finished = true;
+		saveErrorLog();
 		abortCountDown();
-		progressBar.setIndeterminate(false);
 		miSaveLog.setEnabled(true);
 		btCancel.setText("Schliessen");
 		btCancel.setEnabled(true);
