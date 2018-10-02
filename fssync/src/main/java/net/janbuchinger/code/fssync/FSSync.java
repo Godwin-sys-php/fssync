@@ -19,13 +19,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.io.StringWriter;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.charset.Charset;
 
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 
 /**
  * This is the programs main class. In the main method a file lock is obtained
@@ -89,5 +93,35 @@ public final class FSSync {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+
+	/**
+	 * Saves the stack trace of an Exception to a file.
+	 * 
+	 * @param logFile
+	 *            The file to be written to.
+	 * @param e
+	 *            The Exeption to get the stack trace from.
+	 * 
+	 * @return <code>true</code> if the file was written.
+	 */
+	public static boolean saveErrorLog(File logFile, Throwable e) {
+		boolean written = false;
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		try {
+			FileUtils.writeStringToFile(logFile, sw.toString(), Charset.defaultCharset());
+			written = true;
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		pw.close();
+		try {
+			sw.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return written;
 	}
 }
