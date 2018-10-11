@@ -1,9 +1,11 @@
-# Attention
-**German language ahead... Since the primary/initial target group of users are german speakers with some lacking english skills. So all UI strings are hard coded in german. Internationalization stands on the to do list...**
+
 ![alt text][logo]
 # FSSync
 FSSync is short for "Filesystems Synchronisator". The program is supposed to be a minimalistic data flow configurator to backup and archive files.
 Yet it should be possible to map complex file system structures.
+
+## Attention
+**German language ahead... Since the primary/initial target group of users are german speakers with some lacking english skills. So all UI strings are hard coded in german at the moment. Internationalization stands on the to do list...**
 
 ## Getting Started
 Just fetch the git repository and import the project path (.../fssync/fssync) as existing gradle project into eclipse. I hope that should do it.
@@ -26,13 +28,13 @@ The general concept is to organize synchronization operations in segments.
 
 A segment contains 0 or more operations.
 
-An operation consists of a source directory and a target (or destination) directory. It can have excluded directories (source) and is configurable by options. 
+An operation consists of a source (also local) directory and a target (also destination or remote) directory. It can have excluded directories (source) and is configurable by options. 
 Also statistics about the running time are stored inside the operation object.
 
 The persistance strategy for the segments and operations and settings is creating pretty formatted Json dumps (Gson) of the Segments and Settings objects. 
-These are stored as ´sync.json´ and ´settings.json´ in the program directory. The program directory is created when FSSync starts for the first time. It is called ´.fssync´ and is located in the user directory.
-On windows systems the directory is also hidden. Other Files stored in the program directory are the file ´lock.file´ that is used to only allow one instance running and the directory ´docs´ that contains license, help and about documents.
-Inside the ´docs´ directory there also is a file called ´version´ that contains the version string of the program release currently installed.
+These are stored as `sync.json` and `settings.json` in the program directory. The program directory is created when FSSync starts for the first time. It is called `.fssync` and is located in the user directory.
+On windows systems the directory is also hidden. Other Files stored in the program directory are the file `lock.file` that is used to only allow one instance running and the directory `docs` that contains license, help and about documents.
+Inside the `docs` directory there also is a file called `version` that contains the version string of the program release currently installed.
 
 A SQLite database file in the root directory is created to index the directory contents. it is synchronized on creation and after the synchronization work has been done.
 The database contains a meta data table and a file system table. The metadata table has one row containing a unique database ID, the number of times data was synchronized and the structural build version of the database.
@@ -42,12 +44,16 @@ The index represents the state of the file system at the end of the last synchro
 # Source Files
 ## Code
 ### package bug507401
-Commented | class name | comment
+Package containing a downloaded class that checks if a path points to a network drive under windows.
+
+Commented | Class Name | Comment
 --- | --- | ---
  | DangerousPathChecker.java | 
 
 ### package net.janbuchinger.code.fssync
-Commented | class name | comment
+Package for all general program and UI classes.
+
+Commented | Class Name | Comment
 --- | --- | ---
 :x: | ArrowPanel.java | Panel drawing an arrow for an OperationPanel.
 :x: | ArrowRestorePanel.java | Panel drawing an arrow for an RestoreOperationPanel.
@@ -76,35 +82,37 @@ Commented | class name | comment
 :heavy_check_mark: | Segment.java | The Segment class manages 0 or more Operations and has a name.
 :x: | SegmentEditorDialog.java | The dialog to edit a Segment.
 :x: | SegmentMenuItem.java | Menu item to start the SegmentEditorDialog.
-:heavy_check_mark: | Segments.java | The main data structure represented by ´sync.json´. All segments and operations are held here.
+:heavy_check_mark: | Segments.java | The main data structure represented by `sync.json`. All segments and operations are held here.
 :x: | SegmentTrayMenuItem.java | Menu item to synchronize a segment via tray menu.
-:x: | Settings.java | The Settings data structure represented by ´settings.json´.
+:x: | Settings.java | The Settings data structure represented by `settings.json`.
 :x: | SettingsDialog.java | The dialog to edit the Settings.
 :heavy_check_mark: | TrayReminderThread.java | Thread to check for any due operations to remind about.
 :heavy_check_mark: | UIChangeWatcherThread.java | Thread to check if any operation paths have come online or are gone offline. On changes RunRefreshUI is executed.
 
 ### package net.janbuchinger.code.fssync.sync
-Commented | class name | comment
+Package for all classes (executed off the EDT) around the SynchronizationProcess, RestorationProcess and RecoverSystemProcess.
+
+Commented | Class Name | Comment
 --- | --- | ---
- | CopyAction.java | 
- | DeleteAction.java | 
- | EditDBsFilenameFilter.java | 
- | LocalFileVisitor.java | 
- | OnlineDB.java | 
- | OperationSummary.java | 
- | RecoverSystemDialog.java | 
- | RecoverSystemProcess.java | 
- | RecoverSystemVisitor.java | 
- | RelativeFile.java | 
- | RemoteFileVisitor.java | 
- | RestorationProcess.java | 
- | SynchronizationCancelledException.java | 
- | SynchronizationProcess.java | 
+:x: | CopyAction.java | A copy action containing a files source, target and relative path and the direction of the copy action.
+:x: | DeleteAction.java | A delete action containing the path of the file to delete and the location of the file to delete.
+:x: | EditDBsFilenameFilter.java | A FilenameFilter to fetch all editable file system index databases in a directory.
+:x: | LocalFileVisitor.java | The FileVisitor to list all files in the source directory.
+:heavy_check_mark: | OnlineDB.java | The database class.
+:x: | OperationSummary.java | A data structure to summarize all copy and delete actions of an Operation.
+:x: | RecoverSystemProcess.java | Thread to build a new database by searching for already existing file pairs.
+:x: | RecoverSystemVisitor.java | FileVisitor to list all files in the target directory to recover already existing file pairs.
+:x: | RelativeFile.java | A file as stored in the database.
+:x: | RemoteFileVisitor.java | FileVisitor to list the contents of the target file system.
+:heavy_check_mark: | RestorationProcess.java | The reverse Synchronization process for operation restoration.
+:x: | SynchronizationCancelledException.java | Exception to signal that the cancel button was pressed.
+:heavy_check_mark: | SynchronizationProcess.java | The SynchronizationProcess.
 
 ### package net.janbuchinger.code.fssync.sync.ui
-Commented | class name | comment
+Package for all classes related to the SynchronizationProcess, RestorationProcess and RecoverSystemProcess classes that are executed on the EDT
+Commented | Class Name | Comment
 --- | --- | ---
- | CopyActionTableCellRenderer.java | 
+ | CopyActionTableCellRenderer.java | TableCellRenderer to display a CopyAction in the OperationSummaryDialog.
  | CopyActionTableModel.java | 
  | DeleteActionTableCellRenderer.java | 
  | DeleteActionTableModel.java | 
@@ -119,6 +127,7 @@ Commented | class name | comment
  | OperationSummaryDialog.java | 
  | OverviewPanel.java | 
  | ProgressBarCountDownThread.java | 
+ | RecoverSystemDialog.java | 
  | RestorationModePanel.java | 
  | RunAbortCountDown.java | 
  | RunCancelled.java | 
@@ -133,7 +142,7 @@ Commented | class name | comment
 
 ## Resources
 ### package net.janbuchinger.code.fssync.res
-Resouce name | comment
+Resouce Name | Comment
 --- | ---
 about.html | The content for the about dialog.
 Apache2.0.txt | The license file to be opened with the current systems txt editor.
