@@ -73,11 +73,11 @@ Commented | Class Name | Comment
 :heavy_check_mark: | ReleaseApplicationLockThread.java | Thread to be executen on application exit releasing the file lock to prevent any further instances to start.
 :x: | RestorationSelectionDialog.java | The Dialog that manages all restoration and repair tasks.
 :x: | RestoreOperationPanel.java | A version of Operation panel with a different colour and an arrow pointing to left instead of right or both directions.
-:heavy_check_mark: | RunAlreadyRunningMessage.java | Runnable for the EDT, shows a parentless dialog warning that the program is already running and exits after ok was pushed.
-:x: | RunFSSyncUI.java | Runnable to start the main UI on the EDT.
-:x: | RunNotifyNewVersion.java | Runnable that is initialized off the EDT in CheckNewVersion, it tells the main frame to display the new version detected message.
-:x: | RunRefreshUI.java | Runnable for UIChangeWatcherThread to communicate to the main frame to refresh.
-:x: | RunRemindTray.java | Runnable for TrayReminderThread to communicate to the tray icon to display the reminder for synchronization.
+:heavy_check_mark: | RunAlreadyRunningMessage.java | `Runnable` for the EDT, shows a parentless dialog warning that the program is already running and exits after ok was pushed.
+:x: | RunFSSyncUI.java | `Runnable` to start the main UI on the EDT.
+:x: | RunNotifyNewVersion.java | `Runnable` that is initialized off the EDT in CheckNewVersion, it tells the main frame to display the new version detected message.
+:x: | RunRefreshUI.java | `Runnable` for UIChangeWatcherThread to communicate to the main frame to refresh.
+:x: | RunRemindTray.java | `Runnable` for TrayReminderThread to communicate to the tray icon to display the reminder for synchronization.
 :x: | RunSegmentMenuItem.java | Menu item to run a Segment.
 :heavy_check_mark: | Segment.java | The Segment class manages 0 or more Operations and has a name.
 :x: | SegmentEditorDialog.java | The dialog to edit a Segment.
@@ -100,6 +100,7 @@ Commented | Class Name | Comment
 :x: | LocalFileVisitor.java | The FileVisitor to list all files in the source directory.
 :heavy_check_mark: | OnlineDB.java | The database class.
 :x: | OperationSummary.java | A data structure to summarize all copy and delete actions of an Operation.
+:x: | ProgressBarCountDownThread.java | A Thread that counts down from a specified time and updates the progress bar in the `SynchronizationProcessDialog`.
 :x: | RecoverSystemProcess.java | Thread to build a new database by searching for already existing file pairs.
 :x: | RecoverSystemVisitor.java | FileVisitor to list all files in the target directory to recover already existing file pairs.
 :x: | RelativeFile.java | A file as stored in the database.
@@ -109,36 +110,36 @@ Commented | Class Name | Comment
 :heavy_check_mark: | SynchronizationProcess.java | The SynchronizationProcess.
 
 ### package net.janbuchinger.code.fssync.sync.ui
-Package for all classes related to the SynchronizationProcess, RestorationProcess and RecoverSystemProcess classes that are executed on the EDT
+Package for all classes related to the SynchronizationProcess, RestorationProcess and RecoverSystemProcess classes that are executed on the EDT.
+
 Commented | Class Name | Comment
 --- | --- | ---
- | CopyActionTableCellRenderer.java | TableCellRenderer to display a CopyAction in the OperationSummaryDialog.
- | CopyActionTableModel.java | 
- | DeleteActionTableCellRenderer.java | 
- | DeleteActionTableModel.java | 
- | DisplayFile.java | 
- | FileTableModel.java | 
- | GetContinueRestore.java | 
- | GetForeignFileHandling.java | 
- | GetRestorationMode.java | 
- | GetRestoreSourceChoice.java | 
- | GetRetryOnOutOfMemory.java | 
- | GetSummaryApproval.java | 
- | OperationSummaryDialog.java | 
- | OverviewPanel.java | 
- | ProgressBarCountDownThread.java | 
- | RecoverSystemDialog.java | 
- | RestorationModePanel.java | 
- | RunAbortCountDown.java | 
- | RunCancelled.java | 
- | RunFinished.java | 
- | RunPauseCountDown.java | 
- | RunSetDeterminate.java | 
- | RunStartCountDown.java | 
- | RunStatusMessageUpdate.java | 
- | RunStatusTextUpdate.java | 
- | StatusMessage.java | 
- | SynchronizationProcessDialog.java | 
+:x: | CopyActionTableCellRenderer.java | `TableCellRenderer` to display a `CopyAction` in the `OperationSummaryDialog`.
+:heavy_check_mark: | CopyActionTableModel.java | The `TableModel` for the `CopyAction` `JTable` in the `OperationSummaryDialog`.
+:x: | DeleteActionTableCellRenderer.java | The `TableCellRenderer` to display a `DeleteAction` in the `OperationSummaryDialog`.
+:x: | DeleteActionTableModel.java | The `TableModel` for the `DeleteAction` `JTable` in the `OperationSummaryDialog`.
+:x: | DisplayFile.java | A File that returns `File.getPath()` in the custom `toString()` method.
+:x: | FileTableModel.java | **deprecated** A `TableModel` to display a generic list of files.
+:x: | GetContinueRestore.java | **deprecated** `Runnable` to obtain a deceision of the user whether to continue when lost files are found.
+:x: | GetForeignFileHandling.java | `Runnable` to get the users deceision how to handle unexpected changes in the target file system.
+:x: | GetRestorationMode.java | `Runnable` to get the users deceision which restoration mode for the restoration batch to use.
+:x: | GetRestoreSourceChoice.java | `Runnable` to get the user deceision which source to use when more than one sources are available to restore.
+:x: | GetRetryOnOutOfMemory.java | `Runnable` to get the users deceision whether to retry when out of disk space.
+:x: | GetSummaryApproval.java | `Runnable` to display the `OperationSummaryDialog`.
+:x: | OperationSummaryDialog.java | The operation summary dialog to let the user review the changes that will be synchronized.
+:x: | OverviewPanel.java | The overview panel inside the `OperationSummaryDialog` summarizing the changes in numbers.
+:x: | RecoverSystemDialog.java | Dialog containing only a progress bar.
+:x: | RestorationModePanel.java | Message panel for the restoration mode selection dialog.
+:x: | RunAbortCountDown.java | `Runnable` to cancel the current progress bar countdown in `SynchronizationProcessDialog` and set the progress bar indeterminate.
+:x: | RunCancelled.java | `Runnable` to set the `SynchronizationProcessDialog` cancelled and closeable.
+:x: | RunFinished.java | `Runnable` to set the `SynchronizationProcessDialog` finished and closeable.
+:x: | RunPauseCountDown.java | `Runnable` to pause or resume the current progress bar countdown.
+:x: | RunSetDeterminate.java | `Runnable` to set the progress bar in the `SynchronizationProcessDialog` in/determinate.
+:x: | RunStartCountDown.java | `Runnable` to start a new progress bar count down.
+:x: | RunStatusMessageUpdate.java | `Runnable` to pass the current list of status messages to the `SynchronizationProcessDialog`.
+:x: | RunStatusTextUpdate.java | `Runnable` to update the status label text.
+:x: | StatusMessage.java | The data object representing a status message.
+:x: | `SynchronizationProcessDialog`.java | The progress and status dialog for `SynchronizationProcess` and `RestorationProcess`.
 
 ## Resources
 ### package net.janbuchinger.code.fssync.res
