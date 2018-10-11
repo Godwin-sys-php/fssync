@@ -159,7 +159,7 @@ segment.png | Image showing the segment editor dialog.
 settings.png | Image showing the settings dialog.
 TODO | To do list (for dialog)
 
-#Acknowledgements
+# Acknowledgments
 * Apache Foundation
   * **commons-io** is used to read, write and copy files. (Apache 2.0)
   * **commons-codec** is used to create checksums. (Apache 2.0)
