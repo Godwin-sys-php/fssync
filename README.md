@@ -48,46 +48,46 @@ Package containing a downloaded class that checks if a path points to a network 
 
 Commented | Class Name | Comment
 --- | --- | ---
- | DangerousPathChecker.java | 
+partially | DangerousPathChecker.java | Supplies static utility function isDangerous(File) to check if a path (in windows) points to a network resource.
 
 ### package net.janbuchinger.code.fssync
 Package for all general program and UI classes.
 
 Commented | Class Name | Comment
 --- | --- | ---
-:x: | ArrowPanel.java | Panel drawing an arrow for an OperationPanel.
-:x: | ArrowRestorePanel.java | Panel drawing an arrow for an RestoreOperationPanel.
+:x: | ArrowPanel.java | Panel drawing an arrow for an `OperationPanel`.
+:x: | ArrowRestorePanel.java | Panel drawing an arrow for an `RestoreOperationPanel`.
 :heavy_check_mark: | CheckNewVersionThread.java | Thread checking for new version at program start (if connection is possible).
-:heavy_check_mark: | FSSync.java | Starting point class containing the main(String[]) method and general utility methods. UI is launched only if the file lock was obtained.
+:heavy_check_mark: | FSSync.java | Starting point class containing the `main(String[])` method and general utility methods. UI is launched only if the file lock was obtained.
 :heavy_check_mark: | FSSyncPaths.java | Class serving the file system paths relevant for program execution and data persistence.
 :heavy_check_mark: | FSSyncUI.java | Main user interface class, here are all menu item selections, tray icon clics and window events handled.
 :x: | NewVersionMessageComponent.java | Content of the new version info dialog.
-:x: | NumberPanel.java | Panel drawing a circle around a number for OperationPanel and RestoreOperationPanel.
-:heavy_check_mark: | Operation.java | The data structure for an Operation.
-:x: | OperationArgument.java | Helper class to communicate the analysis mode for the Operation (quick or deep) to the SynchronizationProcess.
-:x: | OperationCheckBox.java | Checkbox for OperationPanel and RestoreOperationPanel to select an Operation for synchronization.
-:x: | OperationEditorDialog.java | JDialog containing the UI to edit an Operation.
+:x: | NumberPanel.java | Panel drawing a circle around a number for `OperationPanel` and RestoreOperationPanel.
+:heavy_check_mark: | Operation.java | The data structure for an `Operation`.
+:x: | OperationArgument.java | Helper class to communicate the analysis mode for the `Operation` (quick or deep) to the `SynchronizationProcess`.
+:x: | OperationCheckBox.java | Checkbox for `OperationPanel` and `RestoreOperationPanel` to select an `Operation` for synchronization.
+:x: | OperationEditorDialog.java | `JDialog` containing the UI to edit an `Operation`.
 :x: | OperationPanel.java | Panel for the main UI, here are the UIs clicks handled.
-:x: | OperationsListModel.java | The ListModel to handle the operations inside the SegmentEditorDialog.
-:x: | OperationTrayMenuItem.java | MenuItem for tray menu.
+:x: | OperationsListModel.java | The `ListModel` to handle the operations inside the `SegmentEditorDialog`.
+:x: | OperationTrayMenuItem.java | `MenuItem` for tray menu.
 :heavy_check_mark: | ReleaseApplicationLockThread.java | Thread to be executen on application exit releasing the file lock to prevent any further instances to start.
 :x: | RestorationSelectionDialog.java | The Dialog that manages all restoration and repair tasks.
-:x: | RestoreOperationPanel.java | A version of Operation panel with a different colour and an arrow pointing to left instead of right or both directions.
+:x: | RestoreOperationPanel.java | A version of `OperationPanel` with a different colour and an arrow pointing to left instead of right or both directions.
 :heavy_check_mark: | RunAlreadyRunningMessage.java | `Runnable` for the EDT, shows a parentless dialog warning that the program is already running and exits after ok was pushed.
 :x: | RunFSSyncUI.java | `Runnable` to start the main UI on the EDT.
-:x: | RunNotifyNewVersion.java | `Runnable` that is initialized off the EDT in CheckNewVersion, it tells the main frame to display the new version detected message.
-:x: | RunRefreshUI.java | `Runnable` for UIChangeWatcherThread to communicate to the main frame to refresh.
-:x: | RunRemindTray.java | `Runnable` for TrayReminderThread to communicate to the tray icon to display the reminder for synchronization.
-:x: | RunSegmentMenuItem.java | Menu item to run a Segment.
-:heavy_check_mark: | Segment.java | The Segment class manages 0 or more Operations and has a name.
-:x: | SegmentEditorDialog.java | The dialog to edit a Segment.
-:x: | SegmentMenuItem.java | Menu item to start the SegmentEditorDialog.
-:heavy_check_mark: | Segments.java | The main data structure represented by `sync.json`. All segments and operations are held here.
-:x: | SegmentTrayMenuItem.java | Menu item to synchronize a segment via tray menu.
-:x: | Settings.java | The Settings data structure represented by `settings.json`.
-:x: | SettingsDialog.java | The dialog to edit the Settings.
+:x: | RunNotifyNewVersion.java | `Runnable` that is initialized off the EDT in `CheckNewVersionThread`, it tells the main frame to display the new version detected message.
+:x: | RunRefreshUI.java | `Runnable` for `UIChangeWatcherThread` to communicate to the main frame to refresh.
+:x: | RunRemindTray.java | `Runnable` for `TrayReminderThread` to communicate to the tray icon to display the reminder for synchronization.
+:x: | RunSegmentMenuItem.java | Menu item to run a `Segment`.
+:heavy_check_mark: | Segment.java | The `Segment` class manages 0 or more `Operation`s and has a name.
+:x: | SegmentEditorDialog.java | The dialog to edit a `Segment`.
+:x: | SegmentMenuItem.java | Menu item to start the `SegmentEditorDialog`.
+:heavy_check_mark: | Segments.java | The main data structure represented by `sync.json`. All segments and operations are stored here.
+:x: | SegmentTrayMenuItem.java | Menu item to synchronize a `Segment` via tray menu.
+:x: | Settings.java | The `Settings` data structure represented by `settings.json`.
+:x: | SettingsDialog.java | The dialog to edit the `Settings`.
 :heavy_check_mark: | TrayReminderThread.java | Thread to check for any due operations to remind about.
-:heavy_check_mark: | UIChangeWatcherThread.java | Thread to check if any operation paths have come online or are gone offline. On changes RunRefreshUI is executed.
+:heavy_check_mark: | UIChangeWatcherThread.java | Thread to check if any operation paths have come online or are gone offline. On changes `RunRefreshUI` is executed.
 
 ### package net.janbuchinger.code.fssync.sync
 Package for all classes (executed off the EDT) around the SynchronizationProcess, RestorationProcess and RecoverSystemProcess.
@@ -96,18 +96,18 @@ Commented | Class Name | Comment
 --- | --- | ---
 :x: | CopyAction.java | A copy action containing a files source, target and relative path and the direction of the copy action.
 :x: | DeleteAction.java | A delete action containing the path of the file to delete and the location of the file to delete.
-:x: | EditDBsFilenameFilter.java | A FilenameFilter to fetch all editable file system index databases in a directory.
-:x: | LocalFileVisitor.java | The FileVisitor to list all files in the source directory.
+:x: | EditDBsFilenameFilter.java | A `FilenameFilter` to fetch all editable file system index databases in a directory.
+:x: | LocalFileVisitor.java | The `FileVisitor` to list all files in the source directory.
 :heavy_check_mark: | OnlineDB.java | The database class.
-:x: | OperationSummary.java | A data structure to summarize all copy and delete actions of an Operation.
+:x: | OperationSummary.java | A data structure to summarize all copy and delete actions of an `Operation`.
 :x: | ProgressBarCountDownThread.java | A Thread that counts down from a specified time and updates the progress bar in the `SynchronizationProcessDialog`.
 :x: | RecoverSystemProcess.java | Thread to build a new database by searching for already existing file pairs.
-:x: | RecoverSystemVisitor.java | FileVisitor to list all files in the target directory to recover already existing file pairs.
+:x: | RecoverSystemVisitor.java | `FileVisitor` to list all files in the target directory to recover already existing file pairs.
 :x: | RelativeFile.java | A file as stored in the database.
-:x: | RemoteFileVisitor.java | FileVisitor to list the contents of the target file system.
-:heavy_check_mark: | RestorationProcess.java | The reverse Synchronization process for operation restoration.
-:x: | SynchronizationCancelledException.java | Exception to signal that the cancel button was pressed.
-:heavy_check_mark: | SynchronizationProcess.java | The SynchronizationProcess.
+:x: | RemoteFileVisitor.java | `FileVisitor` to list the contents of the target file system.
+:heavy_check_mark: | RestorationProcess.java | The reverse synchronization process for operation restoration.
+:x: | SynchronizationCancelledException.java | `Exception` to signal that the cancel button was pressed.
+:heavy_check_mark: | SynchronizationProcess.java | The `SynchronizationProcess`.
 
 ### package net.janbuchinger.code.fssync.sync.ui
 Package for all classes related to the SynchronizationProcess, RestorationProcess and RecoverSystemProcess classes that are executed on the EDT.
@@ -139,7 +139,7 @@ Commented | Class Name | Comment
 :x: | RunStatusMessageUpdate.java | `Runnable` to pass the current list of status messages to the `SynchronizationProcessDialog`.
 :x: | RunStatusTextUpdate.java | `Runnable` to update the status label text.
 :x: | StatusMessage.java | The data object representing a status message.
-:x: | `SynchronizationProcessDialog`.java | The progress and status dialog for `SynchronizationProcess` and `RestorationProcess`.
+:x: | SynchronizationProcessDialog.java | The progress and status dialog for `SynchronizationProcess` and `RestorationProcess`.
 
 ## Resources
 ### package net.janbuchinger.code.fssync.res
